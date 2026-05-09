@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buyer's Guide | Rafael Gonzalez – Realtor West Palm Beach FL</title>
+  <meta name="description" content="Your complete guide to buying a home in West Palm Beach and Palm Beach County. Prepared exclusively by Rafael Gonzalez, Keller Williams Realtor. Call (561) 905-6211." />
+  <link rel="canonical" href="https://rafaelgonzalezrealtor.com/buyer-guide.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark:  #1c1a18;
+      --gold:  #b8955a;
+      --gold-lt:#d4b07a;
+      --white: #ffffff;
+      --off:   #faf8f5;
+      --cream: #f2ede6;
+      --gray:  #6b7280;
+      --light: #e8e4df;
+      --text:  #2c2a28;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(184,149,90,0.15);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    }
+    .nav-brand { font-family: 'Playfair Display', serif; color: var(--dark); font-size: 1.1rem; text-decoration: none; }
+    .nav-brand span { color: var(--gold); }
+    .nav-back { font-size: 0.82rem; font-weight: 600; color: var(--gold); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-back:hover { color: var(--dark); }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: url('photos/luxury-home.jpg') center/cover no-repeat;
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(120deg, rgba(28,26,24,0.88) 0%, rgba(28,26,24,0.65) 60%, rgba(28,26,24,0.3) 100%);
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      padding: 8rem 5% 4rem;
+      max-width: 700px;
+    }
+    .hero-tag {
+      display: inline-block;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); border: 1px solid rgba(184,149,90,0.5);
+      padding: 0.35rem 1rem; border-radius: 2px; margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      color: var(--white); line-height: 1.15; margin-bottom: 1.2rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold-lt); }
+    .hero p { font-size: 1.05rem; color: rgba(255,255,255,0.75); max-width: 500px; margin-bottom: 2.5rem; font-weight: 300; }
+    .hero-meta {
+      display: flex; align-items: center; gap: 1.5rem;
+      padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.12);
+    }
+    .hero-avatar {
+      width: 64px; height: 64px; border-radius: 50%;
+      object-fit: cover; border: 2px solid var(--gold);
+    }
+    .hero-meta-text strong { display: block; color: var(--white); font-size: 0.95rem; }
+    .hero-meta-text span { color: rgba(255,255,255,0.55); font-size: 0.8rem; }
+    .btn {
+      display: inline-block; padding: 0.85rem 2rem; border-radius: 2px;
+      font-weight: 600; font-size: 0.88rem; letter-spacing: 0.05em;
+      text-decoration: none; transition: all 0.25s; cursor: pointer; border: none;
+    }
+    .btn-gold { background: var(--gold); color: var(--dark); }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-1px); }
+
+    /* TOC */
+    .toc { background: var(--dark); padding: 3rem 5%; }
+    .toc-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .toc-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); white-space: nowrap; }
+    .toc-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .toc-links a { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.6); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; white-space: nowrap; }
+    .toc-links a:hover { color: var(--gold); }
+
+    /* SECTION COMMON */
+    .section-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; display: block; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--dark); line-height: 1.25; margin-bottom: 1.2rem; }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .divider { width: 40px; height: 2px; background: var(--gold); margin: 1.5rem 0; }
+
+    /* INTRO */
+    .intro { padding: 6rem 5%; background: var(--off); }
+    .intro-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .intro-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; }
+    .intro-text p { color: var(--gray); line-height: 1.85; font-size: 0.97rem; margin-bottom: 1rem; }
+    .intro-text p strong { color: var(--dark); }
+
+    /* DREAM HOME */
+    .dream { padding: 6rem 5%; background: var(--white); }
+    .dream-inner { max-width: 1100px; margin: 0 auto; }
+    .dream-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+    .dream-card {
+      border: 1px solid var(--light); border-radius: 4px; overflow: hidden;
+      transition: all 0.3s; box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    .dream-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 28px rgba(184,149,90,0.1); }
+    .dream-card-img { width: 100%; height: 200px; object-fit: cover; display: block; }
+    .dream-card-body { padding: 1.4rem; }
+    .dream-card h3 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--dark); margin-bottom: 0.5rem; }
+    .dream-card p { font-size: 0.84rem; color: var(--gray); line-height: 1.7; }
+
+    /* PROCESS */
+    .process { padding: 6rem 5%; background: var(--dark); }
+    .process-inner { max-width: 1100px; margin: 0 auto; }
+    .process-inner .section-title { color: var(--white); }
+    .process-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-top: 3rem; }
+    .process-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; padding: 1.8rem; transition: all 0.3s;
+    }
+    .process-card:hover { background: rgba(184,149,90,0.1); border-color: rgba(184,149,90,0.3); }
+    .process-num {
+      font-family: 'Playfair Display', serif; font-size: 2.5rem; color: var(--gold);
+      line-height: 1; margin-bottom: 1rem; opacity: 0.6;
+    }
+    .process-card h3 { font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); margin-bottom: 0.8rem; }
+    .process-card ul { list-style: none; padding: 0; }
+    .process-card ul li { font-size: 0.8rem; color: rgba(255,255,255,0.55); padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); line-height: 1.5; }
+    .process-card ul li:last-child { border-bottom: none; }
+    .process-card ul li::before { content: '→ '; color: var(--gold); font-size: 0.75rem; }
+
+    /* FINANCING */
+    .financing { padding: 6rem 5%; background: var(--cream); }
+    .financing-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .financing-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; }
+    .dos-donts { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem; }
+    .do-box, .dont-box { border-radius: 4px; padding: 1.4rem; }
+    .do-box { background: rgba(184,149,90,0.1); border: 1px solid rgba(184,149,90,0.25); }
+    .dont-box { background: rgba(220,80,80,0.06); border: 1px solid rgba(220,80,80,0.2); }
+    .do-box h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.8rem; }
+    .dont-box h4 { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #c0392b; margin-bottom: 0.8rem; }
+    .do-box li, .dont-box li { font-size: 0.8rem; color: var(--gray); line-height: 1.65; margin-bottom: 0.4rem; list-style: none; padding-left: 1rem; position: relative; }
+    .do-box li::before { content: '✓'; position: absolute; left: 0; color: var(--gold); font-weight: 700; }
+    .dont-box li::before { content: '✗'; position: absolute; left: 0; color: #c0392b; font-weight: 700; }
+
+    /* CLOSING DAY */
+    .closing { padding: 6rem 5%; background: var(--white); }
+    .closing-inner { max-width: 1100px; margin: 0 auto; }
+    .closing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; margin-top: 3rem; }
+    .closing-img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; border-radius: 4px; }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      padding: 0.9rem 0; border-bottom: 1px solid var(--light);
+      font-size: 0.88rem; color: var(--gray); line-height: 1.6;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check-icon {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 0.65rem; font-weight: 700; flex-shrink: 0; margin-top: 2px;
+    }
+
+    /* PROMISE */
+    .promise { padding: 6rem 5%; background: var(--off); }
+    .promise-inner { max-width: 1100px; margin: 0 auto; }
+    .promise-layout { display: grid; grid-template-columns: 380px 1fr; gap: 5rem; align-items: start; margin-top: 3rem; }
+    .promise-card {
+      background: var(--dark); border-radius: 6px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+    }
+    .promise-card-img { width: 100%; height: 320px; object-fit: cover; object-position: top; display: block; }
+    .promise-card-body { padding: 2rem; }
+    .promise-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); }
+    .promise-title { font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin: 0.3rem 0 1.2rem; display: block; }
+    .promise-contact { display: flex; flex-direction: column; gap: 0.5rem; }
+    .promise-contact a { font-size: 0.82rem; color: rgba(255,255,255,0.65); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; transition: color 0.2s; }
+    .promise-contact a:hover { color: var(--gold); }
+    .kw-badge-dark {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.5rem 0.9rem; border-radius: 2px; margin-top: 1.2rem;
+      font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.6);
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .kw-dot { width: 8px; height: 8px; background: #e31837; border-radius: 50%; }
+    .promise-list { list-style: none; padding: 0; }
+    .promise-list li {
+      display: flex; align-items: flex-start; gap: 1rem;
+      padding: 1rem 0; border-bottom: 1px solid var(--light);
+    }
+    .promise-list li:last-child { border-bottom: none; }
+    .p-icon {
+      width: 36px; height: 36px; border-radius: 4px; background: rgba(184,149,90,0.12);
+      border: 1px solid rgba(184,149,90,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+    .promise-list li p { font-size: 0.88rem; color: var(--gray); line-height: 1.7; margin: 0; }
+    .promise-list li strong { display: block; font-size: 0.88rem; color: var(--dark); margin-bottom: 0.2rem; }
+
+    /* GLOSSARY */
+    .glossary { padding: 6rem 5%; background: var(--white); }
+    .glossary-inner { max-width: 1100px; margin: 0 auto; }
+    .glossary-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--light); margin-top: 3rem; border-radius: 4px; overflow: hidden; }
+    .gloss-item { background: var(--white); padding: 1.4rem; transition: background 0.2s; }
+    .gloss-item:hover { background: var(--off); }
+    .gloss-term { font-weight: 700; font-size: 0.82rem; color: var(--dark); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.4rem; }
+    .gloss-def { font-size: 0.8rem; color: var(--gray); line-height: 1.65; }
+
+    /* CTA */
+    .cta-final { padding: 6rem 5%; background: var(--dark); text-align: center; }
+    .cta-final h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem,3vw,2.8rem); color: var(--white); margin-bottom: 1rem; }
+    .cta-final p { color: rgba(255,255,255,0.6); max-width: 520px; margin: 0 auto 2.5rem; font-size: 0.97rem; }
+    .cta-contacts { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 2rem; }
+    .cta-contact-item { text-align: center; }
+    .cta-contact-item span { display: block; font-size: 0.68rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .cta-contact-item a { font-size: 1rem; font-weight: 600; color: var(--gold); text-decoration: none; }
+
+    /* FOOTER */
+    footer { background: #111; padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-brand { font-family: 'Playfair Display', serif; color: var(--white); font-size: 0.95rem; }
+    .footer-brand span { color: var(--gold); }
+    .footer-note { font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .intro-inner, .financing-inner, .promise-layout { grid-template-columns: 1fr; gap: 3rem; }
+      .closing-grid { grid-template-columns: 1fr; gap: 2rem; }
+      .dream-grid { grid-template-columns: repeat(2,1fr); }
+      .process-grid { grid-template-columns: repeat(2,1fr); }
+      .glossary-grid { grid-template-columns: repeat(2,1fr); }
+      .promise-layout { grid-template-columns: 1fr !important; }
+      .intro { padding: 4rem 4%; }
+      .dream { padding: 4rem 4%; }
+      .process { padding: 4rem 4%; }
+      .financing { padding: 4rem 4%; }
+      .closing { padding: 4rem 4%; }
+      .promise { padding: 4rem 4%; }
+      .glossary { padding: 4rem 4%; }
+      .cta-final { padding: 4rem 4%; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 4%; }
+      .hero-content { padding: 6rem 4% 3rem; }
+      .hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+      .hero p { font-size: 0.92rem; }
+      .hero-meta { flex-wrap: wrap; gap: 1rem; }
+      .toc { padding: 2rem 4%; }
+      .toc-inner { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+      .toc-links { gap: 0.75rem; }
+      .toc-links a { font-size: 0.75rem; }
+      footer { flex-direction: column; text-align: center; gap: 0.5rem; }
+    }
+    @media (max-width: 600px) {
+      .dream-grid, .process-grid, .glossary-grid { grid-template-columns: 1fr; }
+      .dos-donts { grid-template-columns: 1fr; }
+      .toc-links { gap: 0.6rem; }
+      .cta-contacts { flex-direction: column; align-items: center; gap: 1.2rem; }
+      .promise-card { max-width: 100%; }
+      .btn { width: 100%; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: clamp(1.8rem, 7vw, 2.4rem); }
+      .section-title { font-size: 1.6rem; }
+      .process-num { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">Rafael <span>Gonzalez</span></a>
+  <a href="/" class="nav-back">← Back to Main Site</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Keller Williams · West Palm Beach, FL</div>
+    <h1>Your Complete Guide to <em>Buying a Home</em> in South Florida</h1>
+    <p>Everything you need to know about buying a home in West Palm Beach and Palm Beach County — prepared exclusively for you by Rafael Gonzalez.</p>
+    <a href="#contact-cta" class="btn btn-gold">Schedule Your Free Consultation</a>
+    <div class="hero-meta" style="margin-top:2.5rem;">
+      <img src="head.png" alt="Rafael Gonzalez Realtor" class="hero-avatar" />
+      <div class="hero-meta-text">
+        <strong>Rafael Gonzalez</strong>
+        <span>Licensed Realtor · Keller Williams · (561) 905-6211</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TABLE OF CONTENTS -->
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-label">Contents</span>
+    <div class="toc-links">
+      <a href="#intro">A Sound Decision</a>
+      <a href="#dream">Your Dream Home</a>
+      <a href="#process">The Buying Process</a>
+      <a href="#financing">Financing</a>
+      <a href="#closing">Closing Day</a>
+      <a href="#promise">My Promise</a>
+      <a href="#glossary">Glossary</a>
+    </div>
+  </div>
+</nav>
+
+<!-- INTRO: A SOUND DECISION -->
+<section class="intro" id="intro">
+  <div class="intro-inner">
+    <img src="photos/couple-home.jpg" alt="Buying a home in West Palm Beach" class="intro-img" />
+    <div class="intro-text">
+      <span class="section-tag">A Sound Decision</span>
+      <h2 class="section-title">Investing in Your <em>Future</em></h2>
+      <div class="divider"></div>
+      <p>Investing in a home is one of the most important decisions you'll ever make. So much more than a roof over your head, <strong>your home is where life unfolds and memories are made</strong> — all while building a financial foundation for your future.</p>
+      <p>As your dedicated Realtor in West Palm Beach, I understand exactly what's cycling through your mind. I've helped hundreds of buyers and sellers across Palm Beach County navigate this journey, and I've mastered every step of the process — from your first search to closing day.</p>
+      <p>When you work with <strong>Rafael Gonzalez</strong>, you benefit from deep local expertise, the power of Keller Williams' global network, and a genuine commitment to making your home-buying experience exceptional. <strong>Your needs come first. Always.</strong></p>
+      <a href="#contact-cta" class="btn btn-gold" style="margin-top:1.5rem;">Let's Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- DREAM HOME -->
+<section class="dream" id="dream">
+  <div class="dream-inner">
+    <span class="section-tag">Your Dream Home</span>
+    <h2 class="section-title">Defining What <em>Home</em> Means to You</h2>
+    <div class="divider"></div>
+    <p style="color:var(--gray);max-width:640px;font-size:0.96rem;line-height:1.8;">Your needs drive how and when we find your next home. From the day we partner together, everything I do will be motivated by your goals and how you imagine life in your new home. Here's what we'll explore together:</p>
+    <div class="dream-grid">
+      <div class="dream-card">
+        <img src="photos/luxury-home.jpg" alt="Luxury home exterior West Palm Beach" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Exterior & Style</h3>
+          <p>Single-family, condo, or townhouse? Pool, garage, architectural style — we define exactly what you're looking for on the outside before we step through the door.</p>
+        </div>
+      </div>
+      <div class="dream-card">
+        <img src="photos/luxury-kitchen.jpg" alt="Luxury kitchen Palm Beach" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Interior & Kitchen</h3>
+          <p>Open floor plan or cozy rooms? Quartz countertops, gourmet kitchen, spa bath — your must-haves become our search filter. No compromises on what matters most.</p>
+        </div>
+      </div>
+      <div class="dream-card">
+        <img src="photos/luxury-bedroom.jpg" alt="Luxury bedroom" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Bedrooms & Living Spaces</h3>
+          <p>Number of bedrooms, owner's suite preferences, home office, playroom — we build your full home wish list so every showing is worth your time.</p>
+        </div>
+      </div>
+      <div class="dream-card">
+        <img src="photos/wpb-aerial.jpg" alt="West Palm Beach neighborhood" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Your Ideal Neighborhood</h3>
+          <p>West Palm Beach, Jupiter, Palm Beach Gardens, Wellington? School districts, commute time, walkability — your neighborhood is an extension of your home.</p>
+        </div>
+      </div>
+      <div class="dream-card">
+        <img src="photos/luxury-living.jpg" alt="Luxury living room" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Lifestyle & Amenities</h3>
+          <p>Golf community, waterfront access, gated estate, equestrian zoning — South Florida offers it all. We'll find the lifestyle that matches your vision.</p>
+        </div>
+      </div>
+      <div class="dream-card">
+        <img src="photos/ocean-view.jpg" alt="Ocean view property Florida" class="dream-card-img" />
+        <div class="dream-card-body">
+          <h3>Timeline & Budget</h3>
+          <p>Whether you want to move in 30 days or 6 months, I'll calibrate our search to your pace and make sure every home shown fits your financial comfort zone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <span class="section-tag" style="color:var(--gold)">Buying 101</span>
+    <h2 class="section-title">How Buying a Home <em>Works</em></h2>
+    <div class="divider"></div>
+    <p style="color:rgba(255,255,255,0.55);max-width:580px;font-size:0.95rem;line-height:1.8;">From first conversation to getting your keys — here's every step of the home buying process in West Palm Beach, simplified and demystified.</p>
+    <div class="process-grid">
+      <div class="process-card">
+        <div class="process-num">01</div>
+        <h3>Partner With Rafael</h3>
+        <ul>
+          <li>Absorb local market insight</li>
+          <li>Get to know neighborhood inventory</li>
+          <li>Access off-market properties</li>
+          <li>Review market averages & trends</li>
+          <li>Complete needs assessment</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">02</div>
+        <h3>Get Pre-Approved</h3>
+        <ul>
+          <li>Understand what you can afford</li>
+          <li>Determine monthly mortgage payment</li>
+          <li>Know your debt-to-income ratio</li>
+          <li>Prepare earnest money funds</li>
+          <li>Obtain pre-approval letter</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">03</div>
+        <h3>Find Your Home</h3>
+        <ul>
+          <li>Search on rafaelgonzalezrealtor.com</li>
+          <li>Schedule & attend home tours</li>
+          <li>Favorite homes, eliminate others</li>
+          <li>Narrow down neighborhoods</li>
+          <li>Decide on your dream home</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">04</div>
+        <h3>Make Your Offer</h3>
+        <ul>
+          <li>Review contract terms & time limits</li>
+          <li>Negotiate purchase price</li>
+          <li>Choose title company</li>
+          <li>Shop home insurance options</li>
+          <li>Sign the offer & deliver escrow</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">05</div>
+        <h3>Under Contract</h3>
+        <ul>
+          <li>Schedule home inspection</li>
+          <li>Negotiate any repairs</li>
+          <li>Order appraisal</li>
+          <li>Secure home loan & insurance</li>
+          <li>Neutralize all contingencies</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">06</div>
+        <h3>Before You Close</h3>
+        <ul>
+          <li>Transfer funds for closing</li>
+          <li>Reserve moving company</li>
+          <li>Change your address with USPS</li>
+          <li>Set up utilities transfer</li>
+          <li>Final property walk-through</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">07</div>
+        <h3>Closing Day: Bring</h3>
+        <ul>
+          <li>Government-issued photo ID</li>
+          <li>Wire transfer confirmation</li>
+          <li>Proof of homeowner's insurance</li>
+          <li>Your copy of the contract</li>
+          <li>Your checkbook</li>
+        </ul>
+      </div>
+      <div class="process-card">
+        <div class="process-num">08</div>
+        <h3>Closing Day 🎉</h3>
+        <ul>
+          <li>Sign all closing documents</li>
+          <li>Title transfer & deed delivery</li>
+          <li>Save all paperwork safely</li>
+          <li>Get your keys</li>
+          <li>Welcome home!</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINANCING -->
+<section class="financing" id="financing">
+  <div class="financing-inner">
+    <img src="photos/mortgage-meeting.jpg" alt="Mortgage consultation West Palm Beach" class="financing-img" />
+    <div>
+      <span class="section-tag">Financing Your Future Home</span>
+      <h2 class="section-title">Protecting Your <em>Loan Approval</em></h2>
+      <div class="divider"></div>
+      <p style="color:var(--gray);line-height:1.8;margin-bottom:1.5rem;font-size:0.94rem;">Once pre-approved, your actions between approval and closing matter enormously. Follow these guidelines to protect your loan and ensure a smooth path to the closing table.</p>
+      <div class="dos-donts">
+        <div class="do-box">
+          <h4>✓ Do This</h4>
+          <ul>
+            <li>Notify your lender of any address changes</li>
+            <li>Notify lender of salary/wage changes</li>
+            <li>Be ready to prove bank deposits</li>
+            <li>Acquire homeowner's insurance immediately after contract</li>
+            <li>Keep all debt paid and current</li>
+          </ul>
+        </div>
+        <div class="dont-box">
+          <h4>✗ Avoid This</h4>
+          <ul>
+            <li>Large purchases on existing credit</li>
+            <li>Applying for new lines of credit</li>
+            <li>Closing or transferring credit balances</li>
+            <li>Changing jobs without telling your lender</li>
+            <li>Co-signing for anyone else's loan</li>
+          </ul>
+        </div>
+      </div>
+      <div style="background:var(--white);border:1px solid var(--light);border-radius:4px;padding:1.4rem;margin-top:1.5rem;">
+        <p style="font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);margin-bottom:0.8rem;">Have On Hand</p>
+        <ul style="list-style:none;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:0.4rem 1rem;">
+          <li style="font-size:0.8rem;color:var(--gray);">✓ Last 2 years' tax returns & W-2s</li>
+          <li style="font-size:0.8rem;color:var(--gray);">✓ Last month of pay stubs</li>
+          <li style="font-size:0.8rem;color:var(--gray);">✓ Last 3 months bank statements</li>
+          <li style="font-size:0.8rem;color:var(--gray);">✓ Photo ID</li>
+          <li style="font-size:0.8rem;color:var(--gray);">✓ 2 years of employer history</li>
+          <li style="font-size:0.8rem;color:var(--gray);">✓ Real estate agreement copy</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING DAY -->
+<section class="closing" id="closing">
+  <div class="closing-inner">
+    <span class="section-tag">Closing Day</span>
+    <h2 class="section-title">The Day You Get Your <em>Keys</em></h2>
+    <div class="divider"></div>
+    <div class="closing-grid">
+      <img src="photos/keys-handover.jpg" alt="Keys to new home West Palm Beach" class="closing-img" />
+      <div>
+        <p style="color:var(--gray);font-size:0.94rem;line-height:1.8;margin-bottom:1.5rem;">Closing day is the moment everything comes together. Here's your complete checklist for a smooth, stress-free closing in Palm Beach County:</p>
+        <ul class="checklist">
+          <li><span class="check-icon">✓</span>Connect with your lender and wire down payment funds in advance</li>
+          <li><span class="check-icon">✓</span>Bring printed confirmation of your wire transfer</li>
+          <li><span class="check-icon">✓</span>Government-issued photo ID for all parties</li>
+          <li><span class="check-icon">✓</span>Proof of homeowner's insurance</li>
+          <li><span class="check-icon">✓</span>Your copy of the purchase contract</li>
+          <li><span class="check-icon">✓</span>Checkbook for any last-minute adjustments</li>
+          <li><span class="check-icon">✓</span>Sign closing disclosure, promissory note & all documents</li>
+          <li><span class="check-icon">✓</span>Title transfer & deed delivery</li>
+          <li><span class="check-icon">✓</span>Receive your keys — you're officially a homeowner!</li>
+        </ul>
+        <div style="background:var(--off);border-left:3px solid var(--gold);padding:1.2rem;margin-top:1.5rem;border-radius:0 4px 4px 0;">
+          <p style="font-size:0.85rem;color:var(--gray);line-height:1.7;"><strong style="color:var(--dark);">Rafael's tip:</strong> Stay in close contact with your agent, lender, and title company throughout the week leading up to closing. I handle this communication on your behalf to ensure nothing slips through the cracks.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MY PROMISE -->
+<section class="promise" id="promise">
+  <div class="promise-inner">
+    <span class="section-tag">My Promise</span>
+    <h2 class="section-title">Your Trusted Partner in <em>Every Step</em></h2>
+    <div class="divider"></div>
+    <div class="promise-layout">
+      <div class="promise-card">
+        <img src="head.png" alt="Rafael Gonzalez Realtor West Palm Beach" class="promise-card-img" />
+        <div class="promise-card-body">
+          <div class="promise-name">Rafael Gonzalez</div>
+          <span class="promise-title">Licensed Realtor · Keller Williams</span>
+          <div class="promise-contact">
+            <a href="tel:+15619056211">📞 (561) 905-6211</a>
+            <a href="mailto:rafaglezglez@kw.com">✉️ rafaglezglez@kw.com</a>
+            <a href="https://rafaelgonzalezrealtor.com" target="_blank">🌐 rafaelgonzalezrealtor.com</a>
+            <a href="https://rafaglezglez.kw.com" target="_blank">🏠 rafaglezglez.kw.com</a>
+          </div>
+          <div class="kw-badge-dark"><span class="kw-dot"></span>Keller Williams Realty</div>
+        </div>
+      </div>
+      <div>
+        <ul class="promise-list">
+          <li>
+            <div class="p-icon">💬</div>
+            <div><strong>Clear, Consistent Communication</strong><p>I communicate in the way and frequency you prefer — phone, text, or email. You'll never be left wondering what's happening with your transaction.</p></div>
+          </li>
+          <li>
+            <div class="p-icon">🤝</div>
+            <div><strong>Integrity in Everything</strong><p>I treat you and your family with straightforwardness, integrity, and respect at every step — even when the right answer isn't the easy one.</p></div>
+          </li>
+          <li>
+            <div class="p-icon">🏆</div>
+            <div><strong>Expert Market Knowledge</strong><p>With deep roots in Palm Beach County, I bring unmatched local knowledge — from West Palm Beach to Jupiter to Wellington — to every transaction.</p></div>
+          </li>
+          <li>
+            <div class="p-icon">🌐</div>
+            <div><strong>KW Global Network Access</strong><p>As a Keller Williams agent, you gain access to 180,000+ associates worldwide and a suite of technology that keeps you informed and ahead of the market.</p></div>
+          </li>
+          <li>
+            <div class="p-icon">🗝️</div>
+            <div><strong>Your Agent for Life</strong><p>From your first home search to future investments, I'm your dedicated real estate adviser — before, during, and long after closing day.</p></div>
+          </li>
+          <li>
+            <div class="p-icon">🌎</div>
+            <div><strong>Bilingual Service — English & Spanish</strong><p>Proudly serving West Palm Beach's diverse community in both English and Spanish. Every client deserves to feel completely understood.</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section class="glossary" id="glossary">
+  <div class="glossary-inner">
+    <span class="section-tag">Glossary</span>
+    <h2 class="section-title">Real Estate Terms <em>Simplified</em></h2>
+    <div class="divider"></div>
+    <div class="glossary-grid">
+      <div class="gloss-item"><div class="gloss-term">Appraisal</div><div class="gloss-def">A written justification of the price paid for a property, based on analysis of comparable sales of similar homes nearby.</div></div>
+      <div class="gloss-item"><div class="gloss-term">APR</div><div class="gloss-def">Annual Percentage Rate — the yearly interest rate you'll pay on your mortgage, including lender fees. Usually slightly higher than your base rate.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Closing Costs</div><div class="gloss-def">Generally 2–5% of the purchase price, covering lender fees, title insurance, recording fees, property taxes, and HOA fees.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Closing Disclosure</div><div class="gloss-def">A document itemizing all funds paid or disbursed at closing. Review it carefully before your closing day.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Deed</div><div class="gloss-def">The legal document that transfers title (ownership) of a property from seller to buyer.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Down Payment</div><div class="gloss-def">A cash payment at closing — typically 3%, 5%, or 20% of the purchase price, depending on your loan program.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Earnest Money</div><div class="gloss-def">A deposit placed in escrow after an offer is accepted, showing the seller you're entering the transaction in good faith.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Equity</div><div class="gloss-def">Your financial interest in the property — the difference between the home's market value and what you still owe on the mortgage.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Escrow</div><div class="gloss-def">Placing money or documents in the custody of a neutral third party until all conditions of a transaction are met.</div></div>
+      <div class="gloss-item"><div class="gloss-term">HOA Fee</div><div class="gloss-def">A monthly or annual fee for homes in communities with a Homeowners Association — covers maintenance of common areas and amenities.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Home Warranty</div><div class="gloss-def">A contract covering repair or replacement of major home systems — HVAC, plumbing, electrical — for a set period after purchase.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Mortgage Insurance</div><div class="gloss-def">Protects the lender if you default. Typically required when your down payment is less than 20% of the purchase price.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Pre-Approval</div><div class="gloss-def">A lender's written commitment to loan you a specific amount, based on verified income, assets, and credit. Essential before making offers.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Property Taxes</div><div class="gloss-def">Annual taxes imposed by local government on real property. In Palm Beach County, rates vary by city and are reassessed annually.</div></div>
+      <div class="gloss-item"><div class="gloss-term">Title Insurance</div><div class="gloss-def">Protects you from financial loss due to defects in the title discovered after purchase — liens, encumbrances, or ownership disputes.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final" id="contact-cta">
+  <h2>Ready to Find Your Dream Home in<br>West Palm Beach?</h2>
+  <p>Let's start your home search today. Free consultation — no pressure, no obligation. I'm here to guide you every step of the way.</p>
+  <a href="https://rafaelgonzalezrealtor.com/#contact" class="btn btn-gold" style="font-size:0.97rem;padding:1rem 2.5rem;">Schedule My Free Consultation</a>
+  <div class="cta-contacts">
+    <div class="cta-contact-item"><span>Call or Text</span><a href="tel:+15619056211">(561) 905-6211</a></div>
+    <div class="cta-contact-item"><span>Email</span><a href="mailto:rafaglezglez@kw.com">rafaglezglez@kw.com</a></div>
+    <div class="cta-contact-item"><span>Website</span><a href="https://rafaelgonzalezrealtor.com">rafaelgonzalezrealtor.com</a></div>
+    <div class="cta-contact-item"><span>KW Listings</span><a href="https://rafaglezglez.kw.com" target="_blank">rafaglezglez.kw.com</a></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Rafael <span>Gonzalez</span> · Realtor</div>
+  <div class="footer-note">© 2026 Rafael Gonzalez · Licensed Realtor · Keller Williams Realty · West Palm Beach, FL</div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Listing Presentation | Rafael Gonzalez | Keller Williams West Palm Beach</title>
+  <meta name="description" content="Rafael Gonzalez – Keller Williams Realtor in West Palm Beach. Luxury listing presentation for Palm Beach County home sellers." />
+  <meta name="robots" content="noindex" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --dark:   #1a1814;
+      --dark2:  #252220;
+      --gold:   #b8955a;
+      --gold-lt:#d4b07a;
+      --white:  #ffffff;
+      --off:    #faf8f5;
+      --cream:  #f2ede5;
+      --gray:   #7a7a7a;
+      --light:  #e8e3dc;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--dark); background: var(--white); line-height: 1.6; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: rgba(26,24,20,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(184,149,90,0.2);
+    }
+    .nav-brand { font-family: 'Playfair Display', serif; color: var(--white); font-size: 1.1rem; text-decoration: none; letter-spacing: 0.02em; }
+    .nav-brand span { color: var(--gold); }
+    .nav-back { font-size: 0.8rem; font-weight: 600; color: rgba(255,255,255,0.55); text-decoration: none; letter-spacing: 0.07em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-back:hover { color: var(--gold); }
+
+    /* ── HERO / COVER ── */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex; align-items: center;
+      overflow: hidden;
+    }
+    .hero-bg { position: absolute; inset: 0; background: url('photos/luxury-facade.jpg') center/cover no-repeat; }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(105deg,
+        rgba(26,24,20,0.96) 0%,
+        rgba(26,24,20,0.82) 45%,
+        rgba(26,24,20,0.4) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; padding: 9rem 6% 5rem; max-width: 780px; }
+
+    .hero-eyebrow {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;
+    }
+    .hero-line { width: 40px; height: 1px; background: var(--gold); }
+    .hero-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--gold);
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      color: var(--white); line-height: 1.1; margin-bottom: 1.4rem;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold-lt); }
+    .hero p { font-size: 1.05rem; color: rgba(255,255,255,0.65); max-width: 500px; margin-bottom: 3rem; font-weight: 300; line-height: 1.8; }
+
+    .hero-divider { width: 100%; height: 1px; background: rgba(255,255,255,0.12); margin-bottom: 2.5rem; }
+
+    .hero-agent {
+      display: flex; align-items: center; gap: 1.5rem;
+    }
+    .hero-avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      object-fit: cover; object-position: top;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 0 4px rgba(184,149,90,0.15);
+    }
+    .hero-agent-info strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--white); }
+    .hero-agent-info span { display: block; font-size: 0.78rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin: 0.2rem 0 0.7rem; }
+    .hero-contacts { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+    .hero-contacts a { font-size: 0.82rem; color: rgba(255,255,255,0.6); text-decoration: none; transition: color 0.2s; }
+    .hero-contacts a:hover { color: var(--gold); }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      color: rgba(255,255,255,0.3); font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+    }
+    .hero-scroll-line { width: 1px; height: 40px; background: rgba(255,255,255,0.2); animation: scrollPulse 2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(0.5)} 50%{opacity:1;transform:scaleY(1)} }
+
+    /* ── TOC BAR ── */
+    .toc { background: var(--dark2); padding: 0; border-bottom: 1px solid rgba(184,149,90,0.15); }
+    .toc-inner {
+      max-width: 1200px; margin: 0 auto;
+      display: flex; align-items: stretch; overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .toc-inner::-webkit-scrollbar { display: none; }
+    .toc-link {
+      display: flex; align-items: center; gap: 0.6rem;
+      padding: 1.2rem 1.5rem;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); text-decoration: none;
+      border-right: 1px solid rgba(255,255,255,0.05);
+      white-space: nowrap; transition: all 0.2s;
+    }
+    .toc-link:hover { color: var(--gold); background: rgba(184,149,90,0.06); }
+    .toc-num { color: var(--gold); opacity: 0.6; font-size: 0.65rem; }
+
+    /* ── SECTION COMMON ── */
+    .section-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; display: block; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 3vw, 2.8rem); line-height: 1.2; margin-bottom: 1.2rem; }
+    .divider { width: 40px; height: 2px; background: var(--gold); margin: 1.2rem 0 1.8rem; }
+    .section-title em { font-style: italic; color: var(--gold); }
+
+    /* ── MARKET SECTION ── */
+    .market { background: var(--dark); padding: 8rem 6%; }
+    .market-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .market-inner .section-title { color: var(--white); }
+    .market-inner p { color: rgba(255,255,255,0.55); font-size: 0.96rem; line-height: 1.85; margin-bottom: 1rem; }
+    .market-inner p strong { color: var(--white); }
+    .market-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+
+    .market-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; margin-top: 2.5rem; }
+    .mstat { background: rgba(255,255,255,0.04); padding: 1.4rem; text-align: center; }
+    .mstat-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); display: block; line-height: 1; margin-bottom: 0.3rem; }
+    .mstat-label { font-size: 0.72rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── NEEDS / CONSULTATION ── */
+    .needs { background: var(--cream); padding: 8rem 6%; }
+    .needs-inner { max-width: 1200px; margin: 0 auto; }
+    .needs-header { text-align: center; max-width: 680px; margin: 0 auto 4rem; }
+    .needs-header .section-title { color: var(--dark); }
+    .needs-header p { color: var(--gray); font-size: 0.97rem; line-height: 1.8; }
+
+    .needs-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; }
+    .needs-card {
+      background: var(--white); border-radius: 6px; padding: 2.2rem;
+      border: 1px solid var(--light);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+    }
+    .needs-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 12px 40px rgba(184,149,90,0.12); }
+    .needs-card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%; background: var(--gold);
+    }
+    .needs-q-num { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--gold); opacity: 0.15; line-height: 1; position: absolute; top: 1rem; right: 1.5rem; }
+    .needs-card h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--dark); margin-bottom: 0.7rem; line-height: 1.35; }
+    .needs-card p { font-size: 0.84rem; color: var(--gray); line-height: 1.7; }
+
+    .needs-bottom { margin-top: 3rem; background: var(--dark); border-radius: 6px; padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+    .needs-bottom h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); margin-bottom: 0.8rem; }
+    .needs-bottom p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.75; }
+    .needs-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; }
+
+    /* ── PROCESS ── */
+    .process { background: var(--white); padding: 8rem 6%; }
+    .process-inner { max-width: 1200px; margin: 0 auto; }
+    .process-header { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: end; margin-bottom: 5rem; }
+    .process-header .section-title { color: var(--dark); }
+    .process-header p { color: var(--gray); font-size: 0.95rem; line-height: 1.8; }
+
+    .phases { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .phase { background: var(--off); border-radius: 6px; padding: 2.5rem; border: 1px solid var(--light); }
+    .phase-title {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1.5rem;
+      padding-bottom: 1rem; border-bottom: 1px solid var(--light);
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .phase-title-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .process-steps { display: flex; flex-direction: column; gap: 0; }
+    .p-step {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      padding: 1rem 0; border-bottom: 1px solid var(--light);
+    }
+    .p-step:last-child { border-bottom: none; }
+    .p-step-num {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      background: var(--gold); color: var(--dark);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 700; margin-top: 2px;
+    }
+    .p-step-text strong { display: block; font-size: 0.9rem; color: var(--dark); margin-bottom: 0.2rem; }
+    .p-step-text p { font-size: 0.8rem; color: var(--gray); line-height: 1.6; }
+
+    /* ── DIGITAL MARKETING ── */
+    .digital { background: var(--dark); padding: 8rem 6%; }
+    .digital-inner { max-width: 1200px; margin: 0 auto; }
+    .digital-inner .section-title { color: var(--white); }
+
+    .digital-top { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; margin-bottom: 5rem; }
+    .digital-stat-big {
+      text-align: center; padding: 3rem;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(184,149,90,0.2); border-radius: 6px;
+    }
+    .digital-stat-big .big-num { font-family: 'Playfair Display', serif; font-size: 6rem; color: var(--gold); line-height: 1; }
+    .digital-stat-big .big-label { font-size: 0.88rem; color: rgba(255,255,255,0.5); margin-top: 0.5rem; line-height: 1.6; }
+    .digital-text p { color: rgba(255,255,255,0.55); font-size: 0.96rem; line-height: 1.85; margin-bottom: 1rem; }
+    .digital-text p strong { color: var(--white); }
+
+    .channels-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(255,255,255,0.07); border-radius: 6px; overflow: hidden; }
+    .channel-card {
+      background: rgba(255,255,255,0.03); padding: 2rem 1.5rem; text-align: center;
+      transition: background 0.2s;
+    }
+    .channel-card:hover { background: rgba(184,149,90,0.08); }
+    .channel-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+    .channel-name { font-size: 0.82rem; font-weight: 600; color: var(--white); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.4rem; }
+    .channel-desc { font-size: 0.75rem; color: rgba(255,255,255,0.4); line-height: 1.6; }
+
+    /* ── MEDIA PLAN ── */
+    .media { background: var(--cream); padding: 8rem 6%; }
+    .media-inner { max-width: 1200px; margin: 0 auto; }
+    .media-inner .section-title { color: var(--dark); }
+    .media-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+    .media-header p { color: var(--gray); font-size: 0.96rem; line-height: 1.8; }
+
+    .media-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .media-card {
+      background: var(--white); border-radius: 6px; overflow: hidden;
+      border: 1px solid var(--light); box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      transition: all 0.3s;
+    }
+    .media-card:hover { border-color: var(--gold); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(184,149,90,0.12); }
+    .media-card-img { width: 100%; height: 160px; object-fit: cover; display: block; }
+    .media-card-body { padding: 1.5rem; }
+    .media-card-icon { font-size: 1.5rem; margin-bottom: 0.6rem; display: block; }
+    .media-card h3 { font-size: 0.88rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--dark); margin-bottom: 0.4rem; }
+    .media-card p { font-size: 0.8rem; color: var(--gray); line-height: 1.65; }
+
+    /* ── CAMPAIGN STRATEGY ── */
+    .campaigns { background: var(--white); padding: 8rem 6%; }
+    .campaigns-inner { max-width: 1200px; margin: 0 auto; }
+    .campaigns-inner .section-title { color: var(--dark); }
+    .campaigns-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+    .campaigns-header p { color: var(--gray); font-size: 0.96rem; line-height: 1.8; }
+
+    .campaigns-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .campaign-box { border-radius: 6px; overflow: hidden; }
+    .campaign-head {
+      padding: 1.8rem 2rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .campaign-head-cs { background: var(--dark); }
+    .campaign-head-jl { background: linear-gradient(120deg, var(--gold) 0%, #a07840 100%); }
+    .campaign-phase {
+      width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(255,255,255,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem;
+    }
+    .campaign-head h3 { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--white); }
+    .campaign-head p { font-size: 0.78rem; color: rgba(255,255,255,0.55); margin-top: 0.1rem; }
+    .campaign-head-jl p { color: rgba(26,24,20,0.65); }
+    .campaign-head-jl h3 { color: var(--dark); }
+
+    .campaign-body { background: var(--off); padding: 2rem; }
+    .campaign-list { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0; }
+    .campaign-list li {
+      display: flex; gap: 0.8rem; align-items: flex-start;
+      padding: 0.85rem 0; border-bottom: 1px solid var(--light);
+      font-size: 0.85rem; color: var(--dark); line-height: 1.5;
+    }
+    .campaign-list li:last-child { border-bottom: none; }
+    .c-check {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px;
+      background: var(--gold); display: flex; align-items: center; justify-content: center;
+      color: var(--white); font-size: 0.6rem; font-weight: 700;
+    }
+
+    /* ── OPEN HOUSE ── */
+    .openhouse { background: var(--dark); padding: 8rem 6%; }
+    .openhouse-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .openhouse-inner .section-title { color: var(--white); }
+    .openhouse-inner > div > p { color: rgba(255,255,255,0.5); font-size: 0.95rem; line-height: 1.85; margin-bottom: 2rem; }
+    .oh-tactics { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0; }
+    .oh-tactic {
+      display: flex; gap: 1rem; align-items: flex-start;
+      padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.07);
+    }
+    .oh-tactic:last-child { border-bottom: none; }
+    .oh-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--gold);
+      flex-shrink: 0; margin-top: 6px;
+    }
+    .oh-tactic p { font-size: 0.88rem; color: rgba(255,255,255,0.6); line-height: 1.6; }
+    .oh-tactic p strong { color: var(--white); display: block; font-size: 0.9rem; margin-bottom: 0.15rem; }
+    .openhouse-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; box-shadow: 0 30px 80px rgba(0,0,0,0.5); }
+
+    /* ── ABOUT RAFAEL ── */
+    .about { background: var(--off); padding: 8rem 6%; }
+    .about-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 400px 1fr; gap: 6rem; align-items: start; }
+    .about-card {
+      background: var(--dark); border-radius: 6px; overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.2);
+      position: sticky; top: 90px;
+    }
+    .about-card-img { width: 100%; height: 400px; object-fit: cover; object-position: top; display: block; }
+    .about-card-body { padding: 2rem; }
+    .about-card-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; color: var(--white); }
+    .about-card-role { font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin: 0.3rem 0 1.2rem; display: block; }
+    .about-contacts { display: flex; flex-direction: column; gap: 0.5rem; }
+    .about-contact-line { display: flex; align-items: center; gap: 0.6rem; font-size: 0.83rem; color: rgba(255,255,255,0.55); }
+    .about-contact-line a { color: rgba(255,255,255,0.55); text-decoration: none; transition: color 0.2s; }
+    .about-contact-line a:hover { color: var(--gold); }
+    .kw-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem 0.9rem; border-radius: 2px; margin-top: 1.2rem; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; }
+    .kw-dot { width: 8px; height: 8px; background: #e31837; border-radius: 50%; }
+
+    .about-right .section-title { color: var(--dark); }
+    .about-right p { color: var(--gray); font-size: 0.96rem; line-height: 1.85; margin-bottom: 1.2rem; }
+
+    .value-props { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin: 2.5rem 0; }
+    .vp-card {
+      background: var(--white); border: 1px solid var(--light); border-radius: 4px;
+      padding: 1.5rem; text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04); transition: all 0.3s;
+    }
+    .vp-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+    .vp-icon { font-size: 1.8rem; margin-bottom: 0.7rem; display: block; }
+    .vp-card h4 { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--dark); margin-bottom: 0.4rem; }
+    .vp-card p { font-size: 0.8rem; color: var(--gray); line-height: 1.6; }
+
+    .kw-network {
+      background: var(--dark); border-radius: 6px; padding: 2.2rem;
+      display: flex; gap: 2rem; align-items: center; flex-wrap: wrap;
+    }
+    .kw-network p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.7; flex: 1; min-width: 200px; }
+    .kw-network p strong { color: var(--white); display: block; font-size: 1rem; margin-bottom: 0.3rem; }
+    .kw-stat { text-align: center; }
+    .kw-stat span { display: block; font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); line-height: 1; }
+    .kw-stat label { display: block; font-size: 0.68rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+
+    /* ── PERFORMANCE ── */
+    .performance { background: var(--dark); padding: 8rem 6%; }
+    .performance-inner { max-width: 1200px; margin: 0 auto; }
+    .performance-inner .section-title { color: var(--white); text-align: center; }
+    .performance-header { text-align: center; margin-bottom: 5rem; }
+    .performance-header p { color: rgba(255,255,255,0.45); font-size: 0.96rem; max-width: 560px; margin: 0 auto; }
+
+    .perf-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-bottom: 3rem; }
+    .perf-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px; padding: 2.5rem 2rem; text-align: center;
+      transition: all 0.3s;
+    }
+    .perf-card:hover { border-color: rgba(184,149,90,0.4); background: rgba(184,149,90,0.06); }
+    .perf-big { font-family: 'Playfair Display', serif; font-size: 3.5rem; color: var(--gold); line-height: 1; display: block; }
+    .perf-unit { font-size: 0.9rem; color: rgba(255,255,255,0.5); }
+    .perf-label { font-size: 0.78rem; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.1em; margin: 0.8rem 0 0.4rem; display: block; }
+    .perf-vs { font-size: 0.72rem; color: rgba(184,149,90,0.7); margin-top: 0.3rem; display: block; }
+
+    .perf-kw { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: rgba(255,255,255,0.07); border-radius: 6px; overflow: hidden; }
+    .pkw-item { background: rgba(255,255,255,0.03); padding: 2rem 1.5rem; text-align: center; }
+    .pkw-num { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); display: block; line-height: 1; margin-bottom: 0.4rem; }
+    .pkw-label { font-size: 0.72rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.08em; line-height: 1.5; }
+
+    /* ── VALUES / KW ── */
+    .values { background: var(--cream); padding: 8rem 6%; }
+    .values-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .values-inner .section-title { color: var(--dark); }
+    .values-inner > div > p { color: var(--gray); font-size: 0.95rem; line-height: 1.85; margin-bottom: 2rem; }
+    .values-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .value-item {
+      display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.8rem;
+      background: var(--white); border-radius: 3px; border: 1px solid var(--light);
+    }
+    .v-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; margin-top: 5px; }
+    .value-item p { font-size: 0.8rem; color: var(--dark); line-height: 1.4; }
+    .value-item p span { color: var(--gray); font-weight: 400; display: block; font-size: 0.75rem; }
+    .values-img-wrap { position: relative; }
+    .values-img { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; }
+    .values-img-badge {
+      position: absolute; bottom: -1.5rem; left: -1.5rem;
+      background: var(--gold); color: var(--dark);
+      padding: 1.5rem 2rem; border-radius: 4px;
+      box-shadow: 0 12px 40px rgba(184,149,90,0.3);
+    }
+    .values-img-badge strong { display: block; font-family: 'Playfair Display', serif; font-size: 1.5rem; }
+    .values-img-badge span { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+
+    /* ── PROMISE ── */
+    .promise { background: var(--white); padding: 8rem 6%; }
+    .promise-inner { max-width: 1200px; margin: 0 auto; }
+    .promise-header { text-align: center; max-width: 640px; margin: 0 auto 4rem; }
+    .promise-header .section-title { color: var(--dark); }
+    .promise-header p { color: var(--gray); font-size: 0.96rem; line-height: 1.8; }
+
+    .promise-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1.5rem; margin-bottom: 4rem; }
+    .promise-card {
+      background: var(--off); border: 1px solid var(--light); border-radius: 6px; padding: 1.8rem;
+      transition: all 0.3s;
+    }
+    .promise-card:hover { border-color: var(--gold); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(184,149,90,0.1); }
+    .promise-card .p-icon { font-size: 1.6rem; margin-bottom: 0.8rem; display: block; }
+    .promise-card h4 { font-family: 'Playfair Display', serif; font-size: 0.95rem; color: var(--dark); margin-bottom: 0.5rem; }
+    .promise-card p { font-size: 0.8rem; color: var(--gray); line-height: 1.65; }
+
+    .promise-signature {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;
+      background: var(--dark); border-radius: 6px; padding: 3rem 3.5rem;
+    }
+    .promise-signature h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--white); margin-bottom: 0.8rem; line-height: 1.3; }
+    .promise-signature p { color: rgba(255,255,255,0.5); font-size: 0.9rem; line-height: 1.75; }
+    .promise-sign-contact { display: flex; flex-direction: column; gap: 1rem; }
+    .psc-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; }
+    .psc-icon { font-size: 1.2rem; }
+    .psc-item span { display: block; font-size: 0.68rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.2rem; }
+    .psc-item a { font-size: 0.92rem; font-weight: 600; color: var(--gold); text-decoration: none; }
+
+    /* ── FINAL CTA ── */
+    .cta-final { padding: 9rem 6%; position: relative; overflow: hidden; text-align: center; }
+    .cta-bg { position: absolute; inset: 0; background: url('photos/waterfront.jpg') center/cover no-repeat; }
+    .cta-overlay { position: absolute; inset: 0; background: rgba(26,24,20,0.9); }
+    .cta-content { position: relative; z-index: 2; max-width: 700px; margin: 0 auto; }
+    .cta-final .section-tag { justify-content: center; }
+    .cta-final h2 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4vw, 3.5rem); color: var(--white); margin-bottom: 1rem; line-height: 1.2; }
+    .cta-final p { color: rgba(255,255,255,0.55); font-size: 1rem; line-height: 1.8; margin-bottom: 3rem; }
+    .cta-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+    .btn { display: inline-block; padding: 0.95rem 2.2rem; border-radius: 2px; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.05em; text-decoration: none; transition: all 0.25s; cursor: pointer; border: none; }
+    .btn-gold { background: var(--gold); color: var(--dark); }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-2px); box-shadow: 0 8px 30px rgba(184,149,90,0.35); }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.3); }
+    .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+    .cta-contacts { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+    .cta-item span { display: block; font-size: 0.65rem; color: rgba(255,255,255,0.3); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.3rem; }
+    .cta-item a { font-size: 1.05rem; font-weight: 600; color: var(--gold); text-decoration: none; }
+
+    /* ── FOOTER ── */
+    footer { background: #0f0e0d; padding: 2rem 6%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-brand { font-family: 'Playfair Display', serif; color: var(--white); font-size: 0.95rem; }
+    .footer-brand span { color: var(--gold); }
+    .footer-note { font-size: 0.72rem; color: rgba(255,255,255,0.25); }
+    .footer-links { display: flex; gap: 1.5rem; }
+    .footer-links a { font-size: 0.75rem; color: rgba(255,255,255,0.35); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .about-inner { grid-template-columns: 340px 1fr; gap: 4rem; }
+      .value-props { grid-template-columns: 1fr 1fr; }
+      .promise-grid { grid-template-columns: repeat(2,1fr); }
+      .channels-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 900px) {
+      .market-inner, .digital-top, .openhouse-inner, .values-inner, .needs-bottom,
+      .process-header, .promise-signature { grid-template-columns: 1fr; gap: 3rem; }
+      .about-inner { grid-template-columns: 1fr; }
+      .about-card { position: static; max-width: 400px; }
+      .phases { grid-template-columns: 1fr; }
+      .needs-grid { grid-template-columns: 1fr; }
+      .campaigns-grid { grid-template-columns: 1fr; }
+      .perf-grid { grid-template-columns: 1fr 1fr; }
+      .perf-kw { grid-template-columns: repeat(2,1fr); }
+      .values-img-badge { left: 0; }
+      .media { padding: 5rem 4%; }
+      .market, .needs, .process, .digital, .campaigns, .openhouse, .about, .performance, .values, .promise { padding: 5rem 4%; }
+      .cta-final { padding: 6rem 4%; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 4%; }
+      .hero-content { padding: 7rem 4% 4rem; }
+      .hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+      .hero p { font-size: 0.92rem; }
+      .toc-inner { overflow-x: auto; }
+      .toc-link { padding: 1rem; font-size: 0.65rem; }
+      .media-grid { grid-template-columns: 1fr 1fr; }
+      .promise-grid { grid-template-columns: 1fr 1fr; }
+      .perf-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; flex-wrap: wrap; }
+    }
+    @media (max-width: 600px) {
+      .media-grid, .promise-grid, .campaigns-grid { grid-template-columns: 1fr; }
+      .channels-grid { grid-template-columns: 1fr 1fr; }
+      .perf-kw { grid-template-columns: 1fr 1fr; }
+      .value-props { grid-template-columns: 1fr; }
+      .values-grid { grid-template-columns: 1fr; }
+      .cta-contacts { flex-direction: column; align-items: center; gap: 1.5rem; }
+      .cta-btns { flex-direction: column; align-items: center; }
+      .cta-btns .btn { width: 100%; max-width: 300px; text-align: center; }
+      .hero-contacts { flex-direction: column; gap: 0.5rem; }
+      .kw-network { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">Rafael <span>Gonzalez</span></a>
+  <a href="/" class="nav-back">← Back to Website</a>
+</nav>
+
+<!-- HERO / COVER -->
+<section class="hero" id="cover">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-line"></div>
+      <span class="hero-label">Listing Presentation · Palm Beach County</span>
+    </div>
+    <h1>Your Home <em>Deserves</em><br>The Best.</h1>
+    <p>A custom strategy built to sell your property for maximum value, in minimum time — with world-class marketing, expert negotiation, and white-glove service from listing to closing.</p>
+    <div class="hero-divider"></div>
+    <div class="hero-agent">
+      <img src="head.png" alt="Rafael Gonzalez" class="hero-avatar" />
+      <div class="hero-agent-info">
+        <strong>Rafael Gonzalez</strong>
+        <span>Keller Williams Realtor · West Palm Beach, FL</span>
+        <div class="hero-contacts">
+          <a href="tel:5619056211">📞 (561) 905-6211</a>
+          <a href="mailto:rafaglezglez@kw.com">✉ rafaglezglez@kw.com</a>
+          <a href="https://rafaelgonzalezrealtor.com" target="_blank">🌐 rafaelgonzalezrealtor.com</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- TOC -->
+<div class="toc" id="toc">
+  <div class="toc-inner">
+    <a href="#market" class="toc-link"><span class="toc-num">01</span> The Market</a>
+    <a href="#needs" class="toc-link"><span class="toc-num">02</span> Your Needs</a>
+    <a href="#process" class="toc-link"><span class="toc-num">03</span> The Process</a>
+    <a href="#marketing" class="toc-link"><span class="toc-num">04</span> Digital Marketing</a>
+    <a href="#mediaplan" class="toc-link"><span class="toc-num">05</span> Media Plan</a>
+    <a href="#campaigns" class="toc-link"><span class="toc-num">06</span> Campaigns</a>
+    <a href="#openhouse" class="toc-link"><span class="toc-num">07</span> Open House</a>
+    <a href="#about" class="toc-link"><span class="toc-num">08</span> About Rafael</a>
+    <a href="#performance" class="toc-link"><span class="toc-num">09</span> Performance</a>
+    <a href="#promise" class="toc-link"><span class="toc-num">10</span> My Promise</a>
+  </div>
+</div>
+
+<!-- 01 · THE MARKET -->
+<section class="market" id="market">
+  <div class="market-inner">
+    <div>
+      <span class="section-tag">01 · The Market</span>
+      <h2 class="section-title">What's Happening in <em>Palm Beach County</em></h2>
+      <div class="divider"></div>
+      <p>Palm Beach County remains one of the most desirable real estate markets in the country. <strong>Demand from buyers — both local and relocating — continues to outpace available inventory</strong>, creating favorable conditions for sellers looking to maximize their return.</p>
+      <p>Buyers are actively searching for properties with waterfront access, modern finishes, and proximity to top-rated schools, dining, and recreation. If your home delivers on these attributes, there has never been a better time to list.</p>
+      <p>With the right pricing strategy and aggressive marketing, your property can attract multiple competitive offers and sell for top dollar in less time than the market average.</p>
+      <div class="market-stats">
+        <div class="mstat">
+          <span class="mstat-num">↑18%</span>
+          <span class="mstat-label">Median Price Growth</span>
+        </div>
+        <div class="mstat">
+          <span class="mstat-num">Low</span>
+          <span class="mstat-label">Inventory Levels</span>
+        </div>
+        <div class="mstat">
+          <span class="mstat-num">30–60</span>
+          <span class="mstat-label">Days Avg. to Sell</span>
+        </div>
+        <div class="mstat">
+          <span class="mstat-num">98%+</span>
+          <span class="mstat-label">List-to-Sale Ratio</span>
+        </div>
+      </div>
+    </div>
+    <img src="photos/wpb-aerial.jpg" alt="Palm Beach County aerial view" class="market-img" />
+  </div>
+</section>
+
+<!-- 02 · YOUR NEEDS COME FIRST -->
+<section class="needs" id="needs">
+  <div class="needs-inner">
+    <div class="needs-header">
+      <span class="section-tag">02 · Your Needs Come First</span>
+      <h2 class="section-title">The <em>Consultation</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem"></div>
+      <p>Before we discuss price, timelines, or marketing, I want to understand your story. These questions guide every decision I make on your behalf — because your goals are the only goals that matter.</p>
+    </div>
+    <div class="needs-grid">
+      <div class="needs-card">
+        <span class="needs-q-num">1</span>
+        <h3>What's your dream outcome for selling your home?</h3>
+        <p>Visualizing success sets the foundation. Whether it's top dollar, a fast close, or a seamless transition into your next home — we build the strategy around your vision.</p>
+      </div>
+      <div class="needs-card">
+        <span class="needs-q-num">2</span>
+        <h3>What's the one thing that <em>must</em> happen for this to be a success?</h3>
+        <p>Every seller has a non-negotiable. Knowing yours from day one ensures I never lose sight of what matters most to you throughout the entire process.</p>
+      </div>
+      <div class="needs-card">
+        <span class="needs-q-num">3</span>
+        <h3>What concerns do you have about the selling process?</h3>
+        <p>Uncertainty creates stress. I address your concerns head-on — from pricing fears to negotiation anxiety — so you can move forward with confidence at every step.</p>
+      </div>
+      <div class="needs-card">
+        <span class="needs-q-num">4</span>
+        <h3>How can I make this experience better than you expected?</h3>
+        <p>My standard is not just meeting your expectations — it's exceeding them. The answer to this question becomes my personal commitment to you from day one.</p>
+      </div>
+    </div>
+    <div class="needs-bottom">
+      <div>
+        <h3>Your Home Is My Priority</h3>
+        <p>From the moment we meet to the day we close, your needs drive every decision I make. I don't just sell homes — I guide families through one of the most significant financial transactions of their lives. That responsibility is something I never take lightly.</p>
+      </div>
+      <img src="photos/agent-clients.jpg" alt="Rafael with clients" class="needs-img" />
+    </div>
+  </div>
+</section>
+
+<!-- 03 · THE PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <div class="process-header">
+      <div>
+        <span class="section-tag">03 · The Process</span>
+        <h2 class="section-title">From <em>Listing</em> to Closing</h2>
+        <div class="divider"></div>
+      </div>
+      <p>The real estate transaction is complex — but with me by your side, every step is planned, executed, and communicated clearly. Here's exactly how I'll guide you from our first meeting to the closing table.</p>
+    </div>
+    <div class="phases">
+      <div class="phase">
+        <div class="phase-title"><span class="phase-title-dot"></span>Phase 1 · Preparation</div>
+        <div class="process-steps">
+          <div class="p-step">
+            <div class="p-step-num">1</div>
+            <div class="p-step-text">
+              <strong>Initial Consultation & Walkthrough</strong>
+              <p>We meet, tour your home, and conduct a thorough needs analysis to understand your goals and timeline.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">2</div>
+            <div class="p-step-text">
+              <strong>Competitive Pricing Strategy</strong>
+              <p>I prepare a detailed Comparative Market Analysis (CMA) to determine the optimal list price that attracts buyers and maximizes your return.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">3</div>
+            <div class="p-step-text">
+              <strong>Sign the Listing Agreement</strong>
+              <p>We formalize our partnership and I begin executing the full marketing plan immediately.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">4</div>
+            <div class="p-step-text">
+              <strong>Staging & Professional Photography</strong>
+              <p>Your home is prepared for its debut — professional staging, photography, and videography to make it irresistible online and in person.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-title"><span class="phase-title-dot"></span>Phase 2 · Marketing & Closing</div>
+        <div class="process-steps">
+          <div class="p-step">
+            <div class="p-step-num">5</div>
+            <div class="p-step-text">
+              <strong>Coming Soon & Just Listed Campaigns</strong>
+              <p>Launch targeted digital, social, and email campaigns to build buzz before and at go-live — driving early momentum and qualified buyer interest.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">6</div>
+            <div class="p-step-text">
+              <strong>Showings, Open House & Offer Review</strong>
+              <p>I coordinate all showings, host strategic open houses, and present every offer with full market context so you can make the best decision.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">7</div>
+            <div class="p-step-text">
+              <strong>Negotiation & Contract Management</strong>
+              <p>I negotiate fiercely on your behalf — protecting your terms, navigating inspection requests, and managing appraisals through to a signed contract.</p>
+            </div>
+          </div>
+          <div class="p-step">
+            <div class="p-step-num">8</div>
+            <div class="p-step-text">
+              <strong>Closing Day & Beyond</strong>
+              <p>Final walkthrough, closing coordination, and keys handed over. My relationship with you doesn't end at closing — I'm here for life.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 · DIGITAL MARKETING -->
+<section class="digital" id="marketing">
+  <div class="digital-inner">
+    <div class="digital-top">
+      <div>
+        <span class="section-tag">04 · Digital Marketing</span>
+        <h2 class="section-title">Where <em>Buyers</em> Are Looking</h2>
+        <div class="divider"></div>
+        <div class="digital-text">
+          <p>Today's buyers begin their home search online — long before they ever contact an agent. <strong>My digital marketing strategy ensures your home captures their attention first, with maximum visibility across every channel they use.</strong></p>
+          <p>From MLS syndication to targeted social media campaigns, I use a data-driven, multi-platform approach to put your listing in front of the most qualified buyers in the market.</p>
+          <p>The result: more showings, stronger offers, and a faster sale at the best possible price.</p>
+        </div>
+      </div>
+      <div class="digital-stat-big">
+        <div class="big-num">95%</div>
+        <div class="big-label">of buyers search online during their home buying journey<br><br><em style="font-size:0.78rem;color:rgba(255,255,255,0.3)">— National Association of REALTORS®</em></div>
+      </div>
+    </div>
+    <div class="channels-grid">
+      <div class="channel-card">
+        <span class="channel-icon">🔍</span>
+        <div class="channel-name">MLS & Zillow</div>
+        <div class="channel-desc">Syndicated to 100s of real estate portals for maximum online reach</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📱</span>
+        <div class="channel-name">Social Media</div>
+        <div class="channel-desc">Instagram, Facebook, and targeted paid ads to reach active buyers</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📧</span>
+        <div class="channel-name">Email Campaigns</div>
+        <div class="channel-desc">Database blasts to buyers and buyer's agents actively looking</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">🏠</span>
+        <div class="channel-name">KWLS Network</div>
+        <div class="channel-desc">Keller Williams' exclusive listing system with global reach</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">🎬</span>
+        <div class="channel-name">Video Tours</div>
+        <div class="channel-desc">Professional walkthroughs and drone footage on YouTube & IG Reels</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📰</span>
+        <div class="channel-name">Property Website</div>
+        <div class="channel-desc">Dedicated landing page built for your listing to capture leads</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">📬</span>
+        <div class="channel-name">Direct Mail</div>
+        <div class="channel-desc">Just-listed postcards to your neighborhood and surrounding areas</div>
+      </div>
+      <div class="channel-card">
+        <span class="channel-icon">🤝</span>
+        <div class="channel-name">Agent Network</div>
+        <div class="channel-desc">Direct outreach to top buyer's agents with qualified clients</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 · MEDIA PLAN -->
+<section class="media" id="mediaplan">
+  <div class="media-inner">
+    <div class="media-header">
+      <span class="section-tag">05 · Your Custom Media Plan</span>
+      <h2 class="section-title">Every Channel. <em>Every Buyer.</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem"></div>
+      <p>From dynamic digital assets to professionally printed materials, I deploy a full suite of marketing tools — each designed to showcase your property at its absolute best and reach buyers wherever they are.</p>
+    </div>
+    <div class="media-grid">
+      <div class="media-card">
+        <img src="photos/photography-home.jpg" alt="Professional Photography" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">📸</span>
+          <h3>Professional Photography</h3>
+          <p>Crisp, magazine-quality photos that make your home irresistible online and stop scrollers in their tracks.</p>
+        </div>
+      </div>
+      <div class="media-card">
+        <img src="photos/digital-marketing.jpg" alt="Social Media Marketing" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">📱</span>
+          <h3>Social Media Posts & Ads</h3>
+          <p>Instagram Stories, Facebook posts, and paid boosted ads targeting buyers in your price range and area.</p>
+        </div>
+      </div>
+      <div class="media-card">
+        <img src="photos/social-marketing.jpg" alt="Digital Campaigns" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">✉️</span>
+          <h3>Email Blast Campaigns</h3>
+          <p>Coming Soon and Just Listed announcements sent to my database of buyers and top area agents.</p>
+        </div>
+      </div>
+      <div class="media-card">
+        <img src="photos/staged-home.jpg" alt="Staging" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">🛋️</span>
+          <h3>Professional Staging</h3>
+          <p>Strategic staging creates the emotional "wow factor" that turns showings into offers. I coordinate the entire process.</p>
+        </div>
+      </div>
+      <div class="media-card">
+        <img src="photos/open-house.jpg" alt="Open House" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">🏡</span>
+          <h3>Property Brochure & Flyers</h3>
+          <p>Professionally designed print materials distributed at showings, open houses, and to neighboring communities.</p>
+        </div>
+      </div>
+      <div class="media-card">
+        <img src="photos/luxury-living.jpg" alt="Video Tour" class="media-card-img" />
+        <div class="media-card-body">
+          <span class="media-card-icon">🎬</span>
+          <h3>Video Walkthrough & Drone</h3>
+          <p>Cinematic video tours and aerial drone footage that give buyers an immersive first look at your property.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 · CAMPAIGN STRATEGY -->
+<section class="campaigns" id="campaigns">
+  <div class="campaigns-inner">
+    <div class="campaigns-header">
+      <span class="section-tag">06 · Strategic Promotion</span>
+      <h2 class="section-title">Built-In <em>Momentum</em> From Day One</h2>
+      <div class="divider" style="margin:1rem auto 1.5rem"></div>
+      <p>I don't wait for buyers to find your home — I go after them. My two-phase launch strategy creates buyer excitement before your listing even hits the market, and sustains that energy all the way to a signed contract.</p>
+    </div>
+    <div class="campaigns-grid">
+      <div class="campaign-box">
+        <div class="campaign-head campaign-head-cs">
+          <div class="campaign-phase">🕐</div>
+          <div>
+            <h3>Coming Soon Campaign</h3>
+            <p>Before your home officially lists</p>
+          </div>
+        </div>
+        <div class="campaign-body">
+          <ul class="campaign-list">
+            <li><span class="c-check">✓</span>Walkthrough, needs analysis & staging consultation</li>
+            <li><span class="c-check">✓</span>Professional photography & videography session</li>
+            <li><span class="c-check">✓</span>Coming Soon email blast to my buyer database</li>
+            <li><span class="c-check">✓</span>Coming Soon social media posts on Instagram & Facebook</li>
+            <li><span class="c-check">✓</span>Direct outreach to top buyer's agents in Palm Beach County</li>
+            <li><span class="c-check">✓</span>Professional yard signage installed</li>
+            <li><span class="c-check">✓</span>Custom property landing page built & ready</li>
+          </ul>
+        </div>
+      </div>
+      <div class="campaign-box">
+        <div class="campaign-head campaign-head-jl">
+          <div class="campaign-phase">🚀</div>
+          <div>
+            <h3>Just Listed Campaign</h3>
+            <p>The moment your listing goes live</p>
+          </div>
+        </div>
+        <div class="campaign-body">
+          <ul class="campaign-list">
+            <li><span class="c-check">✓</span>Launch listing on KW Listing System, MLS & 100+ portals</li>
+            <li><span class="c-check">✓</span>Just Listed email blast to database and nearby agents</li>
+            <li><span class="c-check">✓</span>Just Listed social media video on Instagram & Facebook</li>
+            <li><span class="c-check">✓</span>Paid boosted Facebook & Instagram ads to targeted buyers</li>
+            <li><span class="c-check">✓</span>Just Listed postcards mailed to surrounding neighborhood</li>
+            <li><span class="c-check">✓</span>Open house scheduled within 3 days of listing go-live</li>
+            <li><span class="c-check">✓</span>Door-knocking campaign to invite neighbors and referrals</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 · OPEN HOUSE STRATEGY -->
+<section class="openhouse" id="openhouse">
+  <div class="openhouse-inner">
+    <div>
+      <span class="section-tag">07 · Open House Strategy</span>
+      <h2 class="section-title">Creating a <em>Buzz</em> Around Your Home</h2>
+      <div class="divider"></div>
+      <p>Open houses aren't just showings — they're strategic events that aggregate motivated buyers in one place and create competitive urgency. My open house strategy is designed to attract the maximum number of qualified visitors and convert interest into offers.</p>
+      <ul class="oh-tactics">
+        <li class="oh-tactic">
+          <div class="oh-dot"></div>
+          <p><strong>Targeted Digital Promotion</strong>Dynamic Facebook and Instagram events, lead-optimized landing pages, and email invites to drive traffic before the event.</p>
+        </li>
+        <li class="oh-tactic">
+          <div class="oh-dot"></div>
+          <p><strong>Eye-Catching Signage</strong>Professional yard sign and directional signs with balloons and riders placed on key corners to capture drive-by traffic.</p>
+        </li>
+        <li class="oh-tactic">
+          <div class="oh-dot"></div>
+          <p><strong>Neighbor Door-Knocking</strong>I personally visit neighboring homes to invite residents — your neighbors often know the next buyer of your property.</p>
+        </li>
+        <li class="oh-tactic">
+          <div class="oh-dot"></div>
+          <p><strong>Captivating Staging & Atmosphere</strong>Every detail is considered — scent, lighting, music, and temperature — to trigger the emotional response that leads to an offer.</p>
+        </li>
+        <li class="oh-tactic">
+          <div class="oh-dot"></div>
+          <p><strong>Same-Day Follow-Up</strong>Every visitor is followed up with the same day to gauge interest, answer questions, and encourage offer submission before the opportunity passes.</p>
+        </li>
+      </ul>
+    </div>
+    <img src="photos/open-house.jpg" alt="Open House Strategy" class="openhouse-img" />
+  </div>
+</section>
+
+<!-- 08 · ABOUT RAFAEL -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-card">
+      <img src="head.png" alt="Rafael Gonzalez – Keller Williams Realtor West Palm Beach" class="about-card-img" />
+      <div class="about-card-body">
+        <div class="about-card-name">Rafael Gonzalez</div>
+        <span class="about-card-role">Keller Williams Realtor · West Palm Beach</span>
+        <div class="about-contacts">
+          <div class="about-contact-line">📞 <a href="tel:5619056211">(561) 905-6211</a></div>
+          <div class="about-contact-line">✉️ <a href="mailto:rafaglezglez@kw.com">rafaglezglez@kw.com</a></div>
+          <div class="about-contact-line">🌐 <a href="https://rafaelgonzalezrealtor.com" target="_blank">rafaelgonzalezrealtor.com</a></div>
+          <div class="about-contact-line">🏠 <a href="https://rafaglezglez.kw.com" target="_blank">rafaglezglez.kw.com</a></div>
+        </div>
+        <div class="kw-badge"><span class="kw-dot"></span> Keller Williams Realty</div>
+      </div>
+    </div>
+    <div class="about-right">
+      <span class="section-tag">08 · About Rafael</span>
+      <h2 class="section-title">Real Expertise. <em>Real Results.</em></h2>
+      <div class="divider"></div>
+      <p>I'm Rafael Gonzalez — a licensed Keller Williams Realtor based in West Palm Beach, Florida, with deep roots across Palm Beach County. I work with buyers, sellers, and investors to make every real estate transaction as profitable and stress-free as possible.</p>
+      <p>What sets me apart isn't just market knowledge — it's an unwavering commitment to your best interests. I combine aggressive marketing, sharp negotiation, and transparent communication to deliver results that consistently outperform the market average.</p>
+      <p>From the waterfront estates of Palm Beach Island to the family communities of Wellington, Jupiter, and Boca Raton — I know every neighborhood, every price range, and every type of transaction. When you choose me, you gain a dedicated partner for life.</p>
+
+      <div class="value-props">
+        <div class="vp-card">
+          <span class="vp-icon">💰</span>
+          <h4>More Money</h4>
+          <p>Maximum marketing exposure attracts maximum buyers — and maximum buyers create the highest possible offers on your home.</p>
+        </div>
+        <div class="vp-card">
+          <span class="vp-icon">⚡</span>
+          <h4>Less Time</h4>
+          <p>My proven launch strategy and buyer network means your home sells faster — without the weeks of waiting most sellers experience.</p>
+        </div>
+        <div class="vp-card">
+          <span class="vp-icon">🧘</span>
+          <h4>Less Stress</h4>
+          <p>I handle every detail — from photography to closing paperwork — so you can focus on your next chapter, not the transaction.</p>
+        </div>
+      </div>
+
+      <div class="kw-network">
+        <div>
+          <p><strong>Backed by the World's Largest Real Estate Company</strong>When you list with me, you're backed by the full power of the Keller Williams global network — 180,000+ agents, exclusive technology, and the most trusted brand in real estate.</p>
+        </div>
+        <div class="kw-stat">
+          <span>180K+</span>
+          <label>KW Agents Worldwide</label>
+        </div>
+        <div class="kw-stat">
+          <span>#1</span>
+          <label>Largest Real Estate Franchise</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 · PERFORMANCE -->
+<section class="performance" id="performance">
+  <div class="performance-inner">
+    <div class="performance-header">
+      <span class="section-tag">09 · Market Performance</span>
+      <h2 class="section-title">The Numbers <em>Say It All</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem"></div>
+      <p>These aren't just statistics — they represent real families who trusted me to sell their homes. Every number reflects a commitment to outperform the market on every metric that matters to you.</p>
+    </div>
+    <div class="perf-grid">
+      <div class="perf-card">
+        <span class="perf-big">98%<span class="perf-unit">+</span></span>
+        <span class="perf-label">List-to-Sale Price Ratio</span>
+        <span class="perf-vs">vs. 93.5% market average — homes sell closer to asking price</span>
+      </div>
+      <div class="perf-card">
+        <span class="perf-big">↑18%<span class="perf-unit"></span></span>
+        <span class="perf-label">Above Median Market Price</span>
+        <span class="perf-vs">Sellers I represent command a premium over the neighborhood average</span>
+      </div>
+      <div class="perf-card">
+        <span class="perf-big">15%<span class="perf-unit"></span></span>
+        <span class="perf-label">Faster Than Market Average</span>
+        <span class="perf-vs">Strategic pricing + aggressive marketing = fewer days on market</span>
+      </div>
+    </div>
+
+    <div class="perf-kw">
+      <div class="pkw-item">
+        <span class="pkw-num">180K+</span>
+        <div class="pkw-label">Keller Williams Agents Worldwide</div>
+      </div>
+      <div class="pkw-item">
+        <span class="pkw-num">#1</span>
+        <div class="pkw-label">Most Innovative Real Estate Company — Fast Company</div>
+      </div>
+      <div class="pkw-item">
+        <span class="pkw-num">100+</span>
+        <div class="pkw-label">Countries with KW Presence</div>
+      </div>
+      <div class="pkw-item">
+        <span class="pkw-num">$500B+</span>
+        <div class="pkw-label">Annual Transaction Volume</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- KW VALUES -->
+<section class="values" id="values">
+  <div class="values-inner">
+    <div>
+      <span class="section-tag">Keller Williams Values</span>
+      <h2 class="section-title">A Company Built on <em>Principles</em></h2>
+      <div class="divider"></div>
+      <p>When you partner with me, you work with an agent backed by a company with a deeply embedded belief system. Keller Williams was built on the revolutionary idea that people are what matter most — and that principle guides every interaction I have with you.</p>
+      <p>These are the core values that shape every decision I make on your behalf:</p>
+      <div class="values-grid">
+        <div class="value-item"><div class="v-dot"></div><p><strong>Win-Win</strong><span>or no deal</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Integrity</strong><span>do the right thing</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Customers First</strong><span>always</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Commitment</strong><span>in all things</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Communication</strong><span>seek first to understand</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Creativity</strong><span>ideas before results</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Teamwork</strong><span>together everyone achieves more</span></p></div>
+        <div class="value-item"><div class="v-dot"></div><p><strong>Trust</strong><span>starts with honesty</span></p></div>
+      </div>
+    </div>
+    <div class="values-img-wrap">
+      <img src="photos/luxury-exterior.jpg" alt="Luxury West Palm Beach Home" class="values-img" />
+      <div class="values-img-badge">
+        <strong>Palm Beach County</strong>
+        <span>Your Local Expert</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 · MY PROMISE -->
+<section class="promise" id="promise">
+  <div class="promise-inner">
+    <div class="promise-header">
+      <span class="section-tag">10 · My Promise to You</span>
+      <h2 class="section-title">Not Just Words. <em>A Commitment.</em></h2>
+      <div class="divider" style="margin:1rem auto 1.5rem"></div>
+      <p>Every seller I work with receives this promise — and I hold myself personally accountable to delivering on each of these eight commitments from our first meeting to long after closing day.</p>
+    </div>
+    <div class="promise-grid">
+      <div class="promise-card">
+        <span class="p-icon">🏆</span>
+        <h4>Sell for Top Dollar</h4>
+        <p>I hold myself accountable to achieving the highest possible sale price for your home through expert pricing and relentless marketing.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">📣</span>
+        <h4>Maximum Market Exposure</h4>
+        <p>Your home will be seen by every qualified buyer in the market — across digital, print, social, and direct channels.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">💬</span>
+        <h4>Clear Communication</h4>
+        <p>I'll update you at every step, in whatever format you prefer — calls, texts, or emails — so you're never left wondering what's happening.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">🤝</span>
+        <h4>Expert Negotiation</h4>
+        <p>I negotiate firmly and strategically on your behalf — protecting your price, your terms, and your bottom line at every turn.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">⚡</span>
+        <h4>Speed & Efficiency</h4>
+        <p>My systems, network, and proven launch strategy are designed to reduce your time on market and eliminate unnecessary delays.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">🔍</span>
+        <h4>Unmatched Attention to Detail</h4>
+        <p>No request is too small. Every detail of your transaction — from paperwork to photography — is handled with precision and care.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">⚖️</span>
+        <h4>Integrity in Every Interaction</h4>
+        <p>I will always give you my honest assessment, even when it's not what you want to hear — because your trust is worth more than any commission.</p>
+      </div>
+      <div class="promise-card">
+        <span class="p-icon">🌟</span>
+        <h4>A Lifelong Relationship</h4>
+        <p>My commitment to you doesn't end at closing. I'm your real estate resource for life — for your next move, your investments, or your referrals.</p>
+      </div>
+    </div>
+    <div class="promise-signature">
+      <div>
+        <h3>Ready to Get the Best Price for Your Home?</h3>
+        <p>Let's set up a free, no-obligation consultation. I'll bring a custom Comparative Market Analysis and a full marketing plan — tailored specifically to your property and your goals. The first step is a conversation.</p>
+      </div>
+      <div class="promise-sign-contact">
+        <div class="psc-item">
+          <span class="psc-icon">📞</span>
+          <div>
+            <span>Call or Text</span>
+            <a href="tel:5619056211">(561) 905-6211</a>
+          </div>
+        </div>
+        <div class="psc-item">
+          <span class="psc-icon">✉️</span>
+          <div>
+            <span>Email</span>
+            <a href="mailto:rafaglezglez@kw.com">rafaglezglez@kw.com</a>
+          </div>
+        </div>
+        <div class="psc-item">
+          <span class="psc-icon">🌐</span>
+          <div>
+            <span>Website</span>
+            <a href="https://rafaelgonzalezrealtor.com" target="_blank">rafaelgonzalezrealtor.com</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final" id="contact">
+  <div class="cta-bg"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <span class="section-tag">Let's Get Started</span>
+    <h2>Your Home's Best Chapter<br><em style="font-style:italic;color:var(--gold-lt)">Starts Here.</em></h2>
+    <p>Real estate is complicated. That's where I come in. At the closing table, my goal is for you to feel that selling your home exceeded every expectation. The first step is simple — let's talk.</p>
+    <div class="cta-btns">
+      <a href="tel:5619056211" class="btn btn-gold">Call (561) 905-6211</a>
+      <a href="mailto:rafaglezglez@kw.com" class="btn btn-outline">Send Me an Email</a>
+    </div>
+    <div class="cta-contacts">
+      <div class="cta-item">
+        <span>Phone</span>
+        <a href="tel:5619056211">(561) 905-6211</a>
+      </div>
+      <div class="cta-item">
+        <span>Email</span>
+        <a href="mailto:rafaglezglez@kw.com">rafaglezglez@kw.com</a>
+      </div>
+      <div class="cta-item">
+        <span>Website</span>
+        <a href="https://rafaelgonzalezrealtor.com" target="_blank">rafaelgonzalezrealtor.com</a>
+      </div>
+      <div class="cta-item">
+        <span>Listings</span>
+        <a href="https://rafaglezglez.kw.com" target="_blank">rafaglezglez.kw.com</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Rafael <span>Gonzalez</span></div>
+    <div class="footer-note">Keller Williams Realty · West Palm Beach, FL · Each office independently owned and operated.</div>
+  </div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/buyer-guide.html">Buyer's Guide</a>
+    <a href="/seller-guide.html">Seller's Guide</a>
+    <a href="/#contact">Contact</a>
+  </div>
+</footer>
+
+</body>
+</html>

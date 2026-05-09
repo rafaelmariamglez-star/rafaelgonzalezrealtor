@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>NextKey</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#080c14;
+  --surface:#0f1521;
+  --surface2:#161d2e;
+  --border:rgba(255,255,255,.07);
+  --accent:#4f7ef8;
+  --accent2:#7c5cf8;
+  --gold:#d4a843;
+  --green:#22c55e;
+  --red:#f87171;
+  --amber:#f59e0b;
+  --text:#f0f4ff;
+  --text2:#8892a4;
+  --text3:#4a5568;
+  --nav-h:68px;
+  --radius:14px;
+  --radius-sm:10px;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.5;overflow:hidden}
+
+/* SCREENS */
+#app{height:100%;display:flex;flex-direction:column}
+.screen{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(var(--nav-h) + 8px)}
+.screen.active{display:block}
+::-webkit-scrollbar{width:0}
+
+/* BOTTOM NAV */
+#bottom-nav{
+  position:fixed;bottom:0;left:0;right:0;
+  height:var(--nav-h);
+  background:rgba(8,12,20,.92);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-top:1px solid var(--border);
+  display:flex;align-items:stretch;
+  z-index:100;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.nav-tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--text3);transition:color .2s;padding-bottom:4px}
+.nav-tab.active{color:var(--accent)}
+.nav-tab svg{width:22px;height:22px;transition:transform .15s}
+.nav-tab.active svg{transform:scale(1.08)}
+.nav-tab span{font-size:10px;font-weight:500;letter-spacing:.3px}
+
+/* GREETING */
+.greeting{padding:20px 18px 0}
+.greeting-date{font-size:13px;color:var(--text2);margin-bottom:4px}
+.greeting-title{font-size:26px;font-weight:800;letter-spacing:-.5px;line-height:1.2}
+.greeting-title .name{color:var(--accent)}
+
+/* COPILOT CARD */
+.copilot-card{background:linear-gradient(135deg,rgba(79,126,248,.15),rgba(124,92,248,.1));border:1px solid rgba(79,126,248,.25);border-radius:var(--radius);padding:16px 18px;margin:14px 18px 14px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .2s}
+.copilot-card:active{border-color:rgba(79,126,248,.5)}
+.copilot-icon{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.copilot-text{flex:1}
+.copilot-text strong{font-size:15px;font-weight:700;display:block}
+.copilot-text span{font-size:13px;color:var(--text2)}
+
+/* SECTION LABEL */
+.section-label{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;padding:0 18px;margin:18px 0 10px}
+
+/* STATS ROW */
+.stats-row{display:flex;gap:10px;padding:0 18px;margin-bottom:6px}
+.stat-mini{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;text-align:center}
+.stat-mini-num{font-size:22px;font-weight:800}
+.stat-mini-label{font-size:11px;color:var(--text2);margin-top:2px}
+
+/* PRIORITY LIST */
+.priority-list{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.priority-item{display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px 14px;cursor:pointer;transition:border-color .2s}
+.priority-item:active{background:var(--surface2)}
+.priority-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.priority-info{flex:1;min-width:0}
+.priority-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.priority-sub{font-size:12px;color:var(--text2);margin-top:1px}
+.priority-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:99px;background:rgba(248,113,113,.12);color:var(--red);white-space:nowrap}
+.priority-badge.warn{background:rgba(245,158,11,.12);color:var(--amber)}
+
+/* LEADS */
+.search-bar{position:sticky;top:0;z-index:10;background:rgba(8,12,20,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);padding:12px 18px 0;border-bottom:1px solid var(--border)}
+.search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:10px 16px;color:var(--text);font-size:14px;outline:none;transition:border-color .2s}
+.search-input:focus{border-color:var(--accent)}
+.filter-tabs{display:flex;gap:8px;padding:10px 0 12px;overflow-x:auto;scrollbar-width:none}
+.filter-tabs::-webkit-scrollbar{display:none}
+.ftab{flex-shrink:0;padding:6px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;background:transparent;border:1px solid var(--border);color:var(--text2)}
+.ftab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.leads-list{padding:12px 18px;display:flex;flex-direction:column;gap:10px}
+.lead-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s}
+.lead-card:active{background:var(--surface2)}
+.lead-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:17px;flex-shrink:0;color:#fff}
+.lead-info{flex:1;min-width:0}
+.lead-name{font-weight:600;font-size:15px}
+.lead-meta{font-size:12px;color:var(--text2);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lead-stage{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;white-space:nowrap}
+.stage-hot{background:rgba(248,113,113,.15);color:var(--red)}
+.stage-warm{background:rgba(245,158,11,.15);color:var(--amber)}
+.stage-showing{background:rgba(79,126,248,.15);color:var(--accent)}
+.stage-offer{background:rgba(124,92,248,.15);color:var(--accent2)}
+.stage-contract{background:rgba(34,197,94,.15);color:var(--green)}
+.stage-closed{background:rgba(212,168,67,.15);color:var(--gold)}
+.stage-nuevo{background:rgba(255,255,255,.08);color:var(--text2)}
+
+/* FAB */
+.fab{position:fixed;bottom:calc(var(--nav-h) + 16px);right:18px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(79,126,248,.4);cursor:pointer;transition:transform .15s,box-shadow .15s;z-index:50}
+.fab:active{transform:scale(.92);box-shadow:0 2px 10px rgba(79,126,248,.3)}
+.fab svg{width:24px;height:24px;stroke:#fff;fill:none}
+
+/* AI SCREEN */
+.ai-header{padding:16px 18px 12px;border-bottom:1px solid var(--border)}
+.ai-header h1{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.ai-header p{font-size:13px;color:var(--text2);margin-top:2px}
+.chips-row{display:flex;gap:8px;padding:12px 18px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border)}
+.chips-row::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:8px 14px;border-radius:99px;font-size:13px;font-weight:500;cursor:pointer;background:var(--surface);border:1px solid var(--border);color:var(--text2);transition:all .15s}
+.chip:active{background:var(--accent);border-color:var(--accent);color:#fff}
+.ai-body{padding:16px 18px}
+.ai-select{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-size:14px;outline:none;margin-bottom:10px;-webkit-appearance:none}
+.ai-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-size:14px;outline:none;resize:none;height:80px;font-family:inherit;transition:border-color .2s}
+.ai-input:focus,.ai-select:focus{border-color:var(--accent)}
+.ai-actions{display:flex;gap:10px;margin-top:10px}
+.btn{padding:11px 18px;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;flex:1}
+.btn-primary:active{opacity:.85}
+.btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--text2)}
+.btn-ghost:active{background:var(--surface2)}
+.btn-green{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.25);color:var(--green)}
+.ai-output{margin-top:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:none}
+.ai-output.visible{display:block}
+.ai-output-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px}
+.ai-output-text{font-size:14px;line-height:1.7;color:var(--text);white-space:pre-wrap}
+.ai-output-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.ai-loading{display:flex;align-items:center;gap:10px;color:var(--accent);font-size:13px;padding:4px 0}
+.ai-dots{display:flex;gap:5px}
+.ai-dots span{width:7px;height:7px;background:var(--accent);border-radius:50%;animation:dp 1.2s ease-in-out infinite}
+.ai-dots span:nth-child(2){animation-delay:.2s}
+.ai-dots span:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* MORE */
+.page-header{padding:16px 18px 12px;position:sticky;top:0;background:rgba(8,12,20,.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10;border-bottom:1px solid var(--border)}
+.page-header h1{font-size:22px;font-weight:700;letter-spacing:-.4px}
+.page-header p{font-size:13px;color:var(--text2);margin-top:2px}
+.more-list{padding:12px 18px;display:flex;flex-direction:column;gap:8px}
+.more-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:15px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:border-color .15s}
+.more-item:active{background:var(--surface2)}
+.more-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.more-item-text{flex:1}
+.more-item-title{font-weight:600;font-size:15px}
+.more-item-sub{font-size:12px;color:var(--text2);margin-top:1px}
+.more-chevron{color:var(--text3)}
+
+/* MODALS */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);z-index:200;display:none;align-items:flex-end}
+.modal-backdrop.open{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;width:100%;max-height:92vh;overflow-y:auto;padding:8px 0 32px;animation:slideUp .3s cubic-bezier(.4,0,.2,1)}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:6px auto 16px}
+.modal-header{padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)}
+.modal-title{font-size:18px;font-weight:700}
+.modal-close{width:30px;height:30px;border-radius:50%;background:var(--surface2);border:none;cursor:pointer;color:var(--text2);font-size:18px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:16px 20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 14px;color:var(--text);font-size:14px;outline:none;font-family:inherit;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{resize:vertical;min-height:70px}
+.field select{-webkit-appearance:none}
+
+/* PIPELINE */
+.pipeline-stages{padding:12px 18px;display:flex;flex-direction:column;gap:12px}
+.pipeline-stage{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.pipeline-stage-header{padding:12px 14px;display:flex;align-items:center;justify-content:space-between}
+.pipeline-stage-title{font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.stage-count{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--surface2)}
+.pipeline-leads{padding:0 10px 10px;display:flex;flex-direction:column;gap:8px}
+.pipeline-lead{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;display:flex;align-items:center;gap:10px;cursor:pointer}
+.pipeline-lead-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.pipeline-lead-name{font-size:14px;font-weight:500;flex:1}
+.pipeline-lead-budget{font-size:12px;color:var(--text2)}
+
+/* GOALS */
+.goals-grid{padding:12px 18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.goal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.goal-label{font-size:12px;color:var(--text2);margin-bottom:6px}
+.goal-numbers{display:flex;align-items:baseline;gap:4px;margin-bottom:8px}
+.goal-current{font-size:26px;font-weight:800}
+.goal-target{font-size:13px;color:var(--text2)}
+.goal-bar-bg{height:5px;background:var(--surface2);border-radius:3px}
+.goal-bar-fill{height:5px;border-radius:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s}
+
+/* TRAINING */
+.lessons-list{padding:12px 18px;display:flex;flex-direction:column;gap:10px}
+.lesson-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;cursor:pointer;transition:border-color .15s}
+.lesson-card:active{background:var(--surface2)}
+.lesson-header{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.lesson-icon{font-size:22px}
+.lesson-title{font-weight:600;font-size:15px}
+.lesson-progress{height:4px;background:var(--surface2);border-radius:2px}
+.lesson-progress-fill{height:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px}
+.lesson-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:12px;color:var(--text2)}
+
+/* PLAN */
+.plan-weeks{padding:12px 18px;display:flex;flex-direction:column;gap:14px}
+.week-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)}
+.week-header{padding:13px 16px;border-bottom:1px solid var(--border);font-weight:700}
+.week-header span{color:var(--accent)}
+.week-days{padding:10px 16px;display:flex;flex-direction:column;gap:8px}
+.day-row{display:flex;align-items:flex-start;gap:10px;font-size:13px}
+.day-label{color:var(--text2);min-width:28px;font-weight:600;flex-shrink:0;padding-top:1px}
+.day-tasks{flex:1;color:var(--text)}
+
+/* SETTINGS */
+.key-status{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;padding:5px 12px;border-radius:99px;margin-bottom:14px}
+.key-ok{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.key-no{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.2)}
+
+/* LEAD DETAIL */
+.lead-detail-header{padding:20px;text-align:center;border-bottom:1px solid var(--border)}
+.lead-detail-avatar{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;color:#fff;margin:0 auto 12px}
+.lead-detail-name{font-size:20px;font-weight:700}
+.lead-detail-meta{font-size:13px;color:var(--text2);margin-top:4px}
+.info-row{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px}
+.info-row:last-child{border-bottom:none}
+.info-label{color:var(--text2);width:110px;flex-shrink:0;font-size:13px}
+.info-value{color:var(--text);flex:1}
+.msg-btn{padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;background:var(--surface2);border:1px solid var(--border);color:var(--text);text-align:left;width:100%;transition:border-color .15s;margin-bottom:8px}
+.msg-btn:active{border-color:var(--accent)}
+
+/* CONTRACT */
+.lang-toggle{display:flex;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:3px;margin-bottom:14px;gap:3px}
+.lang-btn{flex:1;text-align:center;padding:8px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--text2);transition:all .15s}
+.lang-btn.active{background:var(--accent);color:#fff}
+.contract-preview{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;font-size:12px;line-height:1.8;color:var(--text);white-space:pre-wrap;max-height:250px;overflow-y:auto;margin-top:10px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 18px;color:var(--text2);font-size:14px}
+.empty-state .icon{font-size:40px;margin-bottom:10px}
+
+/* TOAST */
+#toast{position:fixed;bottom:calc(var(--nav-h) + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,21,33,.95);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:500;color:var(--text);opacity:0;transition:opacity .2s,transform .2s;z-index:999;white-space:nowrap;backdrop-filter:blur(12px)}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- BOTTOM NAV -->
+<nav id="bottom-nav">
+  <div class="nav-tab active" id="tab-today" onclick="switchTab('today')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span>Hoy</span>
+  </div>
+  <div class="nav-tab" id="tab-leads" onclick="switchTab('leads')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Leads</span>
+  </div>
+  <div class="nav-tab" id="tab-ai" onclick="switchTab('ai')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span>Copilot</span>
+  </div>
+  <div class="nav-tab" id="tab-more" onclick="switchTab('more')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span>Más</span>
+  </div>
+</nav>
+
+<!-- TODAY SCREEN -->
+<div class="screen active" id="screen-today">
+  <div class="greeting">
+    <p class="greeting-date" id="today-date"></p>
+    <h1 class="greeting-title" id="greeting-title">Buenos días,<br><span class="name">Rafael.</span></h1>
+  </div>
+  <div class="copilot-card" onclick="switchTab('ai')">
+    <div class="copilot-icon">✨</div>
+    <div class="copilot-text">
+      <strong>Copilot IA</strong>
+      <span>Redacta un mensaje o pide consejo</span>
+    </div>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+  </div>
+  <div class="stats-row">
+    <div class="stat-mini"><div class="stat-mini-num" id="stat-leads">0</div><div class="stat-mini-label">Leads</div></div>
+    <div class="stat-mini"><div class="stat-mini-num" id="stat-hot">0</div><div class="stat-mini-label">Calientes</div></div>
+    <div class="stat-mini"><div class="stat-mini-num" id="stat-overdue">0</div><div class="stat-mini-label">Sin contacto</div></div>
+  </div>
+  <p class="section-label">Prioridades de hoy</p>
+  <div class="priority-list" id="priority-list"></div>
+</div>
+
+<!-- LEADS SCREEN -->
+<div class="screen" id="screen-leads">
+  <div class="search-bar">
+    <input class="search-input" placeholder="Buscar leads..." id="lead-search" oninput="filterLeads()" autocomplete="off">
+    <div class="filter-tabs" id="filter-tabs">
+      <div class="ftab active" onclick="setFilter('all',this)">Todos</div>
+      <div class="ftab" onclick="setFilter('hot',this)">🔥 Caliente</div>
+      <div class="ftab" onclick="setFilter('warm',this)">🟡 Tibio</div>
+      <div class="ftab" onclick="setFilter('showing',this)">👁 Showing</div>
+      <div class="ftab" onclick="setFilter('offer',this)">📝 Oferta</div>
+      <div class="ftab" onclick="setFilter('contract',this)">✅ Contrato</div>
+      <div class="ftab" onclick="setFilter('closed',this)">🏆 Cerrado</div>
+    </div>
+  </div>
+  <div class="leads-list" id="leads-list"></div>
+</div>
+
+<!-- AI SCREEN -->
+<div class="screen" id="screen-ai">
+  <div class="ai-header">
+    <h1>✨ Copilot</h1>
+    <p>Tu asistente de mensajes y estrategia</p>
+  </div>
+  <div class="chips-row">
+    <div class="chip" onclick="quickChip('followup')">📞 Follow-up</div>
+    <div class="chip" onclick="quickChip('intro')">👋 Introducción</div>
+    <div class="chip" onclick="quickChip('showing')">🏠 Showing</div>
+    <div class="chip" onclick="quickChip('offer')">📝 Oferta</div>
+    <div class="chip" onclick="quickChip('nurture')">❤️ Nurturing</div>
+    <div class="chip" onclick="quickChip('referral')">⭐ Referido</div>
+    <div class="chip" onclick="quickChip('price')">💰 Precio</div>
+    <div class="chip" onclick="quickChip('custom')">✏️ Personalizado</div>
+  </div>
+  <div class="ai-body">
+    <div class="field">
+      <label>Lead (opcional)</label>
+      <select class="ai-select" id="ai-lead-sel">
+        <option value="">— sin lead específico —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Tipo de mensaje</label>
+      <select class="ai-select" id="ai-type-sel">
+        <option value="followup">Follow-up (sin contacto 3+ días)</option>
+        <option value="intro">Presentación inicial</option>
+        <option value="showing">Confirmación de showing</option>
+        <option value="offer">Estrategia de oferta</option>
+        <option value="nurture">Nurturing (largo plazo)</option>
+        <option value="referral">Pedir referido</option>
+        <option value="price">Reducción de precio</option>
+        <option value="closed">Felicitación cierre</option>
+        <option value="custom">Personalizado ↓</option>
+      </select>
+    </div>
+    <div class="field" id="custom-prompt-field" style="display:none">
+      <label>Tu instrucción</label>
+      <textarea class="ai-input" id="ai-custom-input" placeholder="Ej: Necesito recordarle al lead que traiga los documentos mañana..."></textarea>
+    </div>
+    <div class="ai-actions">
+      <button class="btn btn-primary" onclick="genMsgAI()">✨ Generar mensaje</button>
+    </div>
+    <div class="ai-output" id="ai-output">
+      <div class="ai-output-label">Mensaje generado</div>
+      <div class="ai-output-text" id="ai-out-text"></div>
+      <div class="ai-output-actions">
+        <button class="btn btn-ghost" onclick="copyMsg()">📋 Copiar</button>
+        <button class="btn btn-green" onclick="sendWA()">💬 WhatsApp</button>
+        <button class="btn btn-ghost" onclick="clearAI()">✕ Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MORE SCREEN -->
+<div class="screen" id="screen-more">
+  <div class="page-header">
+    <h1>Más</h1>
+    <p>Herramientas y configuración</p>
+  </div>
+  <div class="more-list">
+    <div class="more-item" onclick="openModal('modal-pipeline')">
+      <div class="more-icon" style="background:rgba(79,126,248,.12)">🏗</div>
+      <div class="more-item-text"><div class="more-item-title">Pipeline</div><div class="more-item-sub">Kanban de tus oportunidades</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="more-item" onclick="openModal('modal-goals')">
+      <div class="more-icon" style="background:rgba(212,168,67,.12)">🎯</div>
+      <div class="more-item-text"><div class="more-item-title">Metas</div><div class="more-item-sub">Tu progreso mensual</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="more-item" onclick="openModal('modal-training')">
+      <div class="more-icon" style="background:rgba(124,92,248,.12)">📚</div>
+      <div class="more-item-text"><div class="more-item-title">Entrenamiento</div><div class="more-item-sub">Módulos para nuevos agentes</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="more-item" onclick="openModal('modal-plan')">
+      <div class="more-icon" style="background:rgba(34,197,94,.12)">📅</div>
+      <div class="more-item-text"><div class="more-item-title">Plan 30 días</div><div class="more-item-sub">Tu hoja de ruta de arranque</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="more-item" onclick="openModal('modal-contract')">
+      <div class="more-icon" style="background:rgba(248,113,113,.12)">📄</div>
+      <div class="more-item-text"><div class="more-item-title">Contrato</div><div class="more-item-sub">Buyer-Broker Agreement</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+    <div class="more-item" onclick="openModal('modal-settings')">
+      <div class="more-icon" style="background:rgba(255,255,255,.06)">⚙️</div>
+      <div class="more-item-text"><div class="more-item-title">Configuración</div><div class="more-item-sub">API Key de OpenAI</div></div>
+      <svg class="more-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+    </div>
+  </div>
+  <p style="text-align:center;color:var(--text3);font-size:12px;padding:16px 0 8px">NextKey v2.0 · Para nuevos agentes KW</p>
+</div>
+
+<!-- FAB -->
+<div class="fab" id="fab-add" onclick="openModal('modal-add-lead')" style="display:none">
+  <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+</div>
+
+<!-- ======== MODALS ======== -->
+
+<!-- ADD LEAD -->
+<div class="modal-backdrop" id="modal-add-lead">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">Nuevo Lead</span><button class="modal-close" onclick="closeModal('modal-add-lead')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre *</label><input id="nl-name" placeholder="Ana García"/></div>
+      <div class="field"><label>Teléfono</label><input id="nl-phone" placeholder="(561) 000-0000" type="tel"/></div>
+      <div class="field"><label>Presupuesto</label><input id="nl-budget" placeholder="$350,000"/></div>
+      <div class="field"><label>Etapa</label><select id="nl-stage">
+        <option value="nuevo">Nuevo</option><option value="warm">Tibio</option>
+        <option value="hot">Caliente</option><option value="showing">Showing</option>
+        <option value="offer">Oferta</option><option value="contract">Contrato</option><option value="closed">Cerrado</option>
+      </select></div>
+      <div class="field"><label>Fuente</label><select id="nl-source">
+        <option>Referido</option><option>Zillow</option><option>Open House</option>
+        <option>Instagram</option><option>Facebook</option><option>Cold Call</option>
+        <option>Sphere</option><option>Otro</option>
+      </select></div>
+      <div class="field"><label>Notas</label><textarea id="nl-notes" placeholder="Detalles importantes..."></textarea></div>
+      <button class="btn btn-primary" style="width:100%" onclick="addLead()">Agregar Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEAD DETAIL -->
+<div class="modal-backdrop" id="modal-lead-detail">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">Lead</span><button class="modal-close" onclick="closeModal('modal-lead-detail')">✕</button></div>
+    <div class="modal-body" id="lead-detail-body"></div>
+  </div>
+</div>
+
+<!-- PIPELINE -->
+<div class="modal-backdrop" id="modal-pipeline">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">🏗 Pipeline</span><button class="modal-close" onclick="closeModal('modal-pipeline')">✕</button></div>
+    <div class="pipeline-stages" id="pipeline-stages"></div>
+  </div>
+</div>
+
+<!-- GOALS -->
+<div class="modal-backdrop" id="modal-goals">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">🎯 Metas del mes</span><button class="modal-close" onclick="closeModal('modal-goals')">✕</button></div>
+    <div class="goals-grid" id="goals-grid"></div>
+  </div>
+</div>
+
+<!-- TRAINING -->
+<div class="modal-backdrop" id="modal-training">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">📚 Entrenamiento</span><button class="modal-close" onclick="closeModal('modal-training')">✕</button></div>
+    <div class="lessons-list" id="lessons-list"></div>
+  </div>
+</div>
+
+<!-- LESSON DETAIL -->
+<div class="modal-backdrop" id="modal-lesson">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="lesson-modal-title">Lección</span><button class="modal-close" onclick="closeModal('modal-lesson')">✕</button></div>
+    <div class="modal-body" id="lesson-modal-body"></div>
+  </div>
+</div>
+
+<!-- 30-DAY PLAN -->
+<div class="modal-backdrop" id="modal-plan">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">📅 Plan 30 días</span><button class="modal-close" onclick="closeModal('modal-plan')">✕</button></div>
+    <div class="plan-weeks" id="plan-weeks"></div>
+  </div>
+</div>
+
+<!-- CONTRACT -->
+<div class="modal-backdrop" id="modal-contract">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">📄 Buyer-Broker</span><button class="modal-close" onclick="closeModal('modal-contract')">✕</button></div>
+    <div class="modal-body">
+      <div class="lang-toggle">
+        <div class="lang-btn active" onclick="setLang('es',this)">Español</div>
+        <div class="lang-btn" onclick="setLang('en',this)">English</div>
+      </div>
+      <div class="field"><label>Nombre del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
+      <div class="field"><label>Fecha inicio</label><input id="c-start" type="date"/></div>
+      <div class="field"><label>Fecha fin</label><input id="c-end" type="date"/></div>
+      <div class="field"><label>Área de búsqueda</label><input id="c-area" placeholder="West Palm Beach, FL"/></div>
+      <div class="field"><label>Rango de precio</label><input id="c-price" placeholder="$300,000 – $500,000"/></div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="genContract()">Generar contrato</button>
+      <pre class="contract-preview" id="contract-preview" style="display:none"></pre>
+      <div id="contract-actions" style="display:none;margin-top:10px">
+        <button class="btn btn-ghost" style="width:100%" onclick="printContract()">🖨 Imprimir / PDF</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="modal-backdrop" id="modal-settings">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title">⚙️ Configuración</span><button class="modal-close" onclick="closeModal('modal-settings')">✕</button></div>
+    <div class="modal-body">
+      <div id="key-status-badge"></div>
+      <div class="field"><label>OpenAI API Key</label><input id="keyInput" type="password" placeholder="sk-..."/></div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Tu clave se guarda <strong>solo en este dispositivo</strong> y nunca sale a ningún servidor.<br>Consíguela en <span style="color:var(--accent)">platform.openai.com</span></p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="saveKey()" style="flex:1">Guardar</button>
+        <button class="btn btn-ghost" onclick="clearKey()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+// ── DATA ────────────────────────────────────────────────────────────────────
+const AGENT = {name:'Rafael', brokerage:'Keller Williams', phone:'561-905-6211'};
+const COLORS = ['#4f7ef8','#7c5cf8','#d4a843','#22c55e','#f87171','#f59e0b','#ec4899','#06b6d4'];
+
+let leads = [
+  {id:1,name:'María González',phone:'561-111-2222',budget:'$450,000',stage:'hot',lastContact:-3,notes:'Pre-aprobada, quiere mudarse en 60 días',source:'Zillow',color:'#4f7ef8'},
+  {id:2,name:'Carlos Díaz',phone:'561-333-4444',budget:'$320,000',stage:'warm',lastContact:-5,notes:'Primera vez comprando, necesita orientación',source:'Referido',color:'#7c5cf8'},
+  {id:3,name:'Jennifer López',phone:'561-555-6666',budget:'$600,000',stage:'showing',lastContact:-1,notes:'Lista para ver propiedades en WPB',source:'Open House',color:'#d4a843'},
+  {id:4,name:'Michael Chen',phone:'561-777-8888',budget:'$280,000',stage:'offer',lastContact:0,notes:'Oferta en proceso, 3br/2ba',source:'Zillow',color:'#22c55e'},
+  {id:5,name:'Sofia Martín',phone:'561-999-0000',budget:'$520,000',stage:'contract',lastContact:0,notes:'Contrato firmado, cierre en 30 días',source:'Referido',color:'#ec4899'},
+  {id:6,name:'David Kim',phone:'561-222-3333',budget:'$380,000',stage:'warm',lastContact:-7,notes:'Inversor, busca duplex o townhouse',source:'Instagram',color:'#06b6d4'},
+  {id:7,name:'Ana Rivera',phone:'561-444-5555',budget:'$290,000',stage:'hot',lastContact:-4,notes:'Mudanza urgente por trabajo, preaprobada',source:'Facebook',color:'#f59e0b'},
+];
+
+const MSGS = {
+  followup:{label:'Follow-up',prompt:(n,b)=>`Escribe un mensaje de texto CORTO (máx 2 párrafos) de seguimiento en español para un lead inmobiliario llamado ${n||'el lead'}${b?', presupuesto '+b:''}. No hemos hablado en varios días. Sé cálido, profesional y sin presión. Firma como ${AGENT.name} de Keller Williams West Palm Beach.`},
+  intro:{label:'Introducción',prompt:(n,b)=>`Escribe un mensaje de presentación inicial en español para ${n||'un nuevo lead'} interesado en comprar${b?' con presupuesto de '+b:''}. Menciona experiencia en West Palm Beach. Sé breve, amigable y profesional. Firma como ${AGENT.name}, Keller Williams.`},
+  showing:{label:'Showing',prompt:(n,b)=>`Escribe un mensaje de confirmación de cita para ver propiedades para ${n||'el lead'}. Incluye entusiasmo, prepara al cliente. Breve y directo. Firma como ${AGENT.name}.`},
+  offer:{label:'Oferta',prompt:(n,b)=>`Escribe un mensaje sobre estrategia de oferta para ${n||'el lead'}${b?', presupuesto '+b:''}. Explica el proceso brevemente, sé seguro y orientador. Firma como ${AGENT.name} de KW.`},
+  nurture:{label:'Nurturing',prompt:(n,b)=>`Escribe un mensaje de valor para mantener relación con ${n||'un lead a largo plazo'}. Comparte algo útil del mercado de WPB. No vendas directamente. Firma como ${AGENT.name}.`},
+  referral:{label:'Referido',prompt:(n,b)=>`Escribe un mensaje pidiendo referidos a ${n||'un cliente'}. Sé auténtico y agradecido, no forzado. Corto. Firma como ${AGENT.name}.`},
+  price:{label:'Reducción precio',prompt:(n,b)=>`Escribe un mensaje sensible sobre ajuste de precio para ${n||'el vendedor'}. Explica el mercado brevemente, sé empático. Firma como ${AGENT.name} de KW West Palm Beach.`},
+  closed:{label:'Cierre',prompt:(n,b)=>`Escribe un mensaje de felicitación por cierre de compra para ${n||'el cliente'}. Cálido, genuino, menciona que estás disponible siempre. Firma como ${AGENT.name}.`},
+  custom:{label:'Personalizado',prompt:(n,b)=>''},
+};
+
+const GOALS = [
+  {key:'calls',label:'Llamadas',current:18,target:30},
+  {key:'contacts',label:'Nuevos contactos',current:7,target:15},
+  {key:'showings',label:'Showings',current:4,target:10},
+  {key:'listings',label:'Listings',current:1,target:3},
+  {key:'closings',label:'Cierres',current:1,target:2},
+  {key:'income',label:'Comisión $',current:9000,target:20000},
+];
+
+const LESSONS = [
+  {icon:'📞',title:'Prospecting & Scripts',desc:'Cómo generar leads y tener conversaciones naturales',progress:80,time:'25 min',content:'Los 5 scripts más importantes:\n\n1. FSBO: "Hola, vi que está vendiendo su propiedad. Trabajo con muchos compradores en esta área..."\n\n2. Expired Listings: "Vi que su propiedad salió del mercado. ¿Qué pasó? ¿Aún quiere vender?"\n\n3. Sphere: "Hey [nombre], estoy construyendo mi negocio de real estate. ¿Conoces a alguien que quiera comprar o vender?"\n\n4. Open House: "Bienvenido. ¿Ya tienes un agente? ¿Estás pre-aprobado?"\n\n5. Cold Call: Sé breve, directo. Enfócate en dar valor, no en vender.'},
+  {icon:'🏠',title:'CMAs & Pricing',desc:'Análisis de mercado y cómo presentar precios',progress:60,time:'30 min',content:'CMA — Comparative Market Analysis:\n\n• Busca 3-5 comparables recientes (últimos 6 meses, < 1 milla)\n• Ajusta por diferencias (sqft, cuartos, condición, año)\n• Analiza días en mercado promedio\n• Nunca des un precio sin ver la propiedad\n\nCómo presentar el precio:\n1. Muestra los datos, no tu opinión\n2. Deja que el seller concluya\n3. Confía en los comparables — los números no mienten'},
+  {icon:'📝',title:'Contratos & Papeleo',desc:'NAR forms, buyer agreements, offer strategy',progress:40,time:'45 min',content:'Documentos clave en Florida:\n\n• Buyer-Broker Agreement — establece tu representación exclusiva\n• FAR/BAR Contract — contrato estándar de Florida\n• Addendums — inspección, HOA, financiamiento\n\nProceso de oferta:\n1. Pre-approval letter del buyer\n2. Proof of funds si es cash\n3. Escrow deposit (típico 1-3%)\n4. Inspection period — 15 días estándar en FL\n5. Closing costs — típico 2-5% del precio'},
+  {icon:'🤝',title:'Negociación',desc:'Técnicas ganar-ganar para cerrar más deals',progress:30,time:'20 min',content:'Principios de negociación:\n\n• Escucha más de lo que hablas\n• Conoce el BATNA (mejor alternativa) de ambas partes\n• Nunca seas el primero en mencionar precio\n• Pide más de lo que quieres — siempre\n• Justifica con datos, no con emociones\n\nFrases que funcionan:\n• "Si puedo conseguir X, ¿cerramos hoy?"\n• "¿Qué necesitarían para que esto funcionara?"\n• El silencio es tu mejor herramienta'},
+  {icon:'📊',title:'Marketing Digital',desc:'Redes sociales, Zillow, y generación de leads online',progress:20,time:'35 min',content:'Plataformas esenciales:\n\n• Zillow Premier Agent — leads de alta intención\n• Instagram — contenido de propiedades + lifestyle WPB\n• Facebook — grupos de comunidad + anuncios geotargeted\n• Google My Business — reseñas locales = oro puro\n\nContenido que funciona:\n1. Tours de propiedades en Reels (30-60 seg)\n2. Market updates mensuales\n3. Tips para compradores / vendedores\n4. Tu historia como agente — autenticidad vende'},
+  {icon:'💰',title:'Finanzas del Agente',desc:'Comisiones, gastos, impuestos y flujo de caja',progress:10,time:'25 min',content:'Estructura de comisiones en FL:\n\n• Típico: 5-6% del precio de venta\n• Se divide entre listing agent y buyer agent\n• Tu split con brokerage (ej: 70/30 o 80/20)\n\nGastos anuales típicos:\n• MLS: ~$600/año\n• NAR + FAR + board local: ~$1,200/año\n• E&O Insurance: ~$300/año\n• Marketing: 10% de tu ingreso objetivo\n\nImpuestos: Como independent contractor, aparta 25-30% de cada comisión antes de gastar.'},
+];
+
+const PLAN = [
+  {week:'Semana 1',theme:'Fundamentos',days:[
+    {d:'L',t:'Completa onboarding KW, activa MLS, instala dotloop'},
+    {d:'M',t:'Aprende el proceso CMA, practica en Canva con templates'},
+    {d:'M',t:'Crea lista de 100 personas de tu sphere of influence'},
+    {d:'J',t:'Llama 10 personas de tu lista y anuncia que eres agente'},
+    {d:'V',t:'Asiste al caravan o open house de tu office'},
+  ]},
+  {week:'Semana 2',theme:'Activación',days:[
+    {d:'L',t:'Configura Google My Business y Zillow profile completo'},
+    {d:'M',t:'Llama 15 personas más de tu lista de sphere'},
+    {d:'M',t:'Practica listing presentation con tu mentor'},
+    {d:'J',t:'Asiste a un open house como visitor — analiza la competencia'},
+    {d:'V',t:'Postea en Instagram tu primer contenido de mercado'},
+  ]},
+  {week:'Semana 3',theme:'Momentum',days:[
+    {d:'L',t:'Objetivo: agendar 1 buyer consultation esta semana'},
+    {d:'M',t:'Llama 10 expireds o FSBOs usando el script'},
+    {d:'M',t:'Haz CMA de 3 propiedades en tu área objetivo'},
+    {d:'J',t:'Haz tu primer open house si tienes acceso a uno'},
+    {d:'V',t:'Revisa metas, ajusta estrategia del fin de semana'},
+  ]},
+  {week:'Semana 4',theme:'Primer cierre',days:[
+    {d:'L',t:'Sigue up con todos tus leads activos sin excepción'},
+    {d:'M',t:'Presenta oferta o estrategia a tu buyer más activo'},
+    {d:'M',t:'Agrega 5 nuevos contactos al CRM esta semana'},
+    {d:'J',t:'Reunión con mentor — revisa el pipeline completo'},
+    {d:'V',t:'Planea el mes 2, duplica todo lo que funcionó'},
+  ]},
+];
+
+// ── STATE ───────────────────────────────────────────────────────────────────
+let currentFilter = 'all';
+let currentLang = 'es';
+let nextId = 8;
+
+// ── INIT ────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  setGreeting();
+  renderToday();
+  renderLeads();
+  renderAILeadSel();
+  renderPipeline();
+  renderGoals();
+  renderLessons();
+  renderPlan();
+  setContractDefaults();
+
+  document.querySelectorAll('.modal-backdrop').forEach(b => {
+    b.addEventListener('click', e => { if(e.target===b) closeModal(b.id); });
+  });
+  document.getElementById('ai-type-sel').addEventListener('change', function(){
+    document.getElementById('custom-prompt-field').style.display = this.value==='custom' ? 'block' : 'none';
+  });
+});
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  ['today','leads','ai','more'].forEach(t => {
+    document.getElementById('screen-'+t).classList.toggle('active', t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+  document.getElementById('fab-add').style.display = tab==='leads' ? 'flex' : 'none';
+  if(tab==='today') renderToday();
+}
+
+// ── TODAY ───────────────────────────────────────────────────────────────────
+function setGreeting() {
+  const d = new Date();
+  const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  document.getElementById('today-date').textContent = `${days[d.getDay()]}, ${d.getDate()} de ${months[d.getMonth()]}`;
+  const h = d.getHours();
+  const gr = h < 12 ? 'Buenos días' : h < 18 ? 'Buenas tardes' : 'Buenas noches';
+  document.getElementById('greeting-title').innerHTML = `${gr},<br><span class="name">Rafael.</span>`;
+}
+
+function renderToday() {
+  const hot = leads.filter(l => l.stage==='hot').length;
+  const overdue = leads.filter(l => l.lastContact <= -3).length;
+  document.getElementById('stat-leads').textContent = leads.length;
+  document.getElementById('stat-hot').textContent = hot;
+  document.getElementById('stat-overdue').textContent = overdue;
+
+  const prio = leads.filter(l => l.lastContact <= -3).sort((a,b) => a.lastContact - b.lastContact).slice(0,5);
+  const list = document.getElementById('priority-list');
+  if(!prio.length) {
+    list.innerHTML = `<div class="empty-state"><div class="icon">✅</div>¡Todos tus leads están al día!</div>`;
+    return;
+  }
+  list.innerHTML = prio.map(l => {
+    const days = Math.abs(l.lastContact);
+    const cls = days >= 5 ? 'priority-badge' : 'priority-badge warn';
+    return `<div class="priority-item" onclick="showLeadDetail(${l.id})">
+      <div class="priority-dot" style="background:${l.color}"></div>
+      <div class="priority-info">
+        <div class="priority-name">${l.name}</div>
+        <div class="priority-sub">${l.budget} · ${l.source}</div>
+      </div>
+      <div class="${cls}">${days}d sin contacto</div>
+    </div>`;
+  }).join('');
+}
+
+// ── LEADS ───────────────────────────────────────────────────────────────────
+function setFilter(f, el) {
+  currentFilter = f;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  renderLeads();
+}
+
+function filterLeads() {
+  renderLeads();
+}
+
+function renderLeads() {
+  const q = document.getElementById('lead-search').value.toLowerCase();
+  let list = leads;
+  if(currentFilter !== 'all') list = list.filter(l => l.stage === currentFilter);
+  if(q) list = list.filter(l => l.name.toLowerCase().includes(q) || l.notes.toLowerCase().includes(q) || l.source.toLowerCase().includes(q));
+
+  const el = document.getElementById('leads-list');
+  if(!list.length) {
+    el.innerHTML = `<div class="empty-state"><div class="icon">👥</div>No hay leads en esta categoría</div>`;
+    return;
+  }
+  el.innerHTML = list.map(l => `
+    <div class="lead-card" onclick="showLeadDetail(${l.id})">
+      <div class="lead-avatar" style="background:${l.color}">${l.name[0]}</div>
+      <div class="lead-info">
+        <div class="lead-name">${l.name}</div>
+        <div class="lead-meta">${l.budget} · ${l.source}${l.lastContact < 0 ? ' · '+Math.abs(l.lastContact)+'d sin contacto' : ''}</div>
+      </div>
+      <span class="lead-stage stage-${l.stage}">${stageLabel(l.stage)}</span>
+    </div>`).join('');
+}
+
+function stageLabel(s) {
+  return {hot:'Caliente',warm:'Tibio',showing:'Showing',offer:'Oferta',contract:'Contrato',closed:'Cerrado',nuevo:'Nuevo'}[s] || s;
+}
+
+function showLeadDetail(id) {
+  const l = leads.find(x => x.id === id);
+  if(!l) return;
+  const days = l.lastContact === 0 ? 'Hoy' : Math.abs(l.lastContact)+'d atrás';
+  document.getElementById('lead-detail-body').innerHTML = `
+    <div class="lead-detail-header">
+      <div class="lead-detail-avatar" style="background:${l.color}">${l.name[0]}</div>
+      <div class="lead-detail-name">${l.name}</div>
+      <div class="lead-detail-meta">${stageLabel(l.stage)}</div>
+    </div>
+    <div style="margin:14px 0">
+      <div class="info-row"><span class="info-label">Teléfono</span><a href="tel:${l.phone}" style="color:var(--accent);text-decoration:none">${l.phone}</a></div>
+      <div class="info-row"><span class="info-label">Presupuesto</span><span class="info-value">${l.budget}</span></div>
+      <div class="info-row"><span class="info-label">Fuente</span><span class="info-value">${l.source}</span></div>
+      <div class="info-row"><span class="info-label">Último contacto</span><span class="info-value">${days}</span></div>
+      <div class="info-row"><span class="info-label">Notas</span><span class="info-value">${l.notes}</span></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <a href="tel:${l.phone}" class="btn btn-ghost" style="flex:1;text-align:center;text-decoration:none">📞 Llamar</a>
+      <a href="https://wa.me/${l.phone.replace(/\D/g,'')}" target="_blank" class="btn btn-green" style="flex:1;text-align:center;text-decoration:none">💬 WhatsApp</a>
+    </div>
+    <p style="font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Generar mensaje con IA</p>
+    ${Object.entries(MSGS).filter(([k])=>k!=='custom').map(([k,v]) => `<button class="msg-btn" onclick="quickMsgFromLead(${id},'${k}')">${v.label}</button>`).join('')}
+    <div class="field" style="margin-top:10px">
+      <label>Cambiar etapa</label>
+      <select style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none" onchange="changeStage(${id},this.value)">
+        ${['nuevo','warm','hot','showing','offer','contract','closed'].map(s=>`<option value="${s}"${l.stage===s?' selected':''}>${stageLabel(s)}</option>`).join('')}
+      </select>
+    </div>`;
+  openModal('modal-lead-detail');
+}
+
+function quickMsgFromLead(id, type) {
+  closeModal('modal-lead-detail');
+  switchTab('ai');
+  setTimeout(() => {
+    document.getElementById('ai-type-sel').value = type;
+    document.getElementById('custom-prompt-field').style.display = type==='custom' ? 'block' : 'none';
+    const sel = document.getElementById('ai-lead-sel');
+    for(let i=0;i<sel.options.length;i++) {
+      if(sel.options[i].value == id){ sel.selectedIndex = i; break; }
+    }
+    genMsgAI();
+  }, 350);
+}
+
+function changeStage(id, stage) {
+  const l = leads.find(x => x.id === id);
+  if(l){ l.stage = stage; renderLeads(); renderPipeline(); renderToday(); }
+  toast('Etapa actualizada');
+}
+
+function addLead() {
+  const name = document.getElementById('nl-name').value.trim();
+  if(!name){ toast('Ingresa el nombre del lead'); return; }
+  leads.push({
+    id: nextId++, name,
+    phone: document.getElementById('nl-phone').value.trim() || '—',
+    budget: document.getElementById('nl-budget').value.trim() || 'N/A',
+    stage: document.getElementById('nl-stage').value,
+    lastContact: 0,
+    notes: document.getElementById('nl-notes').value.trim(),
+    source: document.getElementById('nl-source').value,
+    color: COLORS[Math.floor(Math.random()*COLORS.length)],
+  });
+  closeModal('modal-add-lead');
+  ['nl-name','nl-phone','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
+  renderLeads(); renderPipeline(); renderToday(); renderAILeadSel();
+  toast('✅ Lead agregado');
+}
+
+// ── AI ──────────────────────────────────────────────────────────────────────
+function renderAILeadSel() {
+  const sel = document.getElementById('ai-lead-sel');
+  sel.innerHTML = '<option value="">— sin lead específico —</option>' +
+    leads.map(l => `<option value="${l.id}">${l.name} (${l.budget})</option>`).join('');
+}
+
+function quickChip(type) {
+  switchTab('ai');
+  setTimeout(() => {
+    document.getElementById('ai-type-sel').value = type;
+    document.getElementById('custom-prompt-field').style.display = type==='custom' ? 'block' : 'none';
+  }, 100);
+}
+
+async function genMsgAI() {
+  const key = localStorage.getItem('nk_openai_key');
+  if(!key){ toast('⚙️ Configura tu API key primero'); openModal('modal-settings'); return; }
+
+  const type = document.getElementById('ai-type-sel').value;
+  const leadId = document.getElementById('ai-lead-sel').value;
+  const lead = leadId ? leads.find(x => x.id == leadId) : null;
+
+  let prompt;
+  if(type === 'custom') {
+    prompt = document.getElementById('ai-custom-input').value.trim();
+    if(!prompt){ toast('Escribe tu instrucción'); return; }
+    prompt += `\n\nFirma como ${AGENT.name} de Keller Williams West Palm Beach.`;
+  } else {
+    prompt = MSGS[type].prompt(lead?.name, lead?.budget);
+  }
+
+  const out = document.getElementById('ai-output');
+  const txt = document.getElementById('ai-out-text');
+  out.classList.add('visible');
+  txt.innerHTML = `<div class="ai-loading"><div class="ai-dots"><span></span><span></span><span></span></div>Generando con IA...</div>`;
+
+  try {
+    const resp = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json','Authorization':'Bearer '+key},
+      body: JSON.stringify({model:'gpt-4o-mini',messages:[{role:'user',content:prompt}],max_tokens:700,temperature:0.75})
+    });
+    if(!resp.ok){ const e = await resp.json(); throw new Error(e.error?.message || 'Error de API'); }
+    const data = await resp.json();
+    typewrite(txt, data.choices[0].message.content);
+  } catch(e) {
+    txt.textContent = '❌ Error: ' + e.message;
+    toast('Error al generar — verifica tu API key');
+  }
+}
+
+function typewrite(el, text) {
+  el.textContent = '';
+  let i = 0;
+  const t = setInterval(() => {
+    if(i < text.length){ el.textContent += text[i++]; }
+    else clearInterval(t);
+  }, 12);
+}
+
+function copyMsg() {
+  const t = document.getElementById('ai-out-text').textContent;
+  if(!t || t.startsWith('❌')){ toast('Nada que copiar'); return; }
+  navigator.clipboard.writeText(t).then(() => toast('📋 Copiado al portapapeles')).catch(() => toast('No se pudo copiar'));
+}
+
+function sendWA() {
+  const t = document.getElementById('ai-out-text').textContent;
+  if(!t || t.startsWith('❌')){ toast('Genera un mensaje primero'); return; }
+  window.open('https://wa.me/?text=' + encodeURIComponent(t), '_blank');
+}
+
+function clearAI() {
+  document.getElementById('ai-output').classList.remove('visible');
+  document.getElementById('ai-out-text').textContent = '';
+}
+
+// ── PIPELINE ────────────────────────────────────────────────────────────────
+function renderPipeline() {
+  const stages = ['hot','warm','showing','offer','contract','closed'];
+  const labels = {hot:'🔥 Caliente',warm:'🟡 Tibio',showing:'👁 Showing',offer:'📝 Oferta',contract:'✅ Contrato',closed:'🏆 Cerrado'};
+  document.getElementById('pipeline-stages').innerHTML = stages.map(s => {
+    const sl = leads.filter(l => l.stage === s);
+    return `<div class="pipeline-stage">
+      <div class="pipeline-stage-header">
+        <span class="pipeline-stage-title">${labels[s]}</span>
+        <span class="stage-count">${sl.length}</span>
+      </div>
+      ${sl.length ? `<div class="pipeline-leads">${sl.map(l => `
+        <div class="pipeline-lead" onclick="closeModal('modal-pipeline');showLeadDetail(${l.id})">
+          <div class="pipeline-lead-dot" style="background:${l.color}"></div>
+          <span class="pipeline-lead-name">${l.name}</span>
+          <span class="pipeline-lead-budget">${l.budget}</span>
+        </div>`).join('')}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ── GOALS ───────────────────────────────────────────────────────────────────
+function renderGoals() {
+  document.getElementById('goals-grid').innerHTML = GOALS.map(g => {
+    const pct = Math.min(100, Math.round(g.current/g.target*100));
+    const fmt = v => g.key==='income' ? '$'+v.toLocaleString() : v;
+    return `<div class="goal-card">
+      <div class="goal-label">${g.label}</div>
+      <div class="goal-numbers"><span class="goal-current">${fmt(g.current)}</span><span class="goal-target">/ ${fmt(g.target)}</span></div>
+      <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+// ── TRAINING ────────────────────────────────────────────────────────────────
+function renderLessons() {
+  document.getElementById('lessons-list').innerHTML = LESSONS.map((l,i) => `
+    <div class="lesson-card" onclick="openLesson(${i})">
+      <div class="lesson-header"><span class="lesson-icon">${l.icon}</span><span class="lesson-title">${l.title}</span></div>
+      <div class="lesson-progress"><div class="lesson-progress-fill" style="width:${l.progress}%"></div></div>
+      <div class="lesson-meta"><span>${l.desc}</span><span>${l.time}</span></div>
+    </div>`).join('');
+}
+
+function openLesson(i) {
+  const l = LESSONS[i];
+  document.getElementById('lesson-modal-title').textContent = l.icon+' '+l.title;
+  document.getElementById('lesson-modal-body').innerHTML = `
+    <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--text)">${l.content}</div>
+    <div style="margin-top:16px">
+      <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${l.progress}%"></div></div>
+      <p style="font-size:12px;color:var(--text2);margin-top:6px">${l.progress}% completado · ${l.time}</p>
+    </div>`;
+  openModal('modal-lesson');
+}
+
+// ── PLAN ────────────────────────────────────────────────────────────────────
+function renderPlan() {
+  document.getElementById('plan-weeks').innerHTML = PLAN.map(w => `
+    <div class="week-card">
+      <div class="week-header"><span>${w.week}</span>: ${w.theme}</div>
+      <div class="week-days">${w.days.map(d => `<div class="day-row"><span class="day-label">${d.d}</span><span class="day-tasks">${d.t}</span></div>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ── CONTRACT ────────────────────────────────────────────────────────────────
+function setContractDefaults() {
+  const today = new Date();
+  const end = new Date(today); end.setMonth(end.getMonth()+6);
+  document.getElementById('c-start').value = today.toISOString().split('T')[0];
+  document.getElementById('c-end').value = end.toISOString().split('T')[0];
+  document.getElementById('c-area').value = 'West Palm Beach, FL';
+}
+
+function setLang(lang, el) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function genContract() {
+  const buyer = document.getElementById('c-buyer').value.trim() || '[NOMBRE DEL COMPRADOR]';
+  const start = document.getElementById('c-start').value || '[FECHA INICIO]';
+  const end = document.getElementById('c-end').value || '[FECHA FIN]';
+  const area = document.getElementById('c-area').value || '[ÁREA]';
+  const price = document.getElementById('c-price').value || '[RANGO]';
+  const date = new Date().toLocaleDateString('es-US',{year:'numeric',month:'long',day:'numeric'});
+
+  const es = `CONTRATO DE REPRESENTACIÓN EXCLUSIVA DE COMPRADOR
+─────────────────────────────────────────────────
+Fecha: ${date}
+
+PARTES:
+Agente: ${AGENT.name}
+Brokerage: ${AGENT.brokerage} Realty
+Teléfono: ${AGENT.phone}
+
+Comprador: ${buyer}
+
+TÉRMINOS:
+• Período: ${start} al ${end}
+• Área: ${area}
+• Rango de precio: ${price}
+
+ACUERDO:
+El Comprador acuerda trabajar exclusivamente con el Agente durante
+el período indicado para la compra de propiedad residencial.
+
+El Agente se compromete a:
+1. Presentar todas las propiedades dentro del criterio indicado
+2. Representar los mejores intereses del Comprador en negociaciones
+3. Mantener confidencialidad de la información del Comprador
+4. Asesorar en el proceso de compra completo
+
+Compensación:
+La comisión del agente es pagada por el vendedor según práctica
+estándar del mercado. Si el vendedor no ofrece compensación,
+el Comprador acuerda pagar ___% del precio de compra.
+
+FIRMAS:
+Comprador: ____________________  Fecha: __________
+
+Agente: ${AGENT.name}
+${AGENT.brokerage} Realty · ${AGENT.phone}`;
+
+  const en = `EXCLUSIVE BUYER REPRESENTATION AGREEMENT
+─────────────────────────────────────────────────
+Date: ${date}
+
+PARTIES:
+Agent: ${AGENT.name}
+Brokerage: ${AGENT.brokerage} Realty
+Phone: ${AGENT.phone}
+
+Buyer: ${buyer}
+
+TERMS:
+• Period: ${start} to ${end}
+• Area: ${area}
+• Price range: ${price}
+
+AGREEMENT:
+Buyer agrees to work exclusively with Agent during the stated period
+for the purchase of residential property in the specified area.
+
+Agent agrees to:
+1. Present all available properties matching Buyer's criteria
+2. Represent Buyer's best interests in all negotiations
+3. Maintain confidentiality of Buyer's information
+4. Guide Buyer through the entire purchase process
+
+Compensation:
+Agent's commission is typically paid by the seller per market
+standard. If seller does not offer co-agent compensation,
+Buyer agrees to pay ___% of the purchase price.
+
+SIGNATURES:
+Buyer: ____________________  Date: __________
+
+Agent: ${AGENT.name}
+${AGENT.brokerage} Realty · ${AGENT.phone}`;
+
+  const contract = currentLang === 'es' ? es : en;
+  const preview = document.getElementById('contract-preview');
+  preview.textContent = contract;
+  preview.style.display = 'block';
+  document.getElementById('contract-actions').style.display = 'block';
+}
+
+function printContract() {
+  const text = document.getElementById('contract-preview').textContent;
+  const w = window.open('','_blank');
+  w.document.write(`<pre style="font-family:monospace;font-size:13px;padding:40px;max-width:680px;margin:0 auto;line-height:1.8">${text}</pre>`);
+  w.document.close(); w.print();
+}
+
+// ── SETTINGS ────────────────────────────────────────────────────────────────
+function updateKeyStatus() {
+  const key = localStorage.getItem('nk_openai_key');
+  const badge = document.getElementById('key-status-badge');
+  if(!badge) return;
+  badge.innerHTML = key
+    ? `<div class="key-status key-ok">✓ API Key configurada — IA activa</div>`
+    : `<div class="key-status key-no">✗ Sin API Key — IA inactiva</div>`;
+  if(key) document.getElementById('keyInput').value = key;
+}
+
+function saveKey() {
+  const k = document.getElementById('keyInput').value.trim();
+  if(!k.startsWith('sk-')){ toast('⚠️ La key debe comenzar con sk-'); return; }
+  localStorage.setItem('nk_openai_key', k);
+  updateKeyStatus();
+  toast('✅ API Key guardada — IA activada');
+}
+
+function clearKey() {
+  localStorage.removeItem('nk_openai_key');
+  document.getElementById('keyInput').value = '';
+  updateKeyStatus();
+  toast('🗑 API Key eliminada');
+}
+
+// ── MODALS ──────────────────────────────────────────────────────────────────
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+  if(id === 'modal-settings') updateKeyStatus();
+  if(id === 'modal-pipeline') renderPipeline();
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ── TOAST ───────────────────────────────────────────────────────────────────
+let toastTimer;
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>

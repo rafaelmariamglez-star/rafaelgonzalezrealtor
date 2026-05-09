@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller's Guide | Rafael Gonzalez – Realtor West Palm Beach FL</title>
+  <meta name="description" content="Sell your home in West Palm Beach for maximum value. Rafael Gonzalez, Keller Williams Realtor, delivers expert pricing, luxury marketing & proven results. Call (561) 905-6211." />
+  <link rel="canonical" href="https://rafaelgonzalezrealtor.com/seller-guide.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark:  #1c1a18;
+      --gold:  #b8955a;
+      --gold-lt:#d4b07a;
+      --white: #ffffff;
+      --off:   #faf8f5;
+      --cream: #f2ede6;
+      --gray:  #6b7280;
+      --light: #e8e4df;
+      --text:  #2c2a28;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; color: var(--text); background: var(--white); line-height: 1.6; }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.1rem 5%;
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(184,149,90,0.15);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.05);
+    }
+    .nav-brand { font-family: 'Playfair Display', serif; color: var(--dark); font-size: 1.1rem; text-decoration: none; }
+    .nav-brand span { color: var(--gold); }
+    .nav-back { font-size: 0.82rem; font-weight: 600; color: var(--gold); text-decoration: none; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-back:hover { color: var(--dark); }
+
+    /* HERO */
+    .hero { min-height: 100vh; position: relative; display: flex; align-items: center; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: url('photos/luxury-exterior.jpg') center/cover no-repeat; }
+    .hero-overlay { position: absolute; inset: 0; background: linear-gradient(120deg, rgba(28,26,24,0.92) 0%, rgba(28,26,24,0.7) 55%, rgba(28,26,24,0.25) 100%); }
+    .hero-content { position: relative; z-index: 2; padding: 8rem 5% 4rem; max-width: 720px; }
+    .hero-tag {
+      display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--gold); border: 1px solid rgba(184,149,90,0.5);
+      padding: 0.35rem 1rem; border-radius: 2px; margin-bottom: 1.5rem;
+    }
+    .hero h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.6rem, 5vw, 4.2rem); color: var(--white); line-height: 1.15; margin-bottom: 1.2rem; }
+    .hero h1 em { font-style: italic; color: var(--gold-lt); }
+    .hero p { font-size: 1.05rem; color: rgba(255,255,255,0.72); max-width: 520px; margin-bottom: 2rem; font-weight: 300; }
+    .hero-stats { display: flex; gap: 2.5rem; padding: 2rem 0; border-top: 1px solid rgba(255,255,255,0.12); border-bottom: 1px solid rgba(255,255,255,0.12); margin-bottom: 2rem; }
+    .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--gold); display: block; line-height: 1; }
+    .stat-label { font-size: 0.72rem; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.3rem; }
+    .hero-meta { display: flex; align-items: center; gap: 1.2rem; }
+    .hero-avatar { width: 56px; height: 56px; border-radius: 50%; object-fit: cover; object-position: top; border: 2px solid var(--gold); }
+    .hero-meta-text strong { display: block; color: var(--white); font-size: 0.92rem; }
+    .hero-meta-text span { color: rgba(255,255,255,0.5); font-size: 0.78rem; }
+    .btn { display: inline-block; padding: 0.85rem 2rem; border-radius: 2px; font-weight: 600; font-size: 0.88rem; letter-spacing: 0.05em; text-decoration: none; transition: all 0.25s; cursor: pointer; border: none; }
+    .btn-gold { background: var(--gold); color: var(--dark); }
+    .btn-gold:hover { background: var(--gold-lt); transform: translateY(-1px); }
+    .btn-outline-light { background: transparent; color: var(--white); border: 1px solid rgba(255,255,255,0.35); }
+    .btn-outline-light:hover { border-color: var(--gold); color: var(--gold); }
+
+    /* TOC */
+    .toc { background: var(--dark); padding: 2.5rem 5%; }
+    .toc-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .toc-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--gold); white-space: nowrap; }
+    .toc-links { display: flex; gap: 2rem; flex-wrap: wrap; }
+    .toc-links a { font-size: 0.78rem; font-weight: 500; color: rgba(255,255,255,0.55); text-decoration: none; letter-spacing: 0.05em; text-transform: uppercase; transition: color 0.2s; white-space: nowrap; }
+    .toc-links a:hover { color: var(--gold); }
+
+    /* COMMON */
+    .section-tag { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.7rem; display: block; }
+    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--dark); line-height: 1.25; margin-bottom: 1.2rem; }
+    .section-title em { font-style: italic; color: var(--gold); }
+    .divider { width: 40px; height: 2px; background: var(--gold); margin: 1.2rem 0 1.5rem; }
+
+    /* WHY NOW */
+    .why-now { padding: 6rem 5%; background: var(--off); }
+    .why-now-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .why-now img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.12); }
+    .why-now p { color: var(--gray); line-height: 1.85; font-size: 0.96rem; margin-bottom: 1rem; }
+    .why-now p strong { color: var(--dark); }
+    .market-pills { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1.5rem; }
+    .pill { background: var(--white); border: 1px solid rgba(184,149,90,0.3); border-radius: 2px; padding: 0.45rem 1rem; font-size: 0.78rem; font-weight: 600; color: var(--dark); }
+    .pill span { color: var(--gold); }
+
+    /* PROCESS */
+    .process { padding: 6rem 5%; background: var(--white); }
+    .process-inner { max-width: 1100px; margin: 0 auto; }
+    .steps-list { margin-top: 3rem; display: flex; flex-direction: column; gap: 0; }
+    .step {
+      display: grid; grid-template-columns: 80px 1fr 300px; gap: 2rem;
+      align-items: center; padding: 2.5rem 0;
+      border-bottom: 1px solid var(--light);
+      transition: all 0.2s;
+    }
+    .step:last-child { border-bottom: none; }
+    .step:hover { background: var(--off); margin: 0 -2rem; padding: 2.5rem 2rem; border-radius: 4px; }
+    .step-num { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--gold); opacity: 0.35; line-height: 1; text-align: center; }
+    .step-body h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 0.5rem; }
+    .step-body p { font-size: 0.88rem; color: var(--gray); line-height: 1.75; }
+    .step-img { width: 100%; height: 160px; object-fit: cover; border-radius: 4px; }
+
+    /* MARKETING */
+    .marketing { padding: 6rem 5%; background: var(--dark); }
+    .marketing-inner { max-width: 1100px; margin: 0 auto; }
+    .marketing-inner .section-title { color: var(--white); }
+    .marketing-intro { color: rgba(255,255,255,0.55); max-width: 600px; font-size:0.95rem; line-height:1.8; margin-bottom: 3rem; }
+    .marketing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
+    .mkt-card {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 4px; overflow: hidden; transition: all 0.3s;
+    }
+    .mkt-card:hover { border-color: rgba(184,149,90,0.4); transform: translateY(-4px); background: rgba(184,149,90,0.07); }
+    .mkt-card-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+    .mkt-card-body { padding: 1.4rem; }
+    .mkt-icon { font-size: 1.5rem; margin-bottom: 0.8rem; display: block; }
+    .mkt-card h3 { font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--white); margin-bottom: 0.5rem; }
+    .mkt-card p { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.7; }
+
+    /* PRICING */
+    .pricing { padding: 6rem 5%; background: var(--cream); }
+    .pricing-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .pricing-img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 4px; box-shadow: 0 20px 60px rgba(0,0,0,0.1); }
+    .pricing-points { list-style: none; padding: 0; margin-top: 1.5rem; }
+    .pricing-points li { display: flex; gap: 1rem; align-items: flex-start; padding: 1rem 0; border-bottom: 1px solid var(--light); }
+    .pricing-points li:last-child { border-bottom: none; }
+    .p-bullet { width: 32px; height: 32px; border-radius: 50%; background: var(--gold); display: flex; align-items: center; justify-content: center; color: var(--dark); font-size: 0.9rem; flex-shrink: 0; font-weight: 700; }
+    .pricing-points li div strong { display: block; font-size: 0.9rem; color: var(--dark); margin-bottom: 0.2rem; }
+    .pricing-points li div p { font-size: 0.83rem; color: var(--gray); line-height: 1.65; margin: 0; }
+
+    /* TIMELINE */
+    .timeline-section { padding: 6rem 5%; background: var(--white); }
+    .timeline-inner { max-width: 900px; margin: 0 auto; }
+    .timeline { margin-top: 3rem; position: relative; }
+    .timeline::before { content: ''; position: absolute; left: 28px; top: 0; bottom: 0; width: 2px; background: var(--light); }
+    .tl-item { display: flex; gap: 2rem; margin-bottom: 2.5rem; position: relative; }
+    .tl-dot {
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--off); border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0; position: relative; z-index: 1;
+    }
+    .tl-body { padding-top: 0.5rem; }
+    .tl-body strong { display: block; font-size: 0.92rem; color: var(--dark); margin-bottom: 0.3rem; font-weight: 700; }
+    .tl-body p { font-size: 0.84rem; color: var(--gray); line-height: 1.7; }
+    .tl-tag { font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); margin-bottom: 0.3rem; display: block; }
+
+    /* PROMISE */
+    .promise { padding: 6rem 5%; background: var(--off); }
+    .promise-inner { max-width: 1100px; margin: 0 auto; }
+    .promise-layout { display: grid; grid-template-columns: 360px 1fr; gap: 5rem; align-items: start; margin-top: 3rem; }
+    .promise-card { background: var(--dark); border-radius: 6px; overflow: hidden; box-shadow: 0 24px 64px rgba(0,0,0,0.2); }
+    .promise-card-img { width: 100%; height: 320px; object-fit: cover; object-position: top; display: block; }
+    .promise-card-body { padding: 2rem; }
+    .promise-name { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--white); }
+    .promise-title-text { font-size: 0.75rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.12em; margin: 0.3rem 0 1.2rem; display: block; }
+    .contact-line { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.5rem; }
+    .contact-line a { font-size: 0.83rem; color: rgba(255,255,255,0.65); text-decoration: none; transition: color 0.2s; }
+    .contact-line a:hover { color: var(--gold); }
+    .kw-badge-dark { display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); padding: 0.5rem 0.9rem; border-radius: 2px; margin-top: 1.2rem; font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.55); text-transform: uppercase; letter-spacing: 0.08em; }
+    .kw-dot { width: 8px; height: 8px; background: #e31837; border-radius: 50%; }
+    .promise-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .promise-item { background: var(--white); border: 1px solid var(--light); border-radius: 4px; padding: 1.4rem; transition: all 0.25s; }
+    .promise-item:hover { border-color: var(--gold); box-shadow: 0 4px 16px rgba(184,149,90,0.1); }
+    .promise-item .pi-icon { font-size: 1.4rem; margin-bottom: 0.7rem; display: block; }
+    .promise-item strong { display: block; font-size: 0.88rem; color: var(--dark); margin-bottom: 0.4rem; }
+    .promise-item p { font-size: 0.82rem; color: var(--gray); line-height: 1.65; margin: 0; }
+
+    /* CTA */
+    .cta-final { padding: 6rem 5%; position: relative; overflow: hidden; text-align: center; }
+    .cta-bg { position: absolute; inset: 0; background: url('photos/boca-luxury.jpg') center/cover no-repeat; }
+    .cta-overlay { position: absolute; inset: 0; background: rgba(28,26,24,0.88); }
+    .cta-content { position: relative; z-index: 2; }
+    .cta-final h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 3rem); color: var(--white); margin-bottom: 1rem; }
+    .cta-final p { color: rgba(255,255,255,0.6); max-width: 540px; margin: 0 auto 2.5rem; font-size: 0.97rem; line-height: 1.8; }
+    .cta-btns { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+    .cta-contacts { display: flex; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+    .cta-item { text-align: center; }
+    .cta-item span { display: block; font-size: 0.68rem; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
+    .cta-item a { font-size: 0.97rem; font-weight: 600; color: var(--gold); text-decoration: none; }
+
+    /* FOOTER */
+    footer { background: #111; padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+    .footer-brand { font-family: 'Playfair Display', serif; color: var(--white); font-size: 0.95rem; }
+    .footer-brand span { color: var(--gold); }
+    .footer-note { font-size: 0.75rem; color: rgba(255,255,255,0.35); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .step { grid-template-columns: 60px 1fr; }
+      .step-img { display: none; }
+    }
+    @media (max-width: 900px) {
+      .why-now-inner, .pricing-inner, .promise-layout { grid-template-columns: 1fr !important; gap: 3rem; }
+      .marketing-grid { grid-template-columns: repeat(2,1fr); }
+      .promise-grid { grid-template-columns: 1fr 1fr; }
+      .why-now { padding: 4rem 4%; }
+      .process { padding: 4rem 4%; }
+      .marketing { padding: 4rem 4%; }
+      .pricing { padding: 4rem 4%; }
+      .timeline-section { padding: 4rem 4%; }
+      .promise { padding: 4rem 4%; }
+      .cta-final { padding: 4rem 4%; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 4%; }
+      .hero-content { padding: 6rem 4% 3rem; }
+      .hero h1 { font-size: clamp(2rem, 8vw, 3rem); }
+      .hero p { font-size: 0.92rem; }
+      .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+      .hero-meta { flex-wrap: wrap; gap: 1rem; }
+      .toc { padding: 2rem 4%; }
+      .toc-inner { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+      .toc-links { gap: 0.75rem; }
+      .toc-links a { font-size: 0.75rem; }
+      .step-body h3 { font-size: 1.05rem; }
+      footer { flex-direction: column; text-align: center; gap: 0.5rem; }
+      .cta-btns { flex-direction: column; align-items: center; }
+      .cta-btns .btn { width: 100%; max-width: 280px; }
+    }
+    @media (max-width: 600px) {
+      .marketing-grid { grid-template-columns: 1fr; }
+      .promise-grid { grid-template-columns: 1fr; }
+      .step { grid-template-columns: 50px 1fr; gap: 1rem; }
+      .toc-links { gap: 0.6rem; }
+      .cta-contacts { flex-direction: column; align-items: center; gap: 1.2rem; }
+      .market-pills { gap: 0.4rem; }
+      .pill { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
+      .promise-card { max-width: 100%; }
+    }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: clamp(1.8rem, 7vw, 2.4rem); }
+      .section-title { font-size: 1.6rem; }
+      .step-num { font-size: 2rem; }
+      .tl-dot { width: 46px; height: 46px; font-size: 1rem; }
+      .tl-item { gap: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="nav-brand">Rafael <span>Gonzalez</span></a>
+  <a href="/" class="nav-back">← Back to Main Site</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag">Seller Presentation · Keller Williams · West Palm Beach, FL</div>
+    <h1>Sell Your Home for <em>Maximum Value</em> in South Florida</h1>
+    <p>A proven strategy, luxury-level marketing, and relentless negotiation — designed to get you the highest price in the shortest time possible.</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2.5rem;">
+      <a href="#contact-cta" class="btn btn-gold">Get My Free Home Valuation</a>
+      <a href="#process" class="btn btn-outline-light">See How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div><span class="stat-num">Top</span><span class="stat-label">Palm Beach County Agent</span></div>
+      <div><span class="stat-num">KW</span><span class="stat-label">180,000+ Global Network</span></div>
+      <div><span class="stat-num">Free</span><span class="stat-label">Market Analysis (CMA)</span></div>
+    </div>
+    <div class="hero-meta">
+      <img src="head.png" alt="Rafael Gonzalez Realtor" class="hero-avatar" />
+      <div class="hero-meta-text">
+        <strong>Rafael Gonzalez</strong>
+        <span>Licensed Realtor · Keller Williams · (561) 905-6211</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-inner">
+    <span class="toc-label">Contents</span>
+    <div class="toc-links">
+      <a href="#why-now">Why Sell Now</a>
+      <a href="#process">The Process</a>
+      <a href="#marketing">Marketing Strategy</a>
+      <a href="#pricing">Pricing Strategy</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#promise">My Promise</a>
+    </div>
+  </div>
+</nav>
+
+<!-- WHY SELL NOW -->
+<section class="why-now" id="why-now">
+  <div class="why-now-inner">
+    <img src="photos/home-value.jpg" alt="Home value West Palm Beach" />
+    <div>
+      <span class="section-tag">Why Sell Now</span>
+      <h2 class="section-title">The Palm Beach County Market Is <em>Working for You</em></h2>
+      <div class="divider"></div>
+      <p>West Palm Beach and Palm Beach County are experiencing one of the strongest seller's markets in Florida's history. <strong>Demand continues to outpace inventory</strong>, giving sellers exceptional leverage to command top dollar and favorable terms.</p>
+      <p>South Florida's population growth, migration from high-tax states, and limited housing supply create the perfect conditions for sellers. Whether you're in Jupiter, Boca Raton, Wellington, or downtown West Palm Beach, <strong>your home has never been worth more.</strong></p>
+      <p>When you partner with Rafael Gonzalez and Keller Williams, you're not just listing a home — you're launching a fully orchestrated campaign designed to attract the right buyers, create competition, and deliver the best possible outcome for you.</p>
+      <div class="market-pills">
+        <div class="pill">Strong Seller's Market <span>✓</span></div>
+        <div class="pill">Low Inventory <span>✓</span></div>
+        <div class="pill">High Buyer Demand <span>✓</span></div>
+        <div class="pill">Rising Home Values <span>✓</span></div>
+        <div class="pill">KW Global Exposure <span>✓</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THE PROCESS -->
+<section class="process" id="process">
+  <div class="process-inner">
+    <span class="section-tag">The Selling Process</span>
+    <h2 class="section-title">From Listing to <em>Closing</em> — Every Step</h2>
+    <div class="divider"></div>
+    <div class="steps-list">
+
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-body">
+          <h3>Free Home Valuation & Consultation</h3>
+          <p>Rafael visits your home, analyzes comparable sales in West Palm Beach and Palm Beach County, and delivers a precise Comparative Market Analysis (CMA). No pressure, no obligation — just data-driven insight into exactly what your home is worth today.</p>
+        </div>
+        <img src="photos/market-data.jpg" alt="Home valuation" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-body">
+          <h3>Strategic Pricing</h3>
+          <p>Price too high and buyers walk. Price right and you create competition. Rafael uses deep market knowledge and proven pricing psychology to position your home for maximum offers — often generating multiple bids above asking price.</p>
+        </div>
+        <img src="photos/negotiation.jpg" alt="Strategic pricing" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-body">
+          <h3>Home Preparation & Staging Guidance</h3>
+          <p>First impressions sell homes. Rafael provides expert guidance on decluttering, staging, and minor improvements that dramatically increase perceived value — helping buyers fall in love from the moment they walk through the door.</p>
+        </div>
+        <img src="photos/staged-home.jpg" alt="Home staging" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-body">
+          <h3>Professional Photography & Media</h3>
+          <p>Over 95% of buyers start their search online. Your listing receives professional photography, high-resolution images, and compelling descriptions that make your home impossible to scroll past — and impossible to forget.</p>
+        </div>
+        <img src="photos/photography-home.jpg" alt="Professional photography" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">05</div>
+        <div class="step-body">
+          <h3>Maximum Market Exposure</h3>
+          <p>Your home is listed on the MLS, Zillow, Realtor.com, KW.com, and syndicated to 100+ real estate platforms globally. Combined with targeted social media campaigns and Rafael's personal buyer network, your home reaches every qualified buyer in the market.</p>
+        </div>
+        <img src="photos/open-house.jpg" alt="Open house marketing" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">06</div>
+        <div class="step-body">
+          <h3>Showings, Open Houses & Offers</h3>
+          <p>Rafael coordinates all showings on your schedule, hosts strategic open houses to maximize foot traffic, and provides real-time feedback after every viewing. When offers arrive, you get a complete breakdown of each one — with Rafael's expert recommendation.</p>
+        </div>
+        <img src="photos/agent-clients.jpg" alt="Agent with clients" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">07</div>
+        <div class="step-body">
+          <h3>Expert Negotiation</h3>
+          <p>This is where experience makes a measurable difference. Rafael negotiates aggressively on your behalf — on price, contingencies, repairs, and closing terms — to protect your interests and maximize your net proceeds. Every dollar matters.</p>
+        </div>
+        <img src="photos/signing-contract.jpg" alt="Signing contract" class="step-img" />
+      </div>
+
+      <div class="step">
+        <div class="step-num">08</div>
+        <div class="step-body">
+          <h3>Under Contract to Closing</h3>
+          <p>Once under contract, Rafael manages every detail — inspections, appraisals, title, lender coordination, and final walk-through — so nothing falls through the cracks. You get to closing day stress-free, with your proceeds in hand.</p>
+        </div>
+        <img src="photos/keys-handover.jpg" alt="Closing day" class="step-img" />
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MARKETING STRATEGY -->
+<section class="marketing" id="marketing">
+  <div class="marketing-inner">
+    <span class="section-tag" style="color:var(--gold)">Marketing Strategy</span>
+    <h2 class="section-title">Your Home Deserves <em>Elite Exposure</em></h2>
+    <div class="divider"></div>
+    <p class="marketing-intro">Selling your home is not just about putting a sign in the yard. Rafael's marketing approach combines cutting-edge digital strategy with Keller Williams' global reach to attract the most qualified buyers — and the highest offers.</p>
+    <div class="marketing-grid">
+      <div class="mkt-card">
+        <img src="photos/photography-home.jpg" alt="Professional photography" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">📸</span>
+          <h3>Professional Photography</h3>
+          <p>High-resolution professional photos that showcase every corner of your home in its best light. First impressions happen in seconds — we make them count.</p>
+        </div>
+      </div>
+      <div class="mkt-card">
+        <img src="photos/market-data.jpg" alt="Digital marketing" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">💻</span>
+          <h3>Digital & MLS Syndication</h3>
+          <p>Listed on MLS, Zillow, Realtor.com, Homes.com, KW.com, and 100+ global platforms. Your home reaches every active buyer searching in South Florida.</p>
+        </div>
+      </div>
+      <div class="mkt-card">
+        <img src="photos/open-house.jpg" alt="Open house" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">🏠</span>
+          <h3>Open Houses & Private Showings</h3>
+          <p>Strategically scheduled open houses to maximize buyer foot traffic, combined with flexible private showings to accommodate serious buyers on their schedule.</p>
+        </div>
+      </div>
+      <div class="mkt-card">
+        <img src="photos/wpb-aerial.jpg" alt="Social media marketing" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">📱</span>
+          <h3>Social Media Campaigns</h3>
+          <p>Targeted Facebook, Instagram, and LinkedIn campaigns reaching qualified buyers in West Palm Beach, Palm Beach County, and relocating buyers across the US.</p>
+        </div>
+      </div>
+      <div class="mkt-card">
+        <img src="photos/agent-clients.jpg" alt="Buyer network" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">🌐</span>
+          <h3>KW's 180,000+ Agent Network</h3>
+          <p>Your listing is immediately shared with Keller Williams' worldwide network of agents and their active buyers — giving you access to an audience no individual agent can match.</p>
+        </div>
+      </div>
+      <div class="mkt-card">
+        <img src="photos/signing-contract.jpg" alt="Negotiation" class="mkt-card-img" />
+        <div class="mkt-card-body">
+          <span class="mkt-icon">🤝</span>
+          <h3>Relentless Negotiation</h3>
+          <p>Every offer analyzed, every term negotiated, every dollar fought for. Rafael's reputation as a skilled negotiator in Palm Beach County is your competitive advantage.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING STRATEGY -->
+<section class="pricing" id="pricing">
+  <div class="pricing-inner">
+    <img src="photos/home-value.jpg" alt="Pricing strategy West Palm Beach" class="pricing-img" />
+    <div>
+      <span class="section-tag">Pricing Strategy</span>
+      <h2 class="section-title">The Right Price Changes <em>Everything</em></h2>
+      <div class="divider"></div>
+      <p style="color:var(--gray);line-height:1.85;margin-bottom:1rem;font-size:0.95rem;">Pricing your home correctly from day one is the single most impactful decision in the entire selling process. Rafael's data-driven approach ensures your home enters the market positioned to attract maximum buyer attention and competing offers.</p>
+      <ul class="pricing-points">
+        <li>
+          <div class="p-bullet">1</div>
+          <div><strong>Free Comparative Market Analysis (CMA)</strong><p>Rafael analyzes recent sales, active listings, and market trends in your specific neighborhood to determine your home's precise market value — at no cost to you.</p></div>
+        </li>
+        <li>
+          <div class="p-bullet">2</div>
+          <div><strong>Competitive Positioning</strong><p>Homes priced right generate immediate interest and multiple offers within the first week. Overpriced homes sit — and a listing that sits loses its leverage fast.</p></div>
+        </li>
+        <li>
+          <div class="p-bullet">3</div>
+          <div><strong>Market Adjustment Strategy</strong><p>Rafael monitors market conditions weekly during your listing. If adjustments are needed, you're consulted immediately with data-backed recommendations.</p></div>
+        </li>
+        <li>
+          <div class="p-bullet">4</div>
+          <div><strong>Net Proceeds Maximization</strong><p>The goal is never just a quick sale — it's the highest net proceeds possible. Every pricing and negotiation decision is made with your bottom line as the priority.</p></div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="timeline-section" id="timeline">
+  <div class="timeline-inner">
+    <span class="section-tag">Selling Timeline</span>
+    <h2 class="section-title">From Consultation to <em>Closing</em></h2>
+    <div class="divider"></div>
+    <p style="color:var(--gray);font-size:0.95rem;line-height:1.8;max-width:600px;">Most homes in West Palm Beach and Palm Beach County sell within 30–60 days when priced and marketed correctly. Here's a typical timeline:</p>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot">📋</div>
+        <div class="tl-body">
+          <span class="tl-tag">Week 1</span>
+          <strong>Consultation, CMA & Listing Agreement</strong>
+          <p>Rafael visits, evaluates your home, delivers the CMA, and we agree on pricing and strategy. Listing agreement signed. Professional photography scheduled.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">📸</div>
+        <div class="tl-body">
+          <span class="tl-tag">Week 1–2</span>
+          <strong>Preparation & Launch</strong>
+          <p>Professional photography completed. Home staged and ready. Listing goes live on MLS, Zillow, KW.com, and all platforms simultaneously. Social media campaign launches.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🏠</div>
+        <div class="tl-body">
+          <span class="tl-tag">Weeks 2–4</span>
+          <strong>Showings & Open Houses</strong>
+          <p>Private showings scheduled. Open houses held. Rafael provides real-time showing feedback and weekly market reports so you always know where you stand.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">📝</div>
+        <div class="tl-body">
+          <span class="tl-tag">Weeks 2–5</span>
+          <strong>Offers & Negotiation</strong>
+          <p>Offers reviewed together. Rafael negotiates price, contingencies, repair requests, and closing date on your behalf. Best offer accepted and contracts executed.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🔍</div>
+        <div class="tl-body">
+          <span class="tl-tag">Weeks 5–8</span>
+          <strong>Under Contract — Due Diligence</strong>
+          <p>Inspection, appraisal, and title work completed. Rafael manages all communication between parties, resolves any contingencies, and keeps the transaction on track to close.</p>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot">🎉</div>
+        <div class="tl-body">
+          <span class="tl-tag">Day 30–60</span>
+          <strong>Closing Day — You Get Paid</strong>
+          <p>Final walk-through completed. Documents signed at the title company. Title transferred. Proceeds wired to your account. Congratulations — your home is sold.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MY PROMISE -->
+<section class="promise" id="promise">
+  <div class="promise-inner">
+    <span class="section-tag">My Promise to You</span>
+    <h2 class="section-title">Your Home. Your Advocate. <em>Your Results.</em></h2>
+    <div class="divider"></div>
+    <div class="promise-layout">
+      <div class="promise-card">
+        <img src="head.png" alt="Rafael Gonzalez Realtor West Palm Beach" class="promise-card-img" />
+        <div class="promise-card-body">
+          <div class="promise-name">Rafael Gonzalez</div>
+          <span class="promise-title-text">Licensed Realtor · Keller Williams</span>
+          <div class="contact-line"><a href="tel:+15619056211">📞 (561) 905-6211</a></div>
+          <div class="contact-line"><a href="mailto:rafaglezglez@kw.com">✉️ rafaglezglez@kw.com</a></div>
+          <div class="contact-line"><a href="https://rafaelgonzalezrealtor.com" target="_blank">🌐 rafaelgonzalezrealtor.com</a></div>
+          <div class="contact-line"><a href="https://rafaglezglez.kw.com" target="_blank">🏠 rafaglezglez.kw.com</a></div>
+          <div class="kw-badge-dark"><span class="kw-dot"></span>Keller Williams Realty</div>
+        </div>
+      </div>
+      <div class="promise-grid">
+        <div class="promise-item">
+          <span class="pi-icon">💰</span>
+          <strong>Maximum Net Proceeds</strong>
+          <p>Every decision I make — pricing, marketing, negotiation — is designed to put the most money in your pocket at closing.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">⚡</span>
+          <strong>Fast, Efficient Sale</strong>
+          <p>Properly priced and expertly marketed homes sell faster. I work urgently to minimize your days on market while maximizing your price.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">💬</span>
+          <strong>Transparent Communication</strong>
+          <p>Weekly updates, real-time feedback, and honest conversations. You'll never wonder what's happening with your listing.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">🌐</span>
+          <strong>Global KW Network</strong>
+          <p>Your listing reaches 180,000+ Keller Williams agents and their buyers worldwide — giving you exposure that no individual agent can match.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">🤝</span>
+          <strong>Expert Negotiation</strong>
+          <p>I negotiate every offer with the skill, data, and assertiveness needed to protect your interests and secure the best possible terms.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">🌎</span>
+          <strong>Bilingual — English & Spanish</strong>
+          <p>Serving West Palm Beach's diverse community in English and Spanish — opening your home to the widest possible pool of qualified buyers.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">📍</span>
+          <strong>Deep Local Expertise</strong>
+          <p>Born and raised in South Florida — I know every neighborhood, price trend, and buyer preference across all of Palm Beach County.</p>
+        </div>
+        <div class="promise-item">
+          <span class="pi-icon">✅</span>
+          <strong>Integrity in Everything</strong>
+          <p>I do the right thing — even when it's not the easiest path. Your trust is the foundation of my business, and I never take it for granted.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="cta-final" id="contact-cta">
+  <div class="cta-bg"></div>
+  <div class="cta-overlay"></div>
+  <div class="cta-content">
+    <h2>Ready to Sell Your Home in<br>West Palm Beach?</h2>
+    <p>Get your free Comparative Market Analysis and find out exactly what your home is worth in today's Palm Beach County market. No pressure. No obligation. Just results.</p>
+    <div class="cta-btns">
+      <a href="https://rafaelgonzalezrealtor.com/#contact" class="btn btn-gold" style="font-size:0.97rem;padding:1rem 2.5rem;">Get My Free Home Valuation</a>
+      <a href="tel:+15619056211" class="btn btn-outline-light" style="font-size:0.97rem;padding:1rem 2.5rem;">Call (561) 905-6211</a>
+    </div>
+    <div class="cta-contacts">
+      <div class="cta-item"><span>Call or Text</span><a href="tel:+15619056211">(561) 905-6211</a></div>
+      <div class="cta-item"><span>Email</span><a href="mailto:rafaglezglez@kw.com">rafaglezglez@kw.com</a></div>
+      <div class="cta-item"><span>Website</span><a href="https://rafaelgonzalezrealtor.com">rafaelgonzalezrealtor.com</a></div>
+      <div class="cta-item"><span>KW Listings</span><a href="https://rafaglezglez.kw.com" target="_blank">rafaglezglez.kw.com</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">Rafael <span>Gonzalez</span> · Realtor</div>
+  <div class="footer-note">© 2026 Rafael Gonzalez · Licensed Realtor · Keller Williams Realty · West Palm Beach, FL</div>
+</footer>
+
+</body>
+</html>
