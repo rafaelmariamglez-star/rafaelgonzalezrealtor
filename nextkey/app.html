@@ -529,7 +529,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
     <div class="modal-header"><span class="modal-title">⚙️ Configuración</span><button class="modal-close" onclick="closeModal('modal-settings')">✕</button></div>
     <div class="modal-body">
       <div id="key-status-badge"></div>
-      <div class="field"><label>OpenAI API Key</label><input id="keyInput" type="password" placeholder="sk-..."/></div>
+      <div class="field"><label>OpenAI API Key</label><input id="keyInput" type="text" placeholder="sk-..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/></div>
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Tu clave se guarda <strong>solo en este dispositivo</strong> y nunca sale a ningún servidor.<br>Consíguela en <span style="color:var(--accent)">platform.openai.com</span></p>
       <div style="display:flex;gap:10px">
         <button class="btn btn-primary" onclick="saveKey()" style="flex:1">Guardar</button>
@@ -1067,10 +1067,11 @@ function updateKeyStatus() {
 
 function saveKey() {
   const k = document.getElementById('keyInput').value.trim();
-  if(!k.startsWith('sk-')){ toast('⚠️ La key debe comenzar con sk-'); return; }
+  if(!k){ alert('El campo está vacío — pega tu API key primero'); return; }
+  if(!k.startsWith('sk-')){ alert('La key debe comenzar con sk-  —  verifica que la copiaste completa'); return; }
   localStorage.setItem('nk_openai_key', k);
   updateKeyStatus();
-  toast('✅ API Key guardada — IA activada');
+  alert('✅ API Key guardada correctamente. Ya puedes usar el Copilot.');
 }
 
 function clearKey() {
