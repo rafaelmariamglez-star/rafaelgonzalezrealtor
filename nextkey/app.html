@@ -547,15 +547,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 const AGENT = {name:'Rafael', brokerage:'Keller Williams', phone:'561-905-6211'};
 const COLORS = ['#4f7ef8','#7c5cf8','#d4a843','#22c55e','#f87171','#f59e0b','#ec4899','#06b6d4'];
 
-let leads = [
-  {id:1,name:'María González',phone:'561-111-2222',budget:'$450,000',stage:'hot',lastContact:-3,notes:'Pre-aprobada, quiere mudarse en 60 días',source:'Zillow',color:'#4f7ef8'},
-  {id:2,name:'Carlos Díaz',phone:'561-333-4444',budget:'$320,000',stage:'warm',lastContact:-5,notes:'Primera vez comprando, necesita orientación',source:'Referido',color:'#7c5cf8'},
-  {id:3,name:'Jennifer López',phone:'561-555-6666',budget:'$600,000',stage:'showing',lastContact:-1,notes:'Lista para ver propiedades en WPB',source:'Open House',color:'#d4a843'},
-  {id:4,name:'Michael Chen',phone:'561-777-8888',budget:'$280,000',stage:'offer',lastContact:0,notes:'Oferta en proceso, 3br/2ba',source:'Zillow',color:'#22c55e'},
-  {id:5,name:'Sofia Martín',phone:'561-999-0000',budget:'$520,000',stage:'contract',lastContact:0,notes:'Contrato firmado, cierre en 30 días',source:'Referido',color:'#ec4899'},
-  {id:6,name:'David Kim',phone:'561-222-3333',budget:'$380,000',stage:'warm',lastContact:-7,notes:'Inversor, busca duplex o townhouse',source:'Instagram',color:'#06b6d4'},
-  {id:7,name:'Ana Rivera',phone:'561-444-5555',budget:'$290,000',stage:'hot',lastContact:-4,notes:'Mudanza urgente por trabajo, preaprobada',source:'Facebook',color:'#f59e0b'},
-];
+let leads = [...DEFAULT_LEADS];
 
 const MSGS = {
   followup:{label:'Follow-up',prompt:(n,b)=>`Escribe un mensaje de texto CORTO (máx 2 párrafos) de seguimiento en español para un lead inmobiliario llamado ${n||'el lead'}${b?', presupuesto '+b:''}. No hemos hablado en varios días. Sé cálido, profesional y sin presión. Firma como ${AGENT.name} de Keller Williams West Palm Beach.`},
@@ -623,8 +615,25 @@ let currentFilter = 'all';
 let currentLang = 'es';
 let nextId = 8;
 
+const DEFAULT_LEADS = [
+  {id:1,name:'María González',phone:'561-111-2222',budget:'$450,000',stage:'hot',lastContact:-3,notes:'Pre-aprobada, quiere mudarse en 60 días',source:'Zillow',color:'#4f7ef8'},
+  {id:2,name:'Carlos Díaz',phone:'561-333-4444',budget:'$320,000',stage:'warm',lastContact:-5,notes:'Primera vez comprando, necesita orientación',source:'Referido',color:'#7c5cf8'},
+  {id:3,name:'Jennifer López',phone:'561-555-6666',budget:'$600,000',stage:'showing',lastContact:-1,notes:'Lista para ver propiedades en WPB',source:'Open House',color:'#d4a843'},
+  {id:4,name:'Michael Chen',phone:'561-777-8888',budget:'$280,000',stage:'offer',lastContact:0,notes:'Oferta en proceso, 3br/2ba',source:'Zillow',color:'#22c55e'},
+  {id:5,name:'Sofia Martín',phone:'561-999-0000',budget:'$520,000',stage:'contract',lastContact:0,notes:'Contrato firmado, cierre en 30 días',source:'Referido',color:'#ec4899'},
+  {id:6,name:'David Kim',phone:'561-222-3333',budget:'$380,000',stage:'warm',lastContact:-7,notes:'Inversor, busca duplex o townhouse',source:'Instagram',color:'#06b6d4'},
+  {id:7,name:'Ana Rivera',phone:'561-444-5555',budget:'$290,000',stage:'hot',lastContact:-4,notes:'Mudanza urgente por trabajo, preaprobada',source:'Facebook',color:'#f59e0b'},
+];
+
+function saveLeads() { localStorage.setItem('nk_leads', JSON.stringify(leads)); }
+function loadLeads() {
+  const saved = localStorage.getItem('nk_leads');
+  if(saved) { leads = JSON.parse(saved); nextId = Math.max(...leads.map(l=>l.id)) + 1; }
+}
+
 // ── INIT ────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
+  loadLeads();
   setGreeting();
   renderToday();
   renderLeads();
@@ -777,7 +786,7 @@ function quickMsgFromLead(id, type) {
 
 function changeStage(id, stage) {
   const l = leads.find(x => x.id === id);
-  if(l){ l.stage = stage; renderLeads(); renderPipeline(); renderToday(); }
+  if(l){ l.stage = stage; saveLeads(); renderLeads(); renderPipeline(); renderToday(); }
   toast('Etapa actualizada');
 }
 
@@ -796,6 +805,7 @@ function addLead() {
   });
   closeModal('modal-add-lead');
   ['nl-name','nl-phone','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
+  saveLeads();
   renderLeads(); renderPipeline(); renderToday(); renderAILeadSel();
   toast('✅ Lead agregado');
 }
