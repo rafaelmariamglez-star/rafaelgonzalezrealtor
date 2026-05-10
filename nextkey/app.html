@@ -293,7 +293,11 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
     <div class="stat-mini"><div class="stat-mini-num" id="stat-leads">0</div><div class="stat-mini-label">Leads</div></div>
     <div class="stat-mini"><div class="stat-mini-num" id="stat-hot">0</div><div class="stat-mini-label">Calientes</div></div>
     <div class="stat-mini"><div class="stat-mini-num" id="stat-overdue">0</div><div class="stat-mini-label">Sin contacto</div></div>
+    <div class="stat-mini" style="border-color:rgba(245,158,11,.3)"><div class="stat-mini-num" id="stat-streak" style="color:var(--amber)">0</div><div class="stat-mini-label">🔥 Racha</div></div>
   </div>
+  <p class="section-label">Lección de hoy</p>
+  <div id="daily-tip-card" style="margin:0 18px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer" onclick="openDailyLesson()"></div>
+
   <p class="section-label">Prioridades de hoy</p>
   <div class="priority-list" id="priority-list"></div>
 </div>
@@ -588,12 +592,46 @@ const GOALS = [
 ];
 
 const LESSONS = [
-  {icon:'📞',title:'Prospecting & Scripts',desc:'Cómo generar leads y tener conversaciones naturales',progress:80,time:'25 min',content:'Los 5 scripts más importantes:\n\n1. FSBO: "Hola, vi que está vendiendo su propiedad. Trabajo con muchos compradores en esta área..."\n\n2. Expired Listings: "Vi que su propiedad salió del mercado. ¿Qué pasó? ¿Aún quiere vender?"\n\n3. Sphere: "Hey [nombre], estoy construyendo mi negocio de real estate. ¿Conoces a alguien que quiera comprar o vender?"\n\n4. Open House: "Bienvenido. ¿Ya tienes un agente? ¿Estás pre-aprobado?"\n\n5. Cold Call: Sé breve, directo. Enfócate en dar valor, no en vender.'},
-  {icon:'🏠',title:'CMAs & Pricing',desc:'Análisis de mercado y cómo presentar precios',progress:60,time:'30 min',content:'CMA — Comparative Market Analysis:\n\n• Busca 3-5 comparables recientes (últimos 6 meses, < 1 milla)\n• Ajusta por diferencias (sqft, cuartos, condición, año)\n• Analiza días en mercado promedio\n• Nunca des un precio sin ver la propiedad\n\nCómo presentar el precio:\n1. Muestra los datos, no tu opinión\n2. Deja que el seller concluya\n3. Confía en los comparables — los números no mienten'},
-  {icon:'📝',title:'Contratos & Papeleo',desc:'NAR forms, buyer agreements, offer strategy',progress:40,time:'45 min',content:'Documentos clave en Florida:\n\n• Buyer-Broker Agreement — establece tu representación exclusiva\n• FAR/BAR Contract — contrato estándar de Florida\n• Addendums — inspección, HOA, financiamiento\n\nProceso de oferta:\n1. Pre-approval letter del buyer\n2. Proof of funds si es cash\n3. Escrow deposit (típico 1-3%)\n4. Inspection period — 15 días estándar en FL\n5. Closing costs — típico 2-5% del precio'},
-  {icon:'🤝',title:'Negociación',desc:'Técnicas ganar-ganar para cerrar más deals',progress:30,time:'20 min',content:'Principios de negociación:\n\n• Escucha más de lo que hablas\n• Conoce el BATNA (mejor alternativa) de ambas partes\n• Nunca seas el primero en mencionar precio\n• Pide más de lo que quieres — siempre\n• Justifica con datos, no con emociones\n\nFrases que funcionan:\n• "Si puedo conseguir X, ¿cerramos hoy?"\n• "¿Qué necesitarían para que esto funcionara?"\n• El silencio es tu mejor herramienta'},
-  {icon:'📊',title:'Marketing Digital',desc:'Redes sociales, Zillow, y generación de leads online',progress:20,time:'35 min',content:'Plataformas esenciales:\n\n• Zillow Premier Agent — leads de alta intención\n• Instagram — contenido de propiedades + lifestyle WPB\n• Facebook — grupos de comunidad + anuncios geotargeted\n• Google My Business — reseñas locales = oro puro\n\nContenido que funciona:\n1. Tours de propiedades en Reels (30-60 seg)\n2. Market updates mensuales\n3. Tips para compradores / vendedores\n4. Tu historia como agente — autenticidad vende'},
-  {icon:'💰',title:'Finanzas del Agente',desc:'Comisiones, gastos, impuestos y flujo de caja',progress:10,time:'25 min',content:'Estructura de comisiones en FL:\n\n• Típico: 5-6% del precio de venta\n• Se divide entre listing agent y buyer agent\n• Tu split con brokerage (ej: 70/30 o 80/20)\n\nGastos anuales típicos:\n• MLS: ~$600/año\n• NAR + FAR + board local: ~$1,200/año\n• E&O Insurance: ~$300/año\n• Marketing: 10% de tu ingreso objetivo\n\nImpuestos: Como independent contractor, aparta 25-30% de cada comisión antes de gastar.'},
+  {icon:'📞',title:'Prospecting & Scripts',desc:'Cómo generar leads y tener conversaciones naturales',time:'25 min',content:'Los 5 scripts más importantes:\n\n1. FSBO: "Hola, vi que está vendiendo su propiedad. Trabajo con muchos compradores en esta área..."\n\n2. Expired Listings: "Vi que su propiedad salió del mercado. ¿Qué pasó? ¿Aún quiere vender?"\n\n3. Sphere: "Hey [nombre], estoy construyendo mi negocio de real estate. ¿Conoces a alguien que quiera comprar o vender?"\n\n4. Open House: "Bienvenido. ¿Ya tienes un agente? ¿Estás pre-aprobado?"\n\n5. Cold Call: Sé breve, directo. Enfócate en dar valor, no en vender.'},
+  {icon:'🏠',title:'CMAs & Pricing',desc:'Análisis de mercado y cómo presentar precios',time:'30 min',content:'CMA — Comparative Market Analysis:\n\n• Busca 3-5 comparables recientes (últimos 6 meses, < 1 milla)\n• Ajusta por diferencias (sqft, cuartos, condición, año)\n• Analiza días en mercado promedio\n• Nunca des un precio sin ver la propiedad\n\nCómo presentar el precio:\n1. Muestra los datos, no tu opinión\n2. Deja que el seller concluya\n3. Confía en los comparables — los números no mienten'},
+  {icon:'📝',title:'Contratos & Papeleo',desc:'NAR forms, buyer agreements, offer strategy',time:'45 min',content:'Documentos clave en Florida:\n\n• Buyer-Broker Agreement — establece tu representación exclusiva\n• FAR/BAR Contract — contrato estándar de Florida\n• Addendums — inspección, HOA, financiamiento\n\nProceso de oferta:\n1. Pre-approval letter del buyer\n2. Proof of funds si es cash\n3. Escrow deposit (típico 1-3%)\n4. Inspection period — 15 días estándar en FL\n5. Closing costs — típico 2-5% del precio'},
+  {icon:'🤝',title:'Negociación',desc:'Técnicas ganar-ganar para cerrar más deals',time:'20 min',content:'Principios de negociación:\n\n• Escucha más de lo que hablas\n• Conoce el BATNA (mejor alternativa) de ambas partes\n• Nunca seas el primero en mencionar precio\n• Pide más de lo que quieres — siempre\n• Justifica con datos, no con emociones\n\nFrases que funcionan:\n• "Si puedo conseguir X, ¿cerramos hoy?"\n• "¿Qué necesitarían para que esto funcionara?"\n• El silencio es tu mejor herramienta'},
+  {icon:'📊',title:'Marketing Digital',desc:'Redes sociales, Zillow, y generación de leads online',time:'35 min',content:'Plataformas esenciales:\n\n• Zillow Premier Agent — leads de alta intención\n• Instagram — contenido de propiedades + lifestyle WPB\n• Facebook — grupos de comunidad + anuncios geotargeted\n• Google My Business — reseñas locales = oro puro\n\nContenido que funciona:\n1. Tours de propiedades en Reels (30-60 seg)\n2. Market updates mensuales\n3. Tips para compradores / vendedores\n4. Tu historia como agente — autenticidad vende'},
+  {icon:'💰',title:'Finanzas del Agente',desc:'Comisiones, gastos, impuestos y flujo de caja',time:'25 min',content:'Estructura de comisiones en FL:\n\n• Típico: 5-6% del precio de venta\n• Se divide entre listing agent y buyer agent\n• Tu split con brokerage (ej: 70/30 o 80/20)\n\nGastos anuales típicos:\n• MLS: ~$600/año\n• NAR + FAR + board local: ~$1,200/año\n• E&O Insurance: ~$300/año\n• Marketing: 10% de tu ingreso objetivo\n\nImpuestos: Como independent contractor, aparta 25-30% de cada comisión antes de gastar.'},
+];
+
+const DAILY_TIPS = [
+  {icon:'🔥',title:'La regola del 3-3-3',challenge:'Llama 3 leads, manda 3 mensajes, agrega 3 contactos nuevos hoy.',tip:'Los agentes top prospectan TODOS los días sin excepción. La consistencia es el único secreto.'},
+  {icon:'📱',title:'Power Hour',challenge:'Dedica 1 hora sin interrupciones solo a llamadas de prospecting.',tip:'Una hora de prospecting diario puede generar 2-3 cierres extra al año. La matemática no falla.'},
+  {icon:'💬',title:'El arte del follow-up',challenge:'Manda un mensaje de valor a 5 leads que no han respondido en 7+ días.',tip:'El 80% de las ventas se hacen entre el 5to y 12vo contacto. La mayoría renuncia después del 2do.'},
+  {icon:'🏠',title:'Conoce tu mercado',challenge:'Busca los 5 listings más recientes en tu zip code y analiza el precio por sqft.',tip:'El agente que conoce los números mejor que cualquier otro siempre gana la confianza del cliente.'},
+  {icon:'⭐',title:'Pide el referido',challenge:'Manda un mensaje a 3 clientes pasados pidiendo referidos hoy.',tip:'El 82% de las transacciones inmobiliarias vienen de referidos o gente conocida. Tu red es tu net worth.'},
+  {icon:'📸',title:'Contenido de hoy',challenge:'Graba un Reel de 30 segundos sobre algo del mercado local de WPB.',tip:'Los agentes que postean 3-4 veces por semana generan 3x más leads que los que no tienen presencia digital.'},
+  {icon:'🎯',title:'Define tu nicho',challenge:'Escribe en papel los 3 tipos de cliente que más quieres servir y por qué.',tip:'Los generalistas luchan. Los especialistas dominan. ¿Eres el experto en primera compra, lujo, inversión?'},
+  {icon:'🤝',title:'Open House máster',challenge:'Planea tu próximo open house — crea la lista de preguntas que vas a hacer a los visitors.',tip:'Un open house bien ejecutado puede generar 3-5 leads calificados en un solo día.'},
+  {icon:'📋',title:'Script de expirados',challenge:'Practica el expired listing script en voz alta 5 veces hasta que suene natural.',tip:'Los expirados son leads de alta intención — ya querían vender, solo necesitan el agente correcto.'},
+  {icon:'💡',title:'Propuesta de valor',challenge:'Escribe en 2 oraciones por qué un cliente debería elegirte a ti sobre otro agente.',tip:'Si no puedes explicar tu valor en 30 segundos, el cliente no lo va a entender tampoco.'},
+  {icon:'📞',title:'Llamadas matutinas',challenge:'Haz tus llamadas de prospecting antes del mediodía — la tasa de respuesta es 2x mayor.',tip:'El 55% de los contactos exitosos ocurren entre 9am y 12pm. La mañana es oro.'},
+  {icon:'🏆',title:'Cierre mental',challenge:'Visualiza cómo sería tu día con 3 cierres este mes. Escríbelo con detalles.',tip:'Los atletas de élite usan visualización. Los agentes top también. Tu cerebro no distingue entre real e imaginado.'},
+  {icon:'📊',title:'Revisa tu pipeline',challenge:'Actualiza el stage de cada lead en tu CRM y escribe el próximo paso para cada uno.',tip:'Un pipeline limpio y actualizado es la diferencia entre estar ocupado y estar productivo.'},
+  {icon:'🌐',title:'Google My Business',challenge:'Responde todas las reseñas de Google que tengas pendientes hoy.',tip:'Los clientes leen 7 reseñas en promedio antes de contactar a un agente. Tu reputación online es tu primera impresión.'},
+  {icon:'🔑',title:'Aprende dotloop',challenge:'Crea un template de oferta en dotloop para tenerlo listo cuando lo necesites.',tip:'Los agentes que dominan la tecnología cierran 28% más rápido que los que no.'},
+  {icon:'💎',title:'Mercado de lujo',challenge:'Visita 2 propiedades de lujo en WPB como práctica, aunque no tengas clientes de ese nivel aún.',tip:'Conocer el mercado de lujo te da credibilidad con TODOS tus clientes, no solo los de alto presupuesto.'},
+  {icon:'📧',title:'Email marketing',challenge:'Crea una lista de email de tus 20 contactos más importantes y mándales un update del mercado.',tip:'El email tiene un ROI de $42 por cada $1 invertido. Es el canal más subestimado en real estate.'},
+  {icon:'🤓',title:'Educación continua',challenge:'Lee 10 páginas de un libro de real estate, ventas, o mindset hoy.',tip:'Los agentes top leen un promedio de 2 libros por mes. El conocimiento compuesto es tu ventaja competitiva.'},
+  {icon:'🏃',title:'Energía = productividad',challenge:'Haz 20 minutos de ejercicio antes de empezar tu día de trabajo.',tip:'El ejercicio aumenta la serotonina y dopamina — exactamente lo que necesitas para prospectar con energía y convicción.'},
+  {icon:'🗣',title:'Practica tu presentación',challenge:'Grábate haciendo tu buyer consultation presentation y mírala crítica y objetivamente.',tip:'Los mejores vendedores del mundo practican su pitch hasta que suena completamente natural y auténtico.'},
+  {icon:'🔄',title:'Sistematiza tu negocio',challenge:'Crea un checklist de los pasos que sigues desde lead hasta cierre.',tip:'Un sistema replicable es lo que separa a los agentes con ingresos estables de los que viven de suerte.'},
+  {icon:'🌟',title:'Zona de influencia',challenge:'Identifica 5 negocios locales con los que puedas hacer partnerships (mortgage, title, moving).',tip:'Un network sólido de referral partners puede duplicar tus leads sin gastar un dólar extra en marketing.'},
+  {icon:'📱',title:'Domina Instagram',challenge:'Crea 3 ideas de contenido para postear esta semana — one tip, one property, one personal.',tip:'La consistencia en redes sociales tarda 6 meses en dar frutos, pero cuando llega, es exponencial.'},
+  {icon:'💪',title:'Maneja el rechazo',challenge:'Llama a 10 personas hoy sabiendo que la mayoría dirá que no — y celebra cada "no".',tip:'Cada "no" te acerca al "sí". Los agentes top reciben 10x más rechazos que el promedio — porque llaman 10x más.'},
+  {icon:'🗺',title:'Conoce tu territorio',challenge:'Maneja por 3 vecindarios de tu área objetivo y nota qué propiedades hay for sale/sold.',tip:'El agente que conoce cada calle, precio y historia de un vecindario es el que los clientes buscan y pagan.'},
+  {icon:'📅',title:'Bloquea tu calendario',challenge:'Planea tu semana completa hoy — bloquea tiempo para prospecting, showings, y admin.',tip:'Sin un calendario bloqueado, las urgencias del día destruyen las prioridades de tu negocio.'},
+  {icon:'🎤',title:'Tu elevator pitch',challenge:'Practica decir qué haces y cómo ayudas en exactamente 30 segundos.',tip:'Nunca sabes cuándo vas a conocer a tu próximo cliente. El elevator pitch es tu arma más importante.'},
+  {icon:'💼',title:'Profesionalismo',challenge:'Revisa que tu firma de email, foto de perfil y bio en todas las plataformas estén actualizadas.',tip:'Tu marca personal es lo primero que ve un cliente antes de conocerte. La consistencia genera confianza.'},
+  {icon:'🧠',title:'Mindset de abundancia',challenge:'Escribe 3 cosas por las que estás agradecido en tu negocio hoy, por pequeñas que sean.',tip:'El mindset correcto no es opcional — es el foundation de todo lo demás. Los mejores agentes lo cultivan diariamente.'},
+  {icon:'🔍',title:'Analiza la competencia',challenge:'Busca al agente #1 de tu zona y estudia su perfil, marketing y reviews.',tip:'No para copiar, sino para entender el estándar y luego superarlo. Aprende del mejor, sé el mejor.'},
+  {icon:'💬',title:'Testimonios poderosos',challenge:'Contacta a 2 clientes anteriores y pídeles una reseña en Google o Zillow.',tip:'Un testimonio auténtico vale más que cualquier anuncio pagado. Las palabras de otros venden lo que tú no puedes.'},
 ];
 
 const PLAN = [
@@ -695,12 +733,69 @@ function setGreeting() {
   document.getElementById('greeting-title').innerHTML = `${gr},<br><span class="name">Rafael.</span>`;
 }
 
+function getDayOfYear() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  return Math.floor((now - start) / 86400000);
+}
+
+function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+
+function updateStreak() {
+  const today = getTodayKey();
+  const yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+  const yKey = yesterday.toISOString().split('T')[0];
+  let streak = parseInt(localStorage.getItem('nk_streak')||'0');
+  const lastOpen = localStorage.getItem('nk_last_open');
+  if(lastOpen === today) { /* already counted */ }
+  else if(lastOpen === yKey) { streak++; localStorage.setItem('nk_streak', streak); localStorage.setItem('nk_last_open', today); }
+  else { streak = 1; localStorage.setItem('nk_streak', streak); localStorage.setItem('nk_last_open', today); }
+  return streak;
+}
+
+function renderDailyTip() {
+  const idx = getDayOfYear() % DAILY_TIPS.length;
+  const tip = DAILY_TIPS[idx];
+  document.getElementById('daily-tip-card').innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <span style="font-size:22px">${tip.icon}</span>
+      <div>
+        <div style="font-weight:700;font-size:14px">${tip.title}</div>
+        <div style="font-size:11px;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px">Lección del día</div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px">${tip.tip}</div>
+    <div style="background:rgba(79,126,248,.08);border:1px solid rgba(79,126,248,.2);border-radius:8px;padding:10px 12px">
+      <span style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px">Reto de hoy</span>
+      <div style="font-size:13px;color:var(--text);margin-top:4px">${tip.challenge}</div>
+    </div>`;
+}
+
+function openDailyLesson() {
+  const idx = getDayOfYear() % DAILY_TIPS.length;
+  const tip = DAILY_TIPS[idx];
+  document.getElementById('lesson-modal-title').textContent = tip.icon+' '+tip.title;
+  document.getElementById('lesson-modal-body').innerHTML = `
+    <div style="background:rgba(79,126,248,.08);border:1px solid rgba(79,126,248,.2);border-radius:10px;padding:14px;margin-bottom:14px">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">🎯 Reto de hoy</div>
+      <div style="font-size:14px;color:var(--text);line-height:1.6">${tip.challenge}</div>
+    </div>
+    <div style="font-size:14px;line-height:1.8;color:var(--text)">${tip.tip}</div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:12px;color:var(--text2)">
+      El contenido cambia cada día. Vuelve mañana para una nueva lección.
+    </div>`;
+  openModal('modal-lesson');
+}
+
 function renderToday() {
   const hot = leads.filter(l => l.stage==='hot').length;
   const overdue = leads.filter(l => l.lastContact <= -3).length;
+  const streak = updateStreak();
   document.getElementById('stat-leads').textContent = leads.length;
   document.getElementById('stat-hot').textContent = hot;
   document.getElementById('stat-overdue').textContent = overdue;
+  document.getElementById('stat-streak').textContent = streak;
+  renderDailyTip();
 
   const prio = leads.filter(l => l.lastContact <= -3).sort((a,b) => a.lastContact - b.lastContact).slice(0,5);
   const list = document.getElementById('priority-list');
@@ -946,10 +1041,22 @@ function renderGoals() {
 
 // ── TRAINING ────────────────────────────────────────────────────────────────
 function renderLessons() {
-  document.getElementById('lessons-list').innerHTML = LESSONS.map((l,i) => `
+  const todayIdx = getDayOfYear() % DAILY_TIPS.length;
+  const todayTip = DAILY_TIPS[todayIdx];
+
+  const dailySection = `
+    <div style="margin:0 0 14px">
+      <div style="font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Contenido de hoy — día ${todayIdx+1} de ${DAILY_TIPS.length}</div>
+      <div class="lesson-card" onclick="openDailyLesson()" style="border-color:rgba(79,126,248,.3);background:rgba(79,126,248,.05)">
+        <div class="lesson-header"><span class="lesson-icon">${todayTip.icon}</span><span class="lesson-title">${todayTip.title}</span><span style="margin-left:auto;font-size:10px;background:var(--accent);color:#fff;padding:2px 8px;border-radius:99px;font-weight:700">HOY</span></div>
+        <div class="lesson-meta"><span>${todayTip.challenge}</span><span>~5 min</span></div>
+      </div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Módulos completos</div>`;
+
+  document.getElementById('lessons-list').innerHTML = dailySection + LESSONS.map((l,i) => `
     <div class="lesson-card" onclick="openLesson(${i})">
       <div class="lesson-header"><span class="lesson-icon">${l.icon}</span><span class="lesson-title">${l.title}</span></div>
-      <div class="lesson-progress"><div class="lesson-progress-fill" style="width:${l.progress}%"></div></div>
       <div class="lesson-meta"><span>${l.desc}</span><span>${l.time}</span></div>
     </div>`).join('');
 }
