@@ -250,6 +250,23 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 /* TOAST */
 #toast{position:fixed;bottom:calc(var(--nav-h) + 16px);left:50%;transform:translateX(-50%) translateY(20px);background:rgba(15,21,33,.95);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 18px;font-size:13px;font-weight:500;color:var(--text);opacity:0;transition:opacity .2s,transform .2s;z-index:999;white-space:nowrap;backdrop-filter:blur(12px)}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* SIGNATURE */
+.sig-area{border:2px dashed var(--accent);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;margin:8px 0}
+.sig-area:active{background:rgba(79,126,248,.08)}
+.sig-area.signed{border-color:var(--green);border-style:solid;background:rgba(34,197,94,.05)}
+.sig-area img{max-width:100%;max-height:60px;display:block;margin:0 auto}
+.sig-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px}
+.sig-label.realtor{color:var(--accent)}
+.sig-label.client{color:var(--amber)}
+#sig-canvas{width:100%;height:180px;background:#fff;border-radius:10px;cursor:crosshair;touch-action:none}
+.sig-pad-btns{display:flex;gap:10px;margin-top:12px}
+.contract-html{font-size:12px;line-height:1.8;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;margin-top:10px;max-height:280px;overflow-y:auto}
+.contract-html h2{font-size:14px;font-weight:800;text-align:center;margin-bottom:4px}
+.contract-html .contract-sub{font-size:11px;color:var(--text2);text-align:center;margin-bottom:12px}
+.contract-html .section{margin-bottom:10px}
+.contract-html .section-title{font-weight:700;font-size:12px;color:var(--accent);margin-bottom:4px;text-transform:uppercase;letter-spacing:.3px}
+.contract-html .divider{border:none;border-top:1px solid var(--border);margin:10px 0}
 </style>
 </head>
 <body>
@@ -568,9 +585,49 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       </div>
       <div class="field"><label>Compensación del agente (%)</label><input id="c-comp" placeholder="3" value="3"/></div>
       <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="genContract()">📄 Generar contrato</button>
-      <pre class="contract-preview" id="contract-preview" style="display:none"></pre>
-      <div id="contract-actions" style="display:none;margin-top:10px">
-        <button class="btn btn-ghost" style="width:100%" onclick="printContract()">🖨 Imprimir / Guardar PDF</button>
+
+      <div id="contract-preview-area" style="display:none">
+        <div class="contract-html" id="contract-html-body"></div>
+
+        <div style="margin-top:14px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius)">
+          <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Firmas digitales</p>
+
+          <div class="sig-label realtor">✏️ Agente — Rafael Gonzalez</div>
+          <div class="sig-area" id="sig-realtor-area" onclick="openSigPad('realtor')">
+            <div id="sig-realtor-preview" style="color:var(--text2);font-size:13px">Toca aquí para firmar</div>
+          </div>
+
+          <div class="sig-label client" style="margin-top:10px">✏️ Cliente — <span id="sig-client-name">Comprador</span></div>
+          <div class="sig-area" id="sig-client-area" onclick="openSigPad('client')">
+            <div id="sig-client-preview" style="color:var(--text2);font-size:13px">Toca aquí para firmar</div>
+          </div>
+
+          <div id="sig-status" style="text-align:center;font-size:12px;color:var(--text2);margin:10px 0"></div>
+        </div>
+
+        <div id="contract-actions" style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn btn-ghost" style="flex:1" onclick="printContract()">🖨 Imprimir / PDF</button>
+          <button class="btn btn-primary" style="flex:1" id="btn-seal" onclick="sealContract()" disabled style="opacity:.5">🔏 Sellar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNATURE PAD -->
+<div class="modal-backdrop" id="modal-sigpad">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="sigpad-title">Firma aquí</span>
+      <button class="modal-close" onclick="closeModal('modal-sigpad')">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--text2);margin-bottom:10px">Dibuja tu firma con el dedo o el mouse:</p>
+      <canvas id="sig-canvas"></canvas>
+      <div class="sig-pad-btns">
+        <button class="btn btn-ghost" style="flex:1" onclick="clearSigPad()">🗑 Limpiar</button>
+        <button class="btn btn-primary" style="flex:1" onclick="confirmSig()">✅ Confirmar firma</button>
       </div>
     </div>
   </div>
@@ -1333,6 +1390,90 @@ function setLang(lang, el) {
   el.classList.add('active');
 }
 
+// ── SIGNATURE STATE ──────────────────────────────────────────────────────────
+let sigData = {realtor: null, client: null};
+let sigTarget = null;
+let sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0;
+let contractData = {};
+
+function initSigCanvas() {
+  sigCanvas = document.getElementById('sig-canvas');
+  if(!sigCanvas) return;
+  const rect = sigCanvas.getBoundingClientRect();
+  sigCanvas.width = sigCanvas.offsetWidth * window.devicePixelRatio;
+  sigCanvas.height = sigCanvas.offsetHeight * window.devicePixelRatio;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  sigCtx.fillStyle = '#fff';
+  sigCtx.fillRect(0,0,sigCanvas.width,sigCanvas.height);
+  sigCtx.strokeStyle = '#111';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+
+  const getPos = e => {
+    const r = sigCanvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return {x: src.clientX - r.left, y: src.clientY - r.top};
+  };
+  sigCanvas.addEventListener('mousedown',  e => { sigDrawing=true; const p=getPos(e); sigLastX=p.x; sigLastY=p.y; });
+  sigCanvas.addEventListener('mousemove',  e => { if(!sigDrawing) return; const p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(sigLastX,sigLastY); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigLastX=p.x; sigLastY=p.y; });
+  sigCanvas.addEventListener('mouseup',    () => sigDrawing=false);
+  sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); sigDrawing=true; const p=getPos(e); sigLastX=p.x; sigLastY=p.y; }, {passive:false});
+  sigCanvas.addEventListener('touchmove',  e => { e.preventDefault(); if(!sigDrawing) return; const p=getPos(e); sigCtx.beginPath(); sigCtx.moveTo(sigLastX,sigLastY); sigCtx.lineTo(p.x,p.y); sigCtx.stroke(); sigLastX=p.x; sigLastY=p.y; }, {passive:false});
+  sigCanvas.addEventListener('touchend',   () => sigDrawing=false);
+}
+
+function openSigPad(target) {
+  sigTarget = target;
+  const title = target==='realtor' ? `✏️ Firma — ${AGENT.name}` : `✏️ Firma — ${contractData.buyer||'Comprador'}`;
+  document.getElementById('sigpad-title').textContent = title;
+  openModal('modal-sigpad');
+  setTimeout(initSigCanvas, 100);
+}
+
+function clearSigPad() {
+  if(!sigCtx) return;
+  sigCtx.fillStyle='#fff'; sigCtx.fillRect(0,0,sigCanvas.width,sigCanvas.height);
+}
+
+function confirmSig() {
+  if(!sigCtx) return;
+  sigData[sigTarget] = sigCanvas.toDataURL('image/png');
+  closeModal('modal-sigpad');
+  updateSigPreviews();
+}
+
+function updateSigPreviews() {
+  const ra = document.getElementById('sig-realtor-area');
+  const ca = document.getElementById('sig-client-area');
+  const rp = document.getElementById('sig-realtor-preview');
+  const cp = document.getElementById('sig-client-preview');
+  if(sigData.realtor) {
+    rp.innerHTML = `<img src="${sigData.realtor}" style="max-height:55px;display:block;margin:0 auto">`;
+    ra.classList.add('signed');
+  }
+  if(sigData.client) {
+    cp.innerHTML = `<img src="${sigData.client}" style="max-height:55px;display:block;margin:0 auto">`;
+    ca.classList.add('signed');
+  }
+  const both = sigData.realtor && sigData.client;
+  const btn = document.getElementById('btn-seal');
+  if(btn) { btn.disabled = !both; btn.style.opacity = both ? '1' : '.5'; }
+  const status = document.getElementById('sig-status');
+  if(status) {
+    if(both) status.innerHTML = '<span style="color:var(--green);font-weight:700">✅ Ambas firmas completas — listo para sellar</span>';
+    else if(sigData.realtor) status.textContent = '⏳ Falta la firma del cliente';
+    else if(sigData.client) status.textContent = '⏳ Falta tu firma como agente';
+    else status.textContent = 'Se requieren ambas firmas para sellar el contrato';
+  }
+}
+
+function sealContract() {
+  if(!sigData.realtor || !sigData.client){ toast('Se requieren ambas firmas'); return; }
+  printContract();
+}
+
 function genContract() {
   const buyer      = document.getElementById('c-buyer').value.trim() || '[NOMBRE DEL COMPRADOR]';
   const buyerAddr  = document.getElementById('c-buyer-addr').value.trim() || '[DIRECCIÓN DEL COMPRADOR]';
@@ -1345,6 +1486,14 @@ function genContract() {
   const comp       = document.getElementById('c-comp').value || '3';
   const dateES     = new Date().toLocaleDateString('es-US',{year:'numeric',month:'long',day:'numeric'});
   const dateEN     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  contractData = {buyer, buyerAddr, buyerPhone, start, end, area, price, propType, comp};
+  sigData = {realtor:null, client:null};
+  document.getElementById('sig-client-name').textContent = buyer;
+  document.getElementById('sig-realtor-area').classList.remove('signed');
+  document.getElementById('sig-client-area').classList.remove('signed');
+  document.getElementById('sig-realtor-preview').innerHTML = 'Toca aquí para firmar';
+  document.getElementById('sig-client-preview').innerHTML = 'Toca aquí para firmar';
+  updateSigPreviews();
 
   const es = `ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR
 Estado de Florida — 2026
@@ -1584,21 +1733,85 @@ This contract was prepared for informational purposes.
 Consult a Florida real estate attorney for legal advice
 specific to your situation.`;
 
-  const contract = currentLang === 'es' ? es : en;
-  const preview = document.getElementById('contract-preview');
-  preview.textContent = contract;
-  preview.style.display = 'block';
-  document.getElementById('contract-actions').style.display = 'block';
+  const isES = currentLang === 'es';
+  const sections = isES ? [
+    {t:'1. PARTES', b:`<b>Agente:</b> ${AGENT.name} · ${AGENT.brokerage} Realty · ${AGENT.phone}<br><b>Comprador:</b> ${buyer} · ${buyerAddr} · ${buyerPhone}`},
+    {t:'2. PERÍODO', b:`Vigente del <b>${start}</b> al <b>${end}</b>`},
+    {t:'3. ÁREA & PROPIEDAD', b:`${area} · ${propType} · ${price}`},
+    {t:'4. REPRESENTACIÓN EXCLUSIVA', b:'El Comprador acuerda trabajar EXCLUSIVAMENTE con el Corredor durante el período indicado y notificar al Corredor antes de visitar cualquier propiedad.'},
+    {t:'5. DEBERES DEL CORREDOR (§ 475.278 FL)', b:'Honestidad, divulgación, diligencia, manejo de escrow, rendición de cuentas.'},
+    {t:'6. DEBERES DEL COMPRADOR', b:'Exclusividad, notificación de propiedades, información financiera veraz, buena fe.'},
+    {t:`7. COMPENSACIÓN ${comp}% (NAR Settlement 2024)`, b:`El Comprador acuerda una compensación de <b>${comp}%</b> del precio de compra. Fuente preferida: concesión del vendedor. Si no aplica, el Comprador paga la diferencia al cierre.`},
+    {t:'8. PROPIEDAD INDEPENDIENTE', b:'Si el Comprador adquiere propiedad identificada por el Corredor dentro de 90 días del vencimiento, aplica la compensación acordada.'},
+    {t:'9. FAIR HOUSING', b:'Cumplimiento con Fair Housing Act, 42 U.S.C. § 3604.'},
+    {t:'10. RESOLUCIÓN DE DISPUTAS', b:'Mediación primero, luego arbitraje vinculante per Florida Realtors Association.'},
+    {t:'11. LEY APLICABLE', b:'Florida Real Estate License Law, Capítulo 475, Florida Statutes.'},
+  ] : [
+    {t:'1. PARTIES', b:`<b>Broker:</b> ${AGENT.name} · ${AGENT.brokerage} Realty · ${AGENT.phone}<br><b>Buyer:</b> ${buyer} · ${buyerAddr} · ${buyerPhone}`},
+    {t:'2. PERIOD', b:`Effective <b>${start}</b> through <b>${end}</b>`},
+    {t:'3. AREA & PROPERTY TYPE', b:`${area} · ${propType} · ${price}`},
+    {t:'4. EXCLUSIVE REPRESENTATION', b:'Buyer agrees to work EXCLUSIVELY with Broker and notify Broker before visiting any property, open house, or contacting any other agent.'},
+    {t:'5. BROKER DUTIES (§ 475.278 FL)', b:'Honesty, disclosure, skill & diligence, escrow handling, accountability.'},
+    {t:'6. BUYER OBLIGATIONS', b:'Exclusivity, property notification, truthful financial info, good faith.'},
+    {t:`7. COMPENSATION ${comp}% (NAR Settlement 2024)`, b:`Buyer agrees to <b>${comp}%</b> of purchase price. Preferred source: seller concession. If insufficient, Buyer pays the difference at closing.`},
+    {t:'8. INDEPENDENTLY FOUND PROPERTY', b:'If Buyer acquires property identified by Broker within 90 days of expiration, agreed compensation applies.'},
+    {t:'9. FAIR HOUSING', b:'Compliance with Fair Housing Act, 42 U.S.C. § 3604.'},
+    {t:'10. DISPUTE RESOLUTION', b:'Mediation first, then binding arbitration per Florida Realtors Association rules.'},
+    {t:'11. GOVERNING LAW', b:'Florida Real Estate License Law, Chapter 475, Florida Statutes.'},
+  ];
+
+  const title = isES ? 'ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR' : 'EXCLUSIVE BUYER REPRESENTATION AGREEMENT';
+  const sub = `Estado de Florida — 2026 · ${isES ? dateES : dateEN}`;
+  const html = `<h2>${title}</h2><div class="contract-sub">${sub}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Contrato preparado con fines informativos. Consulte con un abogado de bienes raíces de Florida.</div>`;
+
+  document.getElementById('contract-html-body').innerHTML = html;
+  document.getElementById('contract-preview-area').style.display = 'block';
+  updateSigPreviews();
 }
 
 function printContract() {
-  const text = document.getElementById('contract-preview').textContent;
+  const body = document.getElementById('contract-html-body').innerHTML;
+  const d = contractData;
+  const sigR = sigData.realtor ? `<img src="${sigData.realtor}" style="height:60px;display:block;margin-bottom:4px">` : '<div style="border-top:2px solid #000;width:280px;margin-bottom:4px"></div>';
+  const sigC = sigData.client  ? `<img src="${sigData.client}"  style="height:60px;display:block;margin-bottom:4px">` : '<div style="border-top:2px solid #000;width:280px;margin-bottom:4px"></div>';
+  const dateStr = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
   const w = window.open('','_blank');
   w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Buyer-Broker Agreement</title>
-  <style>body{font-family:'Courier New',monospace;font-size:12px;padding:40px;max-width:720px;margin:0 auto;line-height:1.9;color:#111}
-  @media print{body{padding:20px}}</style></head>
-  <body><pre>${text}</pre></body></html>`);
-  w.document.close(); w.print();
+  <style>
+    body{font-family:Georgia,serif;font-size:12px;padding:40px;max-width:720px;margin:0 auto;line-height:1.8;color:#111}
+    h2{font-size:16px;text-align:center;margin-bottom:4px}
+    .sub{text-align:center;color:#555;margin-bottom:16px;font-size:12px}
+    .section-title{font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#333;margin:14px 0 4px}
+    hr{border:none;border-top:1px solid #ddd;margin:10px 0}
+    .sig-block{display:flex;gap:40px;margin-top:30px;padding-top:20px;border-top:2px solid #000}
+    .sig-col{flex:1}
+    .sig-name{font-size:11px;margin-top:4px;color:#333}
+    .sig-title{font-size:10px;color:#666}
+    @media print{body{padding:20px}}
+  </style></head>
+  <body>
+    ${body}
+    <div class="sig-block">
+      <div class="sig-col">
+        <div class="sig-title">AGENTE / BROKER</div>
+        ${sigR}
+        <div class="sig-name"><b>${AGENT.name}</b></div>
+        <div class="sig-title">${AGENT.brokerage} Realty · FL Licensed RE Agent</div>
+        <div class="sig-title">Fecha: ${dateStr}</div>
+      </div>
+      <div class="sig-col">
+        <div class="sig-title">COMPRADOR / BUYER</div>
+        ${sigC}
+        <div class="sig-name"><b>${d.buyer||'Comprador'}</b></div>
+        <div class="sig-title">${d.buyerPhone||''}</div>
+        <div class="sig-title">Fecha: ${dateStr}</div>
+      </div>
+    </div>
+  </body></html>`);
+  w.document.close();
+  w.print();
 }
 
 // ── SETTINGS ────────────────────────────────────────────────────────────────
