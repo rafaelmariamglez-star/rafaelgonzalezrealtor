@@ -471,7 +471,29 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title">🎯 Metas del mes</span><button class="modal-close" onclick="closeModal('modal-goals')">✕</button></div>
-    <div class="goals-grid" id="goals-grid"></div>
+    <div style="padding:12px 18px 0" id="goals-body"></div>
+  </div>
+</div>
+
+<!-- GOAL DETAIL -->
+<div class="modal-backdrop" id="modal-goal-detail">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="goal-detail-title">Meta</span><button class="modal-close" onclick="closeModal('modal-goal-detail')">✕</button></div>
+    <div class="modal-body" id="goal-detail-body"></div>
+  </div>
+</div>
+
+<!-- SET GOAL -->
+<div class="modal-backdrop" id="modal-set-goal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-header"><span class="modal-title" id="set-goal-title">Editar meta</span><button class="modal-close" onclick="closeModal('modal-set-goal')">✕</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Meta del mes</label><input id="sg-target" type="number" placeholder="30"/></div>
+      <div class="field"><label>Progreso actual</label><input id="sg-current" type="number" placeholder="0"/></div>
+      <button class="btn btn-primary" style="width:100%" onclick="saveGoal()">Guardar meta</button>
+    </div>
   </div>
 </div>
 
@@ -582,14 +604,30 @@ const MSGS = {
   custom:{label:'Personalizado',prompt:(n,b)=>''},
 };
 
-const GOALS = [
-  {key:'calls',label:'Llamadas',current:18,target:30},
-  {key:'contacts',label:'Nuevos contactos',current:7,target:15},
-  {key:'showings',label:'Showings',current:4,target:10},
-  {key:'listings',label:'Listings',current:1,target:3},
-  {key:'closings',label:'Cierres',current:1,target:2},
-  {key:'income',label:'Comisión $',current:9000,target:20000},
+const GOAL_DEFS = [
+  {key:'calls',   label:'Llamadas',        icon:'📞', unit:'',  step:1,  advice:(left,days)=>`Haz ${Math.ceil(left/days)} llamadas por día — pon el timer en 1 hora y no pares.`},
+  {key:'contacts',label:'Nuevos contactos',icon:'👤', unit:'',  step:1,  advice:(left,days)=>`Agrega ${Math.ceil(left/days)} persona nueva al día — redes sociales, vecinos, esfera.`},
+  {key:'showings', label:'Showings',        icon:'🏠', unit:'',  step:1,  advice:(left,days)=>`Agenda ${Math.ceil(left/days)} showing por día — confirma con tus leads calientes primero.`},
+  {key:'listings', label:'Listings',        icon:'📋', unit:'',  step:1,  advice:(left,days)=>`Visita ${Math.ceil(left/days)} propiedad potencial — habla con FSBOs y expirados esta semana.`},
+  {key:'closings', label:'Cierres',         icon:'🏆', unit:'',  step:1,  advice:(left,days)=>`Revisa todos tus contratos activos — ¿hay algo que puedas empujar para cerrar este mes?`},
+  {key:'income',   label:'Comisión',        icon:'💰', unit:'$', step:500, advice:(left,days)=>`Te faltan $${left.toLocaleString()} — cada closing te acerca. ¿Qué lead está más cerca de cerrar?`},
 ];
+
+function loadGoals() {
+  const saved = localStorage.getItem('nk_goals');
+  if(saved) return JSON.parse(saved);
+  return [
+    {key:'calls',   current:18, target:30},
+    {key:'contacts',current:7,  target:15},
+    {key:'showings',current:4,  target:10},
+    {key:'listings',current:1,  target:3},
+    {key:'closings',current:1,  target:2},
+    {key:'income',  current:9000,target:20000},
+  ];
+}
+function saveGoals(g) { localStorage.setItem('nk_goals', JSON.stringify(g)); }
+let GOALS = loadGoals();
+let editingGoalKey = null;
 
 const LESSONS = [
   {icon:'📞',title:'Prospecting & Scripts',desc:'Cómo generar leads y tener conversaciones naturales',time:'25 min',content:'Los 5 scripts más importantes:\n\n1. FSBO: "Hola, vi que está vendiendo su propiedad. Trabajo con muchos compradores en esta área..."\n\n2. Expired Listings: "Vi que su propiedad salió del mercado. ¿Qué pasó? ¿Aún quiere vender?"\n\n3. Sphere: "Hey [nombre], estoy construyendo mi negocio de real estate. ¿Conoces a alguien que quiera comprar o vender?"\n\n4. Open House: "Bienvenido. ¿Ya tienes un agente? ¿Estás pre-aprobado?"\n\n5. Cold Call: Sé breve, directo. Enfócate en dar valor, no en vender.'},
@@ -1027,16 +1065,134 @@ function renderPipeline() {
 }
 
 // ── GOALS ───────────────────────────────────────────────────────────────────
+function getDaysLeftInMonth() {
+  const now = new Date();
+  const last = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+  return Math.max(1, last - now.getDate() + 1);
+}
+
 function renderGoals() {
-  document.getElementById('goals-grid').innerHTML = GOALS.map(g => {
+  const daysLeft = getDaysLeftInMonth();
+  const html = GOALS.map(g => {
+    const def = GOAL_DEFS.find(d => d.key === g.key);
     const pct = Math.min(100, Math.round(g.current/g.target*100));
-    const fmt = v => g.key==='income' ? '$'+v.toLocaleString() : v;
-    return `<div class="goal-card">
-      <div class="goal-label">${g.label}</div>
-      <div class="goal-numbers"><span class="goal-current">${fmt(g.current)}</span><span class="goal-target">/ ${fmt(g.target)}</span></div>
-      <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${pct}%"></div></div>
+    const left = Math.max(0, g.target - g.current);
+    const fmt = v => def.unit==='$' ? '$'+v.toLocaleString() : v;
+    const done = g.current >= g.target;
+    const advice = done ? '✅ ¡Meta lograda! Define una nueva meta más alta.' : def.advice(left, daysLeft);
+    const perDay = done ? 0 : Math.ceil(left/daysLeft);
+    const perDayLabel = def.unit==='$' ? '$'+perDay.toLocaleString()+'/día' : perDay+'/día';
+
+    return `<div style="background:var(--surface);border:1px solid ${done?'rgba(34,197,94,.3)':'var(--border)'};border-radius:var(--radius);padding:16px;margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:20px">${def.icon}</span>
+          <span style="font-weight:700;font-size:15px">${def.label}</span>
+          ${done?'<span style="font-size:10px;background:rgba(34,197,94,.15);color:var(--green);padding:2px 8px;border-radius:99px;font-weight:700">LOGRADA</span>':''}
+        </div>
+        <button onclick="openSetGoal('${g.key}')" style="background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px">✏️</button>
+      </div>
+      <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:8px">
+        <span style="font-size:32px;font-weight:800;color:${done?'var(--green)':'var(--text)'}">${fmt(g.current)}</span>
+        <span style="font-size:14px;color:var(--text2)">de ${fmt(g.target)}</span>
+        ${!done?`<span style="margin-left:auto;font-size:12px;font-weight:600;color:var(--accent)">${perDayLabel} para lograrlo</span>`:''}
+      </div>
+      <div class="goal-bar-bg" style="margin-bottom:10px"><div class="goal-bar-fill" style="width:${pct}%;background:${done?'var(--green)':''}"></div></div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:10px">${advice}</div>
+      ${!done?`<div style="display:flex;gap:8px">
+        <button class="btn btn-primary" style="flex:1;padding:10px" onclick="logProgress('${g.key}',${def.step})">+${def.unit==='$'?'$'+def.step:def.step} Registrar</button>
+        <button class="btn btn-ghost" onclick="openGoalDetail('${g.key}')" style="padding:10px 14px">📋 Plan</button>
+      </div>`:`<button class="btn btn-ghost" style="width:100%" onclick="openSetGoal('${g.key}')">🎯 Subir la meta</button>`}
     </div>`;
   }).join('');
+
+  document.getElementById('goals-body').innerHTML =
+    `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <span style="font-size:12px;color:var(--text2)">📅 ${daysLeft} días restantes en el mes</span>
+    </div>` + html;
+}
+
+function logProgress(key, step) {
+  const g = GOALS.find(x => x.key===key);
+  if(!g) return;
+  const wasBelow = g.current < g.target;
+  g.current = Math.min(g.target, g.current + step);
+  saveGoals(GOALS);
+  renderGoals();
+  const def = GOAL_DEFS.find(d => d.key===key);
+  const fmt = v => def.unit==='$' ? '$'+v.toLocaleString() : v;
+  if(wasBelow && g.current >= g.target) {
+    toast('🏆 ¡META LOGRADA! '+def.label+' — '+fmt(g.target));
+  } else {
+    const pct = Math.round(g.current/g.target*100);
+    toast('✅ '+def.label+': '+fmt(g.current)+' ('+pct+'%)');
+  }
+}
+
+function openGoalDetail(key) {
+  const g = GOALS.find(x => x.key===key);
+  const def = GOAL_DEFS.find(d => d.key===key);
+  const daysLeft = getDaysLeftInMonth();
+  const left = Math.max(0, g.target - g.current);
+  const perDay = Math.ceil(left/daysLeft);
+  const fmt = v => def.unit==='$' ? '$'+v.toLocaleString() : v;
+
+  const steps = {
+    calls: ['1. Abre tu lista de leads en NextKey','2. Filtra por "Caliente" y "Tibio"','3. Llama en orden de prioridad — los más viejos primero','4. Si no contestan, deja un voicemail corto','5. Manda un texto de seguimiento 2 horas después'],
+    contacts: ['1. Revisa tu Instagram/Facebook — ¿quién interactuó hoy?','2. Asiste a un evento local o open house','3. Pide 1 referido a cada cliente satisfecho','4. Conéctate con 3 personas nuevas en LinkedIn','5. Habla con tus vecinos — la esfera es oro'],
+    showings: ['1. Identifica tus 3 leads más activos','2. Envíales 2-3 propiedades que coincidan con sus criterios','3. Ofrece 2 fechas y horas específicas','4. Confirma 24 horas antes con un mensaje de WhatsApp','5. Prepara info del vecindario para la visita'],
+    listings: ['1. Busca FSBOs en tu área en Zillow/Realtor.com','2. Llama a expireds del último mes','3. Haz CMAs de propiedades en tu vecindario objetivo','4. Manda cartas a homeowners de alto equity','5. Pide referidos de sellers a tu red actual'],
+    closings: ['1. Revisa cada contrato activo — ¿hay contingencias pendientes?','2. Habla con el title company sobre el timeline','3. Empuja la inspection period para que no se venza','4. Ayuda a tu buyer a resolver cualquier obstáculo','5. Comunícate con el lender para confirmar el clear to close'],
+    income: ['1. Calcula cuántas comisiones necesitas para la meta','2. Identifica qué leads están más cerca de cerrar','3. Enfoca tu energía en esos leads esta semana','4. Negocia well — cada $10K en precio = $300 más en comisión','5. Considera referidos de otras zonas si tu pipeline está lento'],
+  };
+
+  document.getElementById('goal-detail-title').textContent = def.icon+' '+def.label;
+  document.getElementById('goal-detail-body').innerHTML = `
+    <div style="background:rgba(79,126,248,.08);border:1px solid rgba(79,126,248,.2);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:13px;color:var(--text2)">Progreso</span>
+        <span style="font-weight:700;color:var(--accent)">${fmt(g.current)} / ${fmt(g.target)}</span>
+      </div>
+      <div class="goal-bar-bg"><div class="goal-bar-fill" style="width:${Math.min(100,Math.round(g.current/g.target*100))}%"></div></div>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:var(--text2)">
+        <span>Te faltan: ${fmt(left)}</span>
+        <span>${daysLeft} días restantes</span>
+      </div>
+    </div>
+    <div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:14px;margin-bottom:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Tu ritmo diario necesario</div>
+      <div style="font-size:22px;font-weight:800">${def.unit==='$'?'$'+perDay.toLocaleString():perDay} <span style="font-size:13px;font-weight:400;color:var(--text2)">por día</span></div>
+    </div>
+    <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Plan de acción — pasos concretos</div>
+    ${(steps[key]||[]).map((s,i)=>`<div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px">
+      <span style="color:var(--accent);font-weight:700;min-width:20px">${i+1}.</span>
+      <span>${s}</span>
+    </div>`).join('')}
+    <div style="margin-top:16px">
+      <button class="btn btn-primary" style="width:100%" onclick="closeModal('modal-goal-detail');logProgress('${key}',${def.step})">+${def.unit==='$'?'$'+def.step:def.step} Registrar progreso ahora</button>
+    </div>`;
+  openModal('modal-goal-detail');
+}
+
+function openSetGoal(key) {
+  editingGoalKey = key;
+  const g = GOALS.find(x => x.key===key);
+  const def = GOAL_DEFS.find(d => d.key===key);
+  document.getElementById('set-goal-title').textContent = '🎯 '+def.label;
+  document.getElementById('sg-target').value = g.target;
+  document.getElementById('sg-current').value = g.current;
+  openModal('modal-set-goal');
+}
+
+function saveGoal() {
+  if(!editingGoalKey) return;
+  const g = GOALS.find(x => x.key===editingGoalKey);
+  g.target = parseFloat(document.getElementById('sg-target').value)||g.target;
+  g.current = parseFloat(document.getElementById('sg-current').value)||0;
+  saveGoals(GOALS);
+  closeModal('modal-set-goal');
+  renderGoals();
+  toast('✅ Meta actualizada');
 }
 
 // ── TRAINING ────────────────────────────────────────────────────────────────
