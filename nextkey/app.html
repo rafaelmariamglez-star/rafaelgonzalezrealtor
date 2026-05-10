@@ -502,21 +502,38 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 <div class="modal-backdrop" id="modal-contract">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-header"><span class="modal-title">📄 Buyer-Broker</span><button class="modal-close" onclick="closeModal('modal-contract')">✕</button></div>
+    <div class="modal-header"><span class="modal-title">📄 Buyer-Broker Agreement</span><button class="modal-close" onclick="closeModal('modal-contract')">✕</button></div>
     <div class="modal-body">
       <div class="lang-toggle">
         <div class="lang-btn active" onclick="setLang('es',this)">Español</div>
         <div class="lang-btn" onclick="setLang('en',this)">English</div>
       </div>
-      <div class="field"><label>Nombre del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
-      <div class="field"><label>Fecha inicio</label><input id="c-start" type="date"/></div>
-      <div class="field"><label>Fecha fin</label><input id="c-end" type="date"/></div>
-      <div class="field"><label>Área de búsqueda</label><input id="c-area" placeholder="West Palm Beach, FL"/></div>
+      <div class="field"><label>Autocompletar desde lead</label>
+        <select id="c-lead-sel" onchange="autoFillContract(this.value)" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+          <option value="">— seleccionar lead —</option>
+        </select>
+      </div>
+      <div class="field"><label>Nombre completo del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
+      <div class="field"><label>Dirección del comprador</label><input id="c-buyer-addr" placeholder="123 Main St, West Palm Beach, FL 33401"/></div>
+      <div class="field"><label>Teléfono del comprador</label><input id="c-buyer-phone" placeholder="(561) 000-0000"/></div>
+      <div class="field"><label>Fecha de inicio</label><input id="c-start" type="date"/></div>
+      <div class="field"><label>Fecha de vencimiento</label><input id="c-end" type="date"/></div>
+      <div class="field"><label>Condado(s) de búsqueda</label><input id="c-area" placeholder="Palm Beach County, FL"/></div>
       <div class="field"><label>Rango de precio</label><input id="c-price" placeholder="$300,000 – $500,000"/></div>
-      <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="genContract()">Generar contrato</button>
+      <div class="field"><label>Tipo de propiedad</label>
+        <select id="c-proptype" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+          <option>Residencial (Single Family)</option>
+          <option>Condominio / Townhouse</option>
+          <option>Multi-Family (2-4 unidades)</option>
+          <option>Terreno / Lote</option>
+          <option>Cualquier tipo residencial</option>
+        </select>
+      </div>
+      <div class="field"><label>Compensación del agente (%)</label><input id="c-comp" placeholder="3" value="3"/></div>
+      <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="genContract()">📄 Generar contrato</button>
       <pre class="contract-preview" id="contract-preview" style="display:none"></pre>
       <div id="contract-actions" style="display:none;margin-top:10px">
-        <button class="btn btn-ghost" style="width:100%" onclick="printContract()">🖨 Imprimir / PDF</button>
+        <button class="btn btn-ghost" style="width:100%" onclick="printContract()">🖨 Imprimir / Guardar PDF</button>
       </div>
     </div>
   </div>
@@ -959,7 +976,22 @@ function setContractDefaults() {
   const end = new Date(today); end.setMonth(end.getMonth()+6);
   document.getElementById('c-start').value = today.toISOString().split('T')[0];
   document.getElementById('c-end').value = end.toISOString().split('T')[0];
-  document.getElementById('c-area').value = 'West Palm Beach, FL';
+  document.getElementById('c-area').value = 'Palm Beach County, FL';
+  // populate lead selector
+  const sel = document.getElementById('c-lead-sel');
+  if(sel) {
+    sel.innerHTML = '<option value="">— seleccionar lead —</option>' +
+      leads.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
+  }
+}
+
+function autoFillContract(id) {
+  if(!id) return;
+  const l = leads.find(x => x.id == id);
+  if(!l) return;
+  document.getElementById('c-buyer').value = l.name;
+  document.getElementById('c-buyer-phone').value = l.phone || '';
+  document.getElementById('c-price').value = l.budget || '';
 }
 
 function setLang(lang, el) {
@@ -969,86 +1001,255 @@ function setLang(lang, el) {
 }
 
 function genContract() {
-  const buyer = document.getElementById('c-buyer').value.trim() || '[NOMBRE DEL COMPRADOR]';
-  const start = document.getElementById('c-start').value || '[FECHA INICIO]';
-  const end = document.getElementById('c-end').value || '[FECHA FIN]';
-  const area = document.getElementById('c-area').value || '[ÁREA]';
-  const price = document.getElementById('c-price').value || '[RANGO]';
-  const date = new Date().toLocaleDateString('es-US',{year:'numeric',month:'long',day:'numeric'});
+  const buyer      = document.getElementById('c-buyer').value.trim() || '[NOMBRE DEL COMPRADOR]';
+  const buyerAddr  = document.getElementById('c-buyer-addr').value.trim() || '[DIRECCIÓN DEL COMPRADOR]';
+  const buyerPhone = document.getElementById('c-buyer-phone').value.trim() || '[TELÉFONO]';
+  const start      = document.getElementById('c-start').value || '[FECHA INICIO]';
+  const end        = document.getElementById('c-end').value || '[FECHA FIN]';
+  const area       = document.getElementById('c-area').value || '[CONDADO]';
+  const price      = document.getElementById('c-price').value || '[RANGO]';
+  const propType   = document.getElementById('c-proptype').value || 'Residencial';
+  const comp       = document.getElementById('c-comp').value || '3';
+  const dateES     = new Date().toLocaleDateString('es-US',{year:'numeric',month:'long',day:'numeric'});
+  const dateEN     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 
-  const es = `CONTRATO DE REPRESENTACIÓN EXCLUSIVA DE COMPRADOR
-─────────────────────────────────────────────────
-Fecha: ${date}
+  const es = `ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR
+Estado de Florida — 2026
+══════════════════════════════════════════════════════
 
-PARTES:
-Agente: ${AGENT.name}
-Brokerage: ${AGENT.brokerage} Realty
-Teléfono: ${AGENT.phone}
+FECHA DE EJECUCIÓN: ${dateES}
 
-Comprador: ${buyer}
+1. PARTES
 
-TÉRMINOS:
-• Período: ${start} al ${end}
-• Área: ${area}
-• Rango de precio: ${price}
+   AGENTE INMOBILIARIO ("Corredor"):
+   Nombre:    ${AGENT.name}
+   Licencia:  Florida Licensed Real Estate Agent
+   Brokerage: ${AGENT.brokerage} Realty
+   Teléfono:  ${AGENT.phone}
 
-ACUERDO:
-El Comprador acuerda trabajar exclusivamente con el Agente durante
-el período indicado para la compra de propiedad residencial.
+   COMPRADOR(ES):
+   Nombre:    ${buyer}
+   Dirección: ${buyerAddr}
+   Teléfono:  ${buyerPhone}
 
-El Agente se compromete a:
-1. Presentar todas las propiedades dentro del criterio indicado
-2. Representar los mejores intereses del Comprador en negociaciones
-3. Mantener confidencialidad de la información del Comprador
-4. Asesorar en el proceso de compra completo
+2. PERÍODO DE REPRESENTACIÓN
+   Este Acuerdo entrará en vigencia el ${start} y vencerá
+   el ${end} ("Período de Representación"), salvo que sea
+   cancelado antes por acuerdo escrito de ambas partes.
 
-Compensación:
-La comisión del agente es pagada por el vendedor según práctica
-estándar del mercado. Si el vendedor no ofrece compensación,
-el Comprador acuerda pagar ___% del precio de compra.
+3. ÁREA GEOGRÁFICA Y TIPO DE PROPIEDAD
+   Condado(s): ${area}
+   Tipo:       ${propType}
+   Rango de precio: ${price}
 
-FIRMAS:
-Comprador: ____________________  Fecha: __________
+4. REPRESENTACIÓN EXCLUSIVA
+   El Comprador acuerda trabajar EXCLUSIVAMENTE con el Corredor
+   durante el Período de Representación para adquirir propiedad
+   que cumpla con los criterios descritos en la Sección 3.
+   El Comprador se compromete a notificar al Corredor antes de
+   visitar cualquier propiedad, open house, o contactar a otro
+   agente o vendedor directamente.
 
-Agente: ${AGENT.name}
-${AGENT.brokerage} Realty · ${AGENT.phone}`;
+5. DEBERES DEL CORREDOR (§ 475.278, Florida Statutes)
+   El Corredor, como representante del Comprador, tiene los
+   siguientes deberes:
+   a) Tratar a todas las partes de manera honesta y justa;
+   b) Revelar al Comprador toda información conocida que afecte
+      materialmente el valor o deseabilidad de la propiedad;
+   c) Usar habilidad, cuidado y diligencia en la transacción;
+   d) Mantener en escrow todos los fondos o bienes recibidos;
+   e) Rendir cuentas al Comprador de todos los fondos recibidos;
+   f) Revelar al Comprador si el Corredor tiene interés personal
+      en la propiedad.
+
+6. DEBERES DEL COMPRADOR
+   El Comprador acuerda:
+   a) Trabajar exclusivamente con el Corredor durante el período;
+   b) Notificar al Corredor de cualquier propiedad de interés;
+   c) Proporcionar información financiera veraz (pre-aprobación);
+   d) Actuar de buena fe en todas las negociaciones.
+
+7. COMPENSACIÓN DEL CORREDOR (Conforme al NAR Settlement 2024)
+   IMPORTANTE: Conforme al acuerdo de la NAR efectivo agosto 2024,
+   la compensación del agente del comprador DEBE ser acordada por
+   escrito antes de mostrar propiedades.
+
+   El Comprador acuerda que el Corredor recibirá una compensación
+   de ${comp}% del precio de compra final de la propiedad.
+
+   a) FUENTE PREFERIDA: El Comprador autorizará al Corredor a
+      solicitar que el vendedor cubra esta compensación como
+      concesión en la oferta de compra.
+   b) RESPONSABILIDAD DEL COMPRADOR: Si el vendedor no ofrece
+      compensación suficiente (o ninguna), el Comprador acuerda
+      pagar la diferencia hasta el ${comp}% acordado al cierre.
+   c) SIN DOBLE COMPENSACIÓN: El Corredor no recibirá más del
+      ${comp}% independientemente de la fuente de pago.
+
+8. PROPIEDAD ENCONTRADA INDEPENDIENTEMENTE
+   Si el Comprador adquiere, durante el Período de Representación
+   o dentro de los 90 días posteriores a su vencimiento, una
+   propiedad que fue presentada o identificada por el Corredor,
+   el Comprador estará obligado a pagar la compensación acordada.
+
+9. CLÁUSULA DE VIVIENDA JUSTA (Fair Housing)
+   El Corredor cumple con todas las leyes federales y estatales de
+   vivienda justa (Fair Housing Act, 42 U.S.C. § 3604) y no
+   discriminará por raza, color, religión, sexo, origen nacional,
+   discapacidad o estado familiar.
+
+10. RESOLUCIÓN DE DISPUTAS
+    Las partes acuerdan intentar la mediación antes de iniciar
+    cualquier acción legal. Si la mediación falla, cualquier
+    disputa se resolverá mediante arbitraje vinculante conforme
+    a las reglas de la Asociación de Realtors de Florida.
+
+11. LEY APLICABLE
+    Este Acuerdo se regirá por las leyes del Estado de Florida,
+    incluyendo el Florida Real Estate License Law (Capítulo 475,
+    Florida Statutes).
+
+12. ACUERDO COMPLETO
+    Este documento constituye el acuerdo completo entre las partes.
+    Cualquier modificación deberá hacerse por escrito y ser firmada
+    por ambas partes.
+
+══════════════════════════════════════════════════════
+FIRMAS
+
+Comprador: _________________________  Fecha: __________
+           ${buyer}
+
+Comprador: _________________________  Fecha: __________
+           (co-comprador si aplica)
+
+Corredor:  _________________________  Fecha: __________
+           ${AGENT.name}
+           ${AGENT.brokerage} Realty
+           Lic. Florida Real Estate Agent
+           Tel: ${AGENT.phone}
+══════════════════════════════════════════════════════
+Este contrato fue preparado con fines informativos.
+Consulte con un abogado de bienes raíces de Florida para
+asesoría legal específica a su situación.`;
 
   const en = `EXCLUSIVE BUYER REPRESENTATION AGREEMENT
-─────────────────────────────────────────────────
-Date: ${date}
+State of Florida — 2026
+══════════════════════════════════════════════════════
 
-PARTIES:
-Agent: ${AGENT.name}
-Brokerage: ${AGENT.brokerage} Realty
-Phone: ${AGENT.phone}
+EXECUTION DATE: ${dateEN}
 
-Buyer: ${buyer}
+1. PARTIES
 
-TERMS:
-• Period: ${start} to ${end}
-• Area: ${area}
-• Price range: ${price}
+   REAL ESTATE BROKER ("Broker"):
+   Name:     ${AGENT.name}
+   License:  Florida Licensed Real Estate Agent
+   Company:  ${AGENT.brokerage} Realty
+   Phone:    ${AGENT.phone}
 
-AGREEMENT:
-Buyer agrees to work exclusively with Agent during the stated period
-for the purchase of residential property in the specified area.
+   BUYER(S):
+   Name:     ${buyer}
+   Address:  ${buyerAddr}
+   Phone:    ${buyerPhone}
 
-Agent agrees to:
-1. Present all available properties matching Buyer's criteria
-2. Represent Buyer's best interests in all negotiations
-3. Maintain confidentiality of Buyer's information
-4. Guide Buyer through the entire purchase process
+2. REPRESENTATION PERIOD
+   This Agreement shall be effective ${start} and shall expire
+   ${end} ("Representation Period"), unless earlier terminated
+   by written mutual agreement of both parties.
 
-Compensation:
-Agent's commission is typically paid by the seller per market
-standard. If seller does not offer co-agent compensation,
-Buyer agrees to pay ___% of the purchase price.
+3. GEOGRAPHIC AREA & PROPERTY TYPE
+   County(ies): ${area}
+   Type:        ${propType}
+   Price Range: ${price}
 
-SIGNATURES:
-Buyer: ____________________  Date: __________
+4. EXCLUSIVE REPRESENTATION
+   Buyer agrees to work EXCLUSIVELY with Broker during the
+   Representation Period to acquire property meeting the criteria
+   described in Section 3. Buyer agrees to notify Broker before
+   visiting any property, open house, or contacting any other
+   agent or seller directly.
 
-Agent: ${AGENT.name}
-${AGENT.brokerage} Realty · ${AGENT.phone}`;
+5. BROKER'S DUTIES (§ 475.278, Florida Statutes)
+   As Buyer's representative, Broker shall:
+   a) Deal honestly and fairly with all parties;
+   b) Disclose all known facts materially affecting the value
+      or desirability of the property;
+   c) Use skill, care, and diligence in the transaction;
+   d) Keep in escrow all funds or property received;
+   e) Account for all funds received;
+   f) Disclose any personal interest Broker may have in the
+      property.
+
+6. BUYER'S OBLIGATIONS
+   Buyer agrees to:
+   a) Work exclusively with Broker during the period;
+   b) Notify Broker of any property of interest;
+   c) Provide truthful financial information (pre-approval);
+   d) Act in good faith in all negotiations.
+
+7. BROKER COMPENSATION (Per NAR Settlement 2024)
+   IMPORTANT: Per the NAR settlement effective August 2024,
+   buyer's agent compensation MUST be agreed upon in writing
+   before showing properties.
+
+   Buyer agrees that Broker shall receive compensation of
+   ${comp}% of the final purchase price of the property.
+
+   a) PREFERRED SOURCE: Buyer authorizes Broker to request
+      that the seller cover this compensation as a concession
+      in the purchase offer.
+   b) BUYER'S RESPONSIBILITY: If the seller does not offer
+      sufficient compensation, Buyer agrees to pay the
+      difference up to the agreed ${comp}% at closing.
+   c) NO DOUBLE COMPENSATION: Broker shall not receive more
+      than ${comp}% regardless of the source of payment.
+
+8. PROPERTY FOUND INDEPENDENTLY
+   If Buyer acquires, during the Representation Period or within
+   90 days after its expiration, a property that was shown or
+   identified by Broker, Buyer shall be obligated to pay the
+   agreed compensation.
+
+9. FAIR HOUSING
+   Broker complies with all federal and state fair housing laws
+   (Fair Housing Act, 42 U.S.C. § 3604) and shall not
+   discriminate based on race, color, religion, sex, national
+   origin, disability, or familial status.
+
+10. DISPUTE RESOLUTION
+    The parties agree to attempt mediation before initiating
+    any legal action. If mediation fails, any dispute shall be
+    resolved by binding arbitration per the Florida Realtors
+    Association rules.
+
+11. GOVERNING LAW
+    This Agreement shall be governed by the laws of the State
+    of Florida, including the Florida Real Estate License Law
+    (Chapter 475, Florida Statutes).
+
+12. ENTIRE AGREEMENT
+    This document constitutes the entire agreement between the
+    parties. Any modification must be made in writing and signed
+    by both parties.
+
+══════════════════════════════════════════════════════
+SIGNATURES
+
+Buyer:  ___________________________  Date: __________
+        ${buyer}
+
+Buyer:  ___________________________  Date: __________
+        (co-buyer if applicable)
+
+Broker: ___________________________  Date: __________
+        ${AGENT.name}
+        ${AGENT.brokerage} Realty
+        FL Licensed Real Estate Agent
+        Phone: ${AGENT.phone}
+══════════════════════════════════════════════════════
+This contract was prepared for informational purposes.
+Consult a Florida real estate attorney for legal advice
+specific to your situation.`;
 
   const contract = currentLang === 'es' ? es : en;
   const preview = document.getElementById('contract-preview');
@@ -1060,7 +1261,10 @@ ${AGENT.brokerage} Realty · ${AGENT.phone}`;
 function printContract() {
   const text = document.getElementById('contract-preview').textContent;
   const w = window.open('','_blank');
-  w.document.write(`<pre style="font-family:monospace;font-size:13px;padding:40px;max-width:680px;margin:0 auto;line-height:1.8">${text}</pre>`);
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Buyer-Broker Agreement</title>
+  <style>body{font-family:'Courier New',monospace;font-size:12px;padding:40px;max-width:720px;margin:0 auto;line-height:1.9;color:#111}
+  @media print{body{padding:20px}}</style></head>
+  <body><pre>${text}</pre></body></html>`);
   w.document.close(); w.print();
 }
 
@@ -1097,6 +1301,7 @@ function openModal(id) {
   document.body.style.overflow = 'hidden';
   if(id === 'modal-settings') updateKeyStatus();
   if(id === 'modal-pipeline') renderPipeline();
+  if(id === 'modal-contract') setContractDefaults();
 }
 
 function closeModal(id) {
