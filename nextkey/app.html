@@ -597,6 +597,7 @@ html,body{
       <div class="field"><label>Nombre *</label><input id="nl-name" placeholder="Ana García"/></div>
       <div class="field"><label>Teléfono</label><input id="nl-phone" placeholder="(561) 000-0000" type="tel"/></div>
       <div class="field"><label>Email</label><input id="nl-email" placeholder="ana@email.com" type="email"/></div>
+      <div class="field"><label>Dirección</label><input id="nl-address" placeholder="123 Palm Beach Blvd, WPB FL"/></div>
       <div class="field"><label>Presupuesto</label><input id="nl-budget" placeholder="$350,000"/></div>
       <div class="field"><label>Etapa</label><select id="nl-stage">
         <option value="nuevo">Nuevo</option><option value="warm">Tibio</option>
@@ -1113,10 +1114,12 @@ function showLeadDetail(id) {
     </div>
     <div style="margin:14px 0">
       <div class="info-row"><span class="info-label">Teléfono</span><a href="tel:${l.phone}" style="color:var(--accent);text-decoration:none">${l.phone}</a></div>
+      ${l.email ? `<div class="info-row"><span class="info-label">Email</span><a href="mailto:${l.email}" style="color:var(--accent);text-decoration:none;word-break:break-all">${l.email}</a></div>` : ''}
+      ${l.address ? `<div class="info-row"><span class="info-label">Dirección</span><span class="info-value">${l.address}</span></div>` : ''}
       <div class="info-row"><span class="info-label">Presupuesto</span><span class="info-value">${l.budget}</span></div>
       <div class="info-row"><span class="info-label">Fuente</span><span class="info-value">${l.source}</span></div>
       <div class="info-row"><span class="info-label">Último contacto</span><span class="info-value">${days}</span></div>
-      <div class="info-row"><span class="info-label">Notas</span><span class="info-value">${l.notes}</span></div>
+      ${l.notes ? `<div class="info-row"><span class="info-label">Notas</span><span class="info-value">${l.notes}</span></div>` : ''}
     </div>
     <div style="display:flex;gap:8px;margin-bottom:14px">
       <a href="tel:${l.phone}" class="btn btn-ghost" style="flex:1;text-align:center;text-decoration:none">📞 Llamar</a>
@@ -1160,6 +1163,7 @@ function addLead() {
     id: nextId++, name,
     phone: document.getElementById('nl-phone').value.trim() || '—',
     email: document.getElementById('nl-email').value.trim() || '',
+    address: document.getElementById('nl-address').value.trim() || '',
     budget: document.getElementById('nl-budget').value.trim() || 'N/A',
     stage: document.getElementById('nl-stage').value,
     lastContact: 0,
@@ -1168,7 +1172,7 @@ function addLead() {
     color: COLORS[Math.floor(Math.random()*COLORS.length)],
   });
   closeModal('modal-add-lead');
-  ['nl-name','nl-phone','nl-email','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
+  ['nl-name','nl-phone','nl-email','nl-address','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
   saveLeads();
   renderLeads(); renderPipeline(); renderToday(); renderAILeadSel();
   toast('✅ Lead agregado');
