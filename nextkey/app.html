@@ -376,6 +376,8 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
       <div class="ai-output-actions">
         <button class="btn btn-ghost" onclick="copyMsg()">📋 Copiar</button>
         <button class="btn btn-green" onclick="sendWA()">💬 WhatsApp</button>
+        <button class="btn btn-ghost" style="background:rgba(79,126,248,.12);border-color:rgba(79,126,248,.25);color:var(--accent)" onclick="sendSMS()">💬 Text</button>
+        <button class="btn btn-ghost" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.25);color:var(--amber)" onclick="sendEmail()">📧 Email</button>
         <button class="btn btn-ghost" onclick="clearAI()">✕ Limpiar</button>
       </div>
     </div>
@@ -438,6 +440,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
     <div class="modal-body">
       <div class="field"><label>Nombre *</label><input id="nl-name" placeholder="Ana García"/></div>
       <div class="field"><label>Teléfono</label><input id="nl-phone" placeholder="(561) 000-0000" type="tel"/></div>
+      <div class="field"><label>Email</label><input id="nl-email" placeholder="ana@email.com" type="email"/></div>
       <div class="field"><label>Presupuesto</label><input id="nl-budget" placeholder="$350,000"/></div>
       <div class="field"><label>Etapa</label><select id="nl-stage">
         <option value="nuevo">Nuevo</option><option value="warm">Tibio</option>
@@ -960,6 +963,7 @@ function addLead() {
   leads.push({
     id: nextId++, name,
     phone: document.getElementById('nl-phone').value.trim() || '—',
+    email: document.getElementById('nl-email').value.trim() || '',
     budget: document.getElementById('nl-budget').value.trim() || 'N/A',
     stage: document.getElementById('nl-stage').value,
     lastContact: 0,
@@ -968,7 +972,7 @@ function addLead() {
     color: COLORS[Math.floor(Math.random()*COLORS.length)],
   });
   closeModal('modal-add-lead');
-  ['nl-name','nl-phone','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
+  ['nl-name','nl-phone','nl-email','nl-budget','nl-notes'].forEach(id => document.getElementById(id).value = '');
   saveLeads();
   renderLeads(); renderPipeline(); renderToday(); renderAILeadSel();
   toast('✅ Lead agregado');
@@ -1061,6 +1065,41 @@ function sendWA() {
 function clearAI() {
   document.getElementById('ai-output').classList.remove('visible');
   document.getElementById('ai-out-text').textContent = '';
+}
+
+function getAIMsg() {
+  const t = document.getElementById('ai-out-text').textContent;
+  if(!t || t.startsWith('❌')){ toast('Genera un mensaje primero'); return null; }
+  return t;
+}
+
+function getSelectedLeadPhone() {
+  const id = document.getElementById('ai-lead-sel').value;
+  if(!id) return '';
+  const l = leads.find(x => x.id == id);
+  return l ? l.phone.replace(/\D/g,'') : '';
+}
+
+function getSelectedLeadEmail() {
+  const id = document.getElementById('ai-lead-sel').value;
+  if(!id) return '';
+  const l = leads.find(x => x.id == id);
+  return l?.email || '';
+}
+
+function sendSMS() {
+  const t = getAIMsg(); if(!t) return;
+  const phone = getSelectedLeadPhone();
+  window.open(`sms:${phone}?body=${encodeURIComponent(t)}`, '_blank');
+}
+
+function sendEmail() {
+  const t = getAIMsg(); if(!t) return;
+  const email = getSelectedLeadEmail();
+  const leadId = document.getElementById('ai-lead-sel').value;
+  const lead = leadId ? leads.find(x => x.id == leadId) : null;
+  const subject = lead ? `Mensaje para ${lead.name}` : 'Mensaje de Rafael Gonzalez - KW';
+  window.open(`mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(t)}`, '_blank');
 }
 
 // ── PIPELINE ────────────────────────────────────────────────────────────────
