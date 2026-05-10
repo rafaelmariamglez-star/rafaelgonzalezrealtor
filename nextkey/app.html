@@ -490,8 +490,9 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
     <div class="modal-handle"></div>
     <div class="modal-header"><span class="modal-title" id="set-goal-title">Editar meta</span><button class="modal-close" onclick="closeModal('modal-set-goal')">✕</button></div>
     <div class="modal-body">
-      <div class="field"><label>Meta del mes</label><input id="sg-target" type="number" placeholder="30"/></div>
-      <div class="field"><label>Progreso actual</label><input id="sg-current" type="number" placeholder="0"/></div>
+      <input type="hidden" id="sg-key-hidden"/>
+      <div class="field"><label>Meta del mes</label><input id="sg-target" type="number" placeholder="30" inputmode="numeric"/></div>
+      <div class="field"><label>Progreso actual</label><input id="sg-current" type="number" placeholder="0" inputmode="numeric"/></div>
       <button class="btn btn-primary" style="width:100%" onclick="saveGoal()">Guardar meta</button>
     </div>
   </div>
@@ -1179,20 +1180,26 @@ function openSetGoal(key) {
   const g = GOALS.find(x => x.key===key);
   const def = GOAL_DEFS.find(d => d.key===key);
   document.getElementById('set-goal-title').textContent = '🎯 '+def.label;
+  document.getElementById('sg-key-hidden').value = key;
   document.getElementById('sg-target').value = g.target;
   document.getElementById('sg-current').value = g.current;
   openModal('modal-set-goal');
 }
 
 function saveGoal() {
-  if(!editingGoalKey) return;
-  const g = GOALS.find(x => x.key===editingGoalKey);
-  g.target = parseFloat(document.getElementById('sg-target').value)||g.target;
-  g.current = parseFloat(document.getElementById('sg-current').value)||0;
+  const keyEl = document.getElementById('sg-key-hidden');
+  const key = keyEl ? keyEl.value : editingGoalKey;
+  if(!key) { alert('Error: no se encontró la meta'); return; }
+  const g = GOALS.find(x => x.key===key);
+  if(!g) { alert('Error: meta no encontrada'); return; }
+  const tVal = parseFloat(document.getElementById('sg-target').value);
+  const cVal = parseFloat(document.getElementById('sg-current').value);
+  if(!isNaN(tVal) && tVal > 0) g.target = tVal;
+  if(!isNaN(cVal) && cVal >= 0) g.current = cVal;
   saveGoals(GOALS);
   closeModal('modal-set-goal');
   renderGoals();
-  toast('✅ Meta actualizada');
+  alert('✅ Meta guardada correctamente');
 }
 
 // ── TRAINING ────────────────────────────────────────────────────────────────
