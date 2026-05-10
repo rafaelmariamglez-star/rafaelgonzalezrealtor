@@ -564,7 +564,7 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
 const AGENT = {name:'Rafael', brokerage:'Keller Williams', phone:'561-905-6211'};
 const COLORS = ['#4f7ef8','#7c5cf8','#d4a843','#22c55e','#f87171','#f59e0b','#ec4899','#06b6d4'];
 
-let leads = [...DEFAULT_LEADS];
+let leads = [];
 
 const MSGS = {
   followup:{label:'Follow-up',prompt:(n,b)=>`Escribe un mensaje de texto CORTO (máx 2 párrafos) de seguimiento en español para un lead inmobiliario llamado ${n||'el lead'}${b?', presupuesto '+b:''}. No hemos hablado en varios días. Sé cálido, profesional y sin presión. Firma como ${AGENT.name} de Keller Williams West Palm Beach.`},
@@ -645,7 +645,12 @@ const DEFAULT_LEADS = [
 function saveLeads() { localStorage.setItem('nk_leads', JSON.stringify(leads)); }
 function loadLeads() {
   const saved = localStorage.getItem('nk_leads');
-  if(saved) { leads = JSON.parse(saved); nextId = Math.max(...leads.map(l=>l.id)) + 1; }
+  if(saved) {
+    leads = JSON.parse(saved);
+    nextId = Math.max(...leads.map(l=>l.id)) + 1;
+  } else {
+    leads = [...DEFAULT_LEADS];
+  }
 }
 
 // ── INIT ────────────────────────────────────────────────────────────────────
