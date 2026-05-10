@@ -356,6 +356,13 @@ html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-
         <option value="custom">Personalizado ↓</option>
       </select>
     </div>
+    <div class="field">
+      <label>Idioma del mensaje</label>
+      <div class="lang-toggle">
+        <div class="lang-btn active" id="ai-lang-es" onclick="setAILang('es',this)">🇵🇷 Español</div>
+        <div class="lang-btn" id="ai-lang-en" onclick="setAILang('en',this)">🇺🇸 English</div>
+      </div>
+    </div>
     <div class="field" id="custom-prompt-field" style="display:none">
       <label>Tu instrucción</label>
       <textarea class="ai-input" id="ai-custom-input" placeholder="Ej: Necesito recordarle al lead que traiga los documentos mañana..."></textarea>
@@ -707,6 +714,7 @@ const PLAN = [
 // ── STATE ───────────────────────────────────────────────────────────────────
 let currentFilter = 'all';
 let currentLang = 'es';
+let aiLang = 'es';
 let nextId = 8;
 
 const DEFAULT_LEADS = [
@@ -973,6 +981,12 @@ function renderAILeadSel() {
     leads.map(l => `<option value="${l.id}">${l.name} (${l.budget})</option>`).join('');
 }
 
+function setAILang(lang, el) {
+  aiLang = lang;
+  document.querySelectorAll('#ai-lang-es,#ai-lang-en').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
 function quickChip(type) {
   switchTab('ai');
   setTimeout(() => {
@@ -989,13 +1003,18 @@ async function genMsgAI() {
   const leadId = document.getElementById('ai-lead-sel').value;
   const lead = leadId ? leads.find(x => x.id == leadId) : null;
 
+  const langInstr = aiLang === 'en'
+    ? 'Write the message in ENGLISH.'
+    : 'Escribe el mensaje en ESPAÑOL.';
+
   let prompt;
   if(type === 'custom') {
     prompt = document.getElementById('ai-custom-input').value.trim();
     if(!prompt){ toast('Escribe tu instrucción'); return; }
-    prompt += `\n\nFirma como ${AGENT.name} de Keller Williams West Palm Beach.`;
+    prompt += `\n\n${langInstr}\nFirma como ${AGENT.name} de Keller Williams West Palm Beach.`;
   } else {
     prompt = MSGS[type].prompt(lead?.name, lead?.budget);
+    prompt += `\n\n${langInstr}`;
   }
 
   const out = document.getElementById('ai-output');
