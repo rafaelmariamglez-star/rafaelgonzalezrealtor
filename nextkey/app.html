@@ -704,9 +704,26 @@ html,body{
       </div>
       <div class="field"><label>Tipo de contrato</label>
         <select id="c-contract-type" onchange="onContractTypeChange()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
-          <option value="ebba">Buyer-Broker Agreement (EBBA-8tb)</option>
-          <option value="showing">Showing Agreement (SA-5)</option>
-          <option value="lease">Contract to Lease (CL-11)</option>
+          <optgroup label="Buyer & Listing">
+            <option value="ebba">Exclusive Buyer Brokerage Agreement (EBBA-8tb)</option>
+            <option value="showing">Showing Agreement (SA-5)</option>
+            <option value="ers">Exclusive Right of Sale - Listing (ERS-21tb)</option>
+            <option value="erl">Exclusive Right to Lease (ERL-14)</option>
+          </optgroup>
+          <optgroup label="Contracts">
+            <option value="rcspp">Residential Contract for Sale & Purchase (RCSPP-7)</option>
+            <option value="asis">AS IS Residential Contract (ASIS-7)</option>
+            <option value="lease-cl">Contract to Lease (CL-11)</option>
+            <option value="cr7">Sale of Buyer's Property (CR-7)</option>
+          </optgroup>
+          <optgroup label="Leases">
+            <option value="rlhd">Residential Lease - Single Family (RLHD-3)</option>
+            <option value="rlaucc">Residential Lease - Apartment (RLAUCC-1)</option>
+          </optgroup>
+          <optgroup label="Modifications">
+            <option value="ea4">Extension Addendum to Contract (EA-4)</option>
+            <option value="mebbsa">Modification to EBBA/Showing (MEBBSA-1)</option>
+          </optgroup>
         </select>
       </div>
       <div class="field"><label>Autocompletar desde lead</label>
@@ -1555,10 +1572,36 @@ function onContractTypeChange() {
   const type = document.getElementById('c-contract-type').value;
   document.getElementById('fields-ebba').style.display = type === 'ebba' ? '' : 'none';
   document.getElementById('fields-showing').style.display = type === 'showing' ? '' : 'none';
-  document.getElementById('fields-lease').style.display = type === 'lease' ? '' : 'none';
-  const titles = {ebba:'📄 Buyer-Broker Agreement', showing:'📋 Showing Agreement', lease:'🏠 Contract to Lease'};
+  document.getElementById('fields-lease').style.display = type === 'lease-cl' ? '' : 'none';
+  const titles = {
+    ebba:'📄 Exclusive Buyer Brokerage Agreement',
+    showing:'📋 Showing Agreement',
+    'lease-cl':'🏠 Contract to Lease',
+    ers:'📄 Exclusive Right of Sale (Listing)',
+    erl:'📄 Exclusive Right to Lease',
+    rcspp:'📄 Residential Contract Sale & Purchase',
+    asis:'📄 AS IS Residential Contract',
+    rlhd:'🏠 Residential Lease - Single Family',
+    rlaucc:'🏠 Residential Lease - Apartment',
+    cr7:'📄 Sale of Buyer\'s Property',
+    ea4:'📄 Extension Addendum',
+    mebbsa:'📄 Modification Agreement'
+  };
   document.getElementById('contract-modal-title').textContent = titles[type] || '📄 Contrato';
-  const buyerLabels = {ebba:'Nombre completo del comprador', showing:'Nombre del consumidor', lease:'Nombre del inquilino (Tenant)'};
+  const buyerLabels = {
+    ebba:'Nombre completo del comprador',
+    showing:'Nombre del consumidor',
+    'lease-cl':'Nombre del inquilino (Tenant)',
+    ers:'Nombre de la propiedad/vendedor',
+    erl:'Nombre de la propiedad/arrendador',
+    rcspp:'Nombre del comprador',
+    asis:'Nombre del comprador',
+    rlhd:'Nombre del inquilino',
+    rlaucc:'Nombre del inquilino',
+    cr7:'Nombre del comprador',
+    ea4:'Referencia del contrato original',
+    mebbsa:'Nombre de la parte'
+  };
   document.getElementById('label-buyer').textContent = buyerLabels[type] || 'Nombre';
   document.getElementById('contract-preview-area').style.display = 'none';
 }
@@ -1689,7 +1732,16 @@ function genContract() {
 
   let html = '';
   if(type === 'showing') html = genShowingHTML(buyer, buyerAddr, buyerPhone, start, end);
-  else if(type === 'lease') html = genLeaseHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'lease-cl') html = genLeaseHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'ers') html = genERSHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'erl') html = genERLHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'rcspp') html = genRCSPPHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'asis') html = genASISHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'rlhd') html = genRLHDHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'rlaucc') html = genRLAUCCHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'cr7') html = genCR7HTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'ea4') html = genEA4HTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'mebbsa') html = genMEBBSAHTML(buyer, buyerAddr, buyerPhone, start, end);
   else html = genEBBAHTML(buyer, buyerAddr, buyerPhone, start, end);
 
   document.getElementById('contract-html-body').innerHTML = html;
@@ -1801,6 +1853,184 @@ function genLeaseHTML(tenant, tenantAddr, tenantPhone, leaseStart, leaseEnd) {
 <hr class="divider">` +
     sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
     `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. El contrato oficial se firma en formulario Florida Realtors® CL-11. • Florida REALTORS® © 2026</div>`;
+}
+
+function genERSHTML(seller, sellerAddr, sellerPhone, start, end) {
+  const area = document.getElementById('c-area').value || 'Palm Beach County, FL';
+  const price = document.getElementById('c-price').value || '[PRECIO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Seller:</b> ${seller}<br>${sellerAddr} · ${sellerPhone}<br><b>Listing Broker:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
+    {t:'2. TERM', b:`Effective <b>${fmtContractDate(start)}</b> through <b>${fmtContractDate(end)}</b>`},
+    {t:'3. PROPERTY', b:`Location: <b>${area}</b><br>List Price: <b>${price}</b>`},
+    {t:'4. BROKER OBLIGATIONS', b:'Use professional knowledge and skills; Market property; Show property to prospective buyers; Cooperate with other licensees; Comply with Fair Housing Act.'},
+    {t:'5. SELLER OBLIGATIONS', b:'Authorize Broker to represent property; Disclose material facts; Cooperate in marketing; Make property available for showings; Maintain property condition.'},
+    {t:'6. COMPENSATION', b:'Commission negotiable per state law. Amount and rate agreed between Seller and Broker. Broker may cooperate with other licensees.'},
+    {t:'7. EXCLUSIVE RIGHT', b:'Broker has exclusive right to sell, lease, or exchange property during term, even if Seller sells directly.'},
+    {t:'8. DISPUTE RESOLUTION', b:'Governed by Florida law. Disputes settled by mediation or arbitration. <small>(ERS-21tb © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>EXCLUSIVE RIGHT OF SALE LISTING AGREEMENT</h2><div class="contract-sub">ERS-21tb · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® ERS-21tb. • Florida REALTORS® © 2026</div>`;
+}
+
+function genERLHTML(landlord, landlordAddr, landlordPhone, start, end) {
+  const area = document.getElementById('c-area').value || 'Palm Beach County, FL';
+  const rent = document.getElementById('c-rent').value || '[RENTA]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Landlord:</b> ${landlord}<br>${landlordAddr} · ${landlordPhone}<br><b>Leasing Broker:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
+    {t:'2. TERM', b:`Effective <b>${fmtContractDate(start)}</b> through <b>${fmtContractDate(end)}</b>`},
+    {t:'3. PROPERTY', b:`Location: <b>${area}</b><br>Monthly Rent: <b>${rent}</b>`},
+    {t:'4. BROKER OBLIGATIONS', b:'Use professional knowledge; Market property; Show to prospective tenants; Cooperate with other licensees; Fair Housing compliance.'},
+    {t:'5. LANDLORD OBLIGATIONS', b:'Authorize Broker to list; Disclose material facts; Maintain property; Cooperate in marketing; Allow showings.'},
+    {t:'6. COMPENSATION', b:'Commission negotiable per state law. Agreed between Landlord and Broker. May cooperate with other licensees.'},
+    {t:'7. EXCLUSIVE RIGHT', b:'Broker has exclusive right to lease property during the term.'},
+    {t:'8. DISPUTE RESOLUTION', b:'Governed by Florida law. Disputes settled by mediation or arbitration. <small>(ERL-14 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>EXCLUSIVE RIGHT TO LEASE AGREEMENT</h2><div class="contract-sub">ERL-14 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® ERL-14. • Florida REALTORS® © 2026</div>`;
+}
+
+function genRCSPPHTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const area = document.getElementById('c-area').value || '';
+  const price = document.getElementById('c-price').value || '[PRECIO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Buyer:</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}`},
+    {t:'2. PROPERTY', b:`Location: <b>${area}</b><br>Purchase Price: <b>${price}</b>`},
+    {t:'3. EARNEST MONEY', b:'Buyer shall deposit earnest money within 3 days of contract execution in amount specified.'},
+    {t:'4. CLOSING DATE', b:'Closing shall occur within time period specified in contract.'},
+    {t:'5. TITLE & SURVEY', b:'Seller provides title commitment and clear title at closing. Buyer may obtain current survey.'},
+    {t:'6. INSPECTIONS', b:'Buyer has right to inspect property. May terminate if inspections unsatisfactory.'},
+    {t:'7. FINANCING', b:'Contract contingent upon Buyer obtaining financing. Buyer must make good faith effort.'},
+    {t:'8. CLOSING COSTS', b:'Buyer and Seller pay respective closing costs as customary, unless otherwise agreed.'},
+    {t:'9. DEFAULT', b:'Non-defaulting party has remedies provided in contract and by Florida law.'},
+    {t:'10. DISPUTE RESOLUTION', b:'Disputes settled by mediation or arbitration per Florida law. <small>(RCSPP-7 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>RESIDENTIAL CONTRACT FOR SALE AND PURCHASE</h2><div class="contract-sub">RCSPP-7 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® RCSPP-7. • Florida REALTORS® © 2026</div>`;
+}
+
+function genASISHTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const area = document.getElementById('c-area').value || '';
+  const price = document.getElementById('c-price').value || '[PRECIO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Buyer:</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}`},
+    {t:'2. PROPERTY', b:`Location: <b>${area}</b><br>Purchase Price: <b>${price}</b><br><b>AS IS:</b> Sold without repairs or warranties.`},
+    {t:'3. EARNEST MONEY', b:'Buyer deposits earnest money within 3 days in amount specified.'},
+    {t:'4. CLOSING DATE', b:'Closing occurs within time period specified.'},
+    {t:'5. INSPECTION', b:'Property sold AS-IS. Inspections for Buyer info only. Buyer accepts current condition.'},
+    {t:'6. NO WARRANTIES', b:'Seller makes no representations. Property sold AS-IS WHERE-IS.'},
+    {t:'7. FINANCING', b:'Contract contingent upon Buyer obtaining financing. Good faith effort required.'},
+    {t:'8. CLOSING COSTS', b:'Buyer and Seller pay respective costs as customary, unless otherwise agreed.'},
+    {t:'9. DEFAULT', b:'Non-defaulting party has remedies provided in contract and by Florida law.'},
+    {t:'10. DISPUTE RESOLUTION', b:'Disputes settled by mediation or arbitration per Florida law. <small>(ASIS-7 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>AS IS RESIDENTIAL CONTRACT FOR SALE AND PURCHASE</h2><div class="contract-sub">ASIS-7 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® ASIS-7. • Florida REALTORS® © 2026</div>`;
+}
+
+function genRLHDHTML(tenant, tenantAddr, tenantPhone, start, end) {
+  const area = document.getElementById('c-area').value || '';
+  const rent = document.getElementById('c-rent').value || '[RENTA]';
+  const deposit = document.getElementById('c-deposit').value || '[DEPÓSITO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Landlord:</b> [NAME]<br><b>Tenant:</b> ${tenant}<br>${tenantAddr} · ${tenantPhone}`},
+    {t:'2. PROPERTY', b:`Location: <b>${area}</b><br>Type: Single Family Home or Duplex<br>Unfurnished`},
+    {t:'3. LEASE TERM', b:`Begins: <b>${fmtContractDate(start)}</b><br>Ends: <b>${fmtContractDate(end)}</b>`},
+    {t:'4. RENT & DEPOSIT', b:`Monthly Rent: <b>${rent}</b><br>Security Deposit: <b>${deposit}</b><br>Due on 1st of month`},
+    {t:'5. UTILITIES', b:'Tenant responsible for electricity, gas, water, sewer, trash, internet (unless specified otherwise).'},
+    {t:'6. MAINTENANCE', b:'Landlord: Structure, roof, major systems. Tenant: Interior and minor repairs.'},
+    {t:'7. OCCUPANCY', b:'For residential purposes only. Specified number of occupants.'},
+    {t:'8. PETS & SMOKING', b:'As specified in lease agreement.'},
+    {t:'9. DEFAULT', b:'Non-payment or breach may result in eviction per Florida statute.'},
+    {t:'10. DISPUTE RESOLUTION', b:'Governed by Florida law. <small>(RLHD-3 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>RESIDENTIAL LEASE FOR SINGLE FAMILY HOME OR DUPLEX</h2><div class="contract-sub">RLHD-3 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® RLHD-3. • Florida REALTORS® © 2026</div>`;
+}
+
+function genRLAUCCHTML(tenant, tenantAddr, tenantPhone, start, end) {
+  const area = document.getElementById('c-area').value || '';
+  const rent = document.getElementById('c-rent').value || '[RENTA]';
+  const deposit = document.getElementById('c-deposit').value || '[DEPÓSITO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES', b:`<b>Landlord:</b> [NAME]<br><b>Tenant:</b> ${tenant}<br>${tenantAddr} · ${tenantPhone}`},
+    {t:'2. PROPERTY', b:`Location: <b>${area}</b><br>Type: Apt/Unit in Multi-Family Building<br>Unit #: [NUMBER]`},
+    {t:'3. LEASE TERM', b:`Begins: <b>${fmtContractDate(start)}</b><br>Ends: <b>${fmtContractDate(end)}</b>`},
+    {t:'4. RENT & DEPOSIT', b:`Monthly Rent: <b>${rent}</b><br>Security Deposit: <b>${deposit}</b><br>Due on 1st of month`},
+    {t:'5. UTILITIES', b:'Included or paid by Tenant as specified. Association fees paid by Landlord.'},
+    {t:'6. MAINTENANCE', b:'Landlord: Building structure, common areas, major systems. Tenant: Interior and damage beyond normal wear.'},
+    {t:'7. OCCUPANCY', b:'Residential purposes only. No business activity without written consent.'},
+    {t:'8. ASSOCIATION', b:'Tenant agrees to comply with all association rules, CC&Rs, and bylaws.'},
+    {t:'9. DEFAULT', b:'Non-payment or violations may result in eviction per Florida statute.'},
+    {t:'10. DISPUTE RESOLUTION', b:'Governed by Florida law. <small>(RLAUCC-1 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>RESIDENTIAL LEASE FOR APT. OR UNIT IN MULTI-FAMILY HOUSING</h2><div class="contract-sub">RLAUCC-1 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® RLAUCC-1. • Florida REALTORS® © 2026</div>`;
+}
+
+function genCR7HTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const price = document.getElementById('c-price').value || '[PRECIO]';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PURPOSE', b:'Agreement for sale of Buyer\'s property to facilitate purchase of another property.'},
+    {t:'2. PARTY', b:`<b>Buyer/Seller:</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}`},
+    {t:'3. SALE PRICE', b:`Sale Price: <b>${price}</b>`},
+    {t:'4. FINANCING CONTINGENCY', b:'Contingent upon obtaining financing or sale of current property.'},
+    {t:'5. CLOSING', b:'Closing occurs within time period allowing for new property purchase.'},
+    {t:'6. BROKER', b:`${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
+    {t:'7. EARNEST MONEY', b:'Deposit within 3 days in amount specified.'},
+    {t:'8. DEFAULT', b:'Default results in loss of earnest money and other remedies under Florida law.'},
+    {t:'9. DISPUTE RESOLUTION', b:'Governed by Florida law. <small>(CR-7 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>SALE OF BUYER'S PROPERTY</h2><div class="contract-sub">CR-7 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® CR-7. • Florida REALTORS® © 2026</div>`;
+}
+
+function genEA4HTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. REFERENCE', b:`Extends original contract. Party: ${buyer}`},
+    {t:'2. EXTENSION', b:`Original expiration: <b>${fmtContractDate(end)}</b><br>New expiration: [DATE]`},
+    {t:'3. TERMS', b:'All terms of original contract remain in effect through new date.'},
+    {t:'4. EARNEST MONEY', b:'Continues to be held per original contract terms.'},
+    {t:'5. MUTUAL AGREEMENT', b:'Both parties must sign for extension to be valid.'},
+    {t:'6. CONSIDERATION', b:'May require additional consideration as agreed.'},
+    {t:'7. CONDITIONS', b:'Original inspections and contingencies remain in effect unless modified.'},
+    {t:'8. DEFAULT', b:'Failure to perform within extended time may result in default.'},
+    {t:'9. DISPUTE RESOLUTION', b:'Governed by Florida law. <small>(EA-4 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>EXTENSION ADDENDUM TO CONTRACT</h2><div class="contract-sub">EA-4 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® EA-4. • Florida REALTORS® © 2026</div>`;
+}
+
+function genMEBBSAHTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. REFERENCE', b:`Modifies existing EBBA or Showing Agreement with: ${buyer}`},
+    {t:'2. MODIFICATION', b:'Terms modified from original agreement are listed herein.'},
+    {t:'3. RELATIONSHIP', b:'May change brokerage relationship (transition, new broker, etc.).'},
+    {t:'4. COMPENSATION', b:'If modified, new percentages or flat fees are specified.'},
+    {t:'5. TERM EXTENSION', b:'If extended, new dates specified.'},
+    {t:'6. OTHER CHANGES', b:'All material changes to original agreement detailed herein.'},
+    {t:'7. BINDING', b:'Upon execution, this modifies original agreement.'},
+    {t:'8. DISPUTE RESOLUTION', b:'Governed by Florida law. <small>(MEBBSA-1 © 2026 Florida Realtors®)</small>'},
+  ];
+  return `<h2>MODIFICATION TO EXCLUSIVE BUYER BROKERAGE / SHOWING AGREEMENT</h2><div class="contract-sub">MEBBSA-1 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. Formulario oficial: Florida Realtors® MEBBSA-1. • Florida REALTORS® © 2026</div>`;
 }
 
 function printContract() {
