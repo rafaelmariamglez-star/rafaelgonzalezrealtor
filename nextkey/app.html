@@ -696,34 +696,66 @@ html,body{
 <div class="modal-backdrop" id="modal-contract">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-header"><span class="modal-title">📄 Buyer-Broker Agreement</span><button class="modal-close" onclick="closeModal('modal-contract')">✕</button></div>
+    <div class="modal-header"><span class="modal-title" id="contract-modal-title">📄 Buyer-Broker Agreement</span><button class="modal-close" onclick="closeModal('modal-contract')">✕</button></div>
     <div class="modal-body">
       <div class="lang-toggle">
         <div class="lang-btn active" onclick="setLang('es',this)">Español</div>
         <div class="lang-btn" onclick="setLang('en',this)">English</div>
+      </div>
+      <div class="field"><label>Tipo de contrato</label>
+        <select id="c-contract-type" onchange="onContractTypeChange()" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+          <option value="ebba">Buyer-Broker Agreement (EBBA-8tb)</option>
+          <option value="showing">Showing Agreement (SA-5)</option>
+          <option value="lease">Contract to Lease (CL-11)</option>
+        </select>
       </div>
       <div class="field"><label>Autocompletar desde lead</label>
         <select id="c-lead-sel" onchange="autoFillContract(this.value)" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
           <option value="">— seleccionar lead —</option>
         </select>
       </div>
-      <div class="field"><label>Nombre completo del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
-      <div class="field"><label>Dirección del comprador</label><input id="c-buyer-addr" placeholder="123 Main St, West Palm Beach, FL 33401"/></div>
-      <div class="field"><label>Teléfono del comprador</label><input id="c-buyer-phone" placeholder="(561) 000-0000"/></div>
+      <div class="field"><label id="label-buyer">Nombre completo del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
+      <div class="field"><label>Dirección</label><input id="c-buyer-addr" placeholder="123 Main St, West Palm Beach, FL 33401"/></div>
+      <div class="field"><label>Teléfono</label><input id="c-buyer-phone" placeholder="(561) 000-0000"/></div>
       <div class="field"><label>Fecha de inicio</label><input id="c-start" type="date"/></div>
       <div class="field"><label>Fecha de vencimiento</label><input id="c-end" type="date"/></div>
-      <div class="field"><label>Condado(s) de búsqueda</label><input id="c-area" placeholder="Palm Beach County, FL"/></div>
-      <div class="field"><label>Rango de precio</label><input id="c-price" placeholder="$300,000 – $500,000"/></div>
-      <div class="field"><label>Tipo de propiedad</label>
-        <select id="c-proptype" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
-          <option>Residencial (Single Family)</option>
-          <option>Condominio / Townhouse</option>
-          <option>Multi-Family (2-4 unidades)</option>
-          <option>Terreno / Lote</option>
-          <option>Cualquier tipo residencial</option>
-        </select>
+      <div id="fields-ebba">
+        <div class="field"><label>Condado(s) de búsqueda</label><input id="c-area" placeholder="Palm Beach County, FL"/></div>
+        <div class="field"><label>Rango de precio</label><input id="c-price" placeholder="$300,000 – $500,000"/></div>
+        <div class="field"><label>Tipo de propiedad</label>
+          <select id="c-proptype" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+            <option>Residencial (Single Family)</option>
+            <option>Condominio / Townhouse</option>
+            <option>Multi-Family (2-4 unidades)</option>
+            <option>Terreno / Lote</option>
+            <option>Cualquier tipo residencial</option>
+          </select>
+        </div>
+        <div class="field"><label>Compensación del agente (%)</label><input id="c-comp" placeholder="3" value="3"/></div>
       </div>
-      <div class="field"><label>Compensación del agente (%)</label><input id="c-comp" placeholder="3" value="3"/></div>
+      <div id="fields-showing" style="display:none">
+        <div class="field"><label>Propiedades (una por línea)</label>
+          <textarea id="c-properties" placeholder="123 Main St, West Palm Beach FL&#10;456 Oak Ave, Wellington FL" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;resize:vertical;min-height:90px;box-sizing:border-box"></textarea>
+        </div>
+      </div>
+      <div id="fields-lease" style="display:none">
+        <div class="field"><label>Nombre del arrendador (Landlord)</label><input id="c-landlord" placeholder="Propietario o empresa"/></div>
+        <div class="field"><label>Dirección de la propiedad en renta</label><input id="c-prop-addr" placeholder="400 Crestwood Court #420, Royal Palm Beach FL 33411"/></div>
+        <div class="field"><label>Renta mensual ($)</label><input id="c-rent" placeholder="2200" type="number"/></div>
+        <div class="field"><label>Depósito de seguridad ($)</label><input id="c-deposit" placeholder="2200" type="number"/></div>
+        <div class="field"><label>Mascotas</label>
+          <select id="c-pets" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+            <option value="prohibited">Prohibidas</option>
+            <option value="permitted">Permitidas</option>
+          </select>
+        </div>
+        <div class="field"><label>Fumar</label>
+          <select id="c-smoking" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;-webkit-appearance:none">
+            <option value="prohibited">Prohibido</option>
+            <option value="permitted">Permitido</option>
+          </select>
+        </div>
+      </div>
       <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="genContract()">📄 Generar contrato</button>
 
       <div id="contract-preview-area" style="display:none">
@@ -1511,12 +1543,24 @@ function setContractDefaults() {
   document.getElementById('c-start').value = today.toISOString().split('T')[0];
   document.getElementById('c-end').value = end.toISOString().split('T')[0];
   document.getElementById('c-area').value = 'Palm Beach County, FL';
-  // populate lead selector
   const sel = document.getElementById('c-lead-sel');
   if(sel) {
     sel.innerHTML = '<option value="">— seleccionar lead —</option>' +
       leads.map(l => `<option value="${l.id}">${l.name}</option>`).join('');
   }
+  onContractTypeChange();
+}
+
+function onContractTypeChange() {
+  const type = document.getElementById('c-contract-type').value;
+  document.getElementById('fields-ebba').style.display = type === 'ebba' ? '' : 'none';
+  document.getElementById('fields-showing').style.display = type === 'showing' ? '' : 'none';
+  document.getElementById('fields-lease').style.display = type === 'lease' ? '' : 'none';
+  const titles = {ebba:'📄 Buyer-Broker Agreement', showing:'📋 Showing Agreement', lease:'🏠 Contract to Lease'};
+  document.getElementById('contract-modal-title').textContent = titles[type] || '📄 Contrato';
+  const buyerLabels = {ebba:'Nombre completo del comprador', showing:'Nombre del consumidor', lease:'Nombre del inquilino (Tenant)'};
+  document.getElementById('label-buyer').textContent = buyerLabels[type] || 'Nombre';
+  document.getElementById('contract-preview-area').style.display = 'none';
 }
 
 function autoFillContract(id) {
@@ -1525,7 +1569,9 @@ function autoFillContract(id) {
   if(!l) return;
   document.getElementById('c-buyer').value = l.name;
   document.getElementById('c-buyer-phone').value = l.phone || '';
-  document.getElementById('c-price').value = l.budget || '';
+  document.getElementById('c-buyer-addr').value = l.address || '';
+  const type = document.getElementById('c-contract-type').value;
+  if(type === 'ebba') document.getElementById('c-price').value = l.budget || '';
 }
 
 function setLang(lang, el) {
@@ -1618,19 +1664,21 @@ function sealContract() {
   printContract();
 }
 
+function fmtContractDate(d) {
+  if(!d || d.startsWith('[')) return d;
+  const [y,m,day] = d.split('-');
+  return new Date(+y, +m-1, +day).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+}
+
 function genContract() {
-  const buyer      = document.getElementById('c-buyer').value.trim() || '[NOMBRE DEL COMPRADOR]';
-  const buyerAddr  = document.getElementById('c-buyer-addr').value.trim() || '[DIRECCIÓN DEL COMPRADOR]';
-  const buyerPhone = document.getElementById('c-buyer-phone').value.trim() || '[TELÉFONO]';
-  const start      = document.getElementById('c-start').value || '[FECHA INICIO]';
-  const end        = document.getElementById('c-end').value || '[FECHA FIN]';
-  const area       = document.getElementById('c-area').value || '[CONDADO]';
-  const price      = document.getElementById('c-price').value || '[RANGO]';
-  const propType   = document.getElementById('c-proptype').value || 'Residencial';
-  const comp       = document.getElementById('c-comp').value || '3';
-  const dateES     = new Date().toLocaleDateString('es-US',{year:'numeric',month:'long',day:'numeric'});
-  const dateEN     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  contractData = {buyer, buyerAddr, buyerPhone, start, end, area, price, propType, comp};
+  const type     = document.getElementById('c-contract-type').value;
+  const buyer    = document.getElementById('c-buyer').value.trim() || '[NOMBRE]';
+  const buyerAddr= document.getElementById('c-buyer-addr').value.trim() || '[DIRECCIÓN]';
+  const buyerPhone=document.getElementById('c-buyer-phone').value.trim() || '[TELÉFONO]';
+  const start    = document.getElementById('c-start').value || '[FECHA INICIO]';
+  const end      = document.getElementById('c-end').value || '[FECHA FIN]';
+
+  contractData = {type, buyer, buyerAddr, buyerPhone, start, end};
   sigData = {realtor:null, client:null};
   document.getElementById('sig-client-name').textContent = buyer;
   document.getElementById('sig-realtor-area').classList.remove('signed');
@@ -1639,58 +1687,143 @@ function genContract() {
   document.getElementById('sig-client-preview').innerHTML = 'Toca aquí para firmar';
   updateSigPreviews();
 
-  const isES = currentLang === 'es';
-  const sections = isES ? [
-    {t:'1. PARTES', b:`<b>Agente:</b> ${AGENT.name} · ${AGENT.brokerage} Realty · ${AGENT.phone}<br><b>Comprador:</b> ${buyer} · ${buyerAddr} · ${buyerPhone}`},
-    {t:'2. PERÍODO', b:`Vigente del <b>${start}</b> al <b>${end}</b>`},
-    {t:'3. ÁREA & PROPIEDAD', b:`${area} · ${propType} · ${price}`},
-    {t:'4. REPRESENTACIÓN EXCLUSIVA', b:'El Comprador acuerda trabajar EXCLUSIVAMENTE con el Corredor durante el período indicado y notificar al Corredor antes de visitar cualquier propiedad.'},
-    {t:'5. DEBERES DEL CORREDOR (§ 475.278 FL)', b:'Honestidad, divulgación, diligencia, manejo de escrow, rendición de cuentas.'},
-    {t:'6. DEBERES DEL COMPRADOR', b:'Exclusividad, notificación de propiedades, información financiera veraz, buena fe.'},
-    {t:`7. COMPENSACIÓN ${comp}% (NAR Settlement 2024)`, b:`El Comprador acuerda una compensación de <b>${comp}%</b> del precio de compra. Fuente preferida: concesión del vendedor. Si no aplica, el Comprador paga la diferencia al cierre.`},
-    {t:'8. PROPIEDAD INDEPENDIENTE', b:'Si el Comprador adquiere propiedad identificada por el Corredor dentro de 90 días del vencimiento, aplica la compensación acordada.'},
-    {t:'9. FAIR HOUSING', b:'Cumplimiento con Fair Housing Act, 42 U.S.C. § 3604.'},
-    {t:'10. RESOLUCIÓN DE DISPUTAS', b:'Mediación primero, luego arbitraje vinculante per Florida Realtors Association.'},
-    {t:'11. LEY APLICABLE', b:'Florida Real Estate License Law, Capítulo 475, Florida Statutes.'},
-  ] : [
-    {t:'1. PARTIES', b:`<b>Broker:</b> ${AGENT.name} · ${AGENT.brokerage} Realty · ${AGENT.phone}<br><b>Buyer:</b> ${buyer} · ${buyerAddr} · ${buyerPhone}`},
-    {t:'2. PERIOD', b:`Effective <b>${start}</b> through <b>${end}</b>`},
-    {t:'3. AREA & PROPERTY TYPE', b:`${area} · ${propType} · ${price}`},
-    {t:'4. EXCLUSIVE REPRESENTATION', b:'Buyer agrees to work EXCLUSIVELY with Broker and notify Broker before visiting any property, open house, or contacting any other agent.'},
-    {t:'5. BROKER DUTIES (§ 475.278 FL)', b:'Honesty, disclosure, skill & diligence, escrow handling, accountability.'},
-    {t:'6. BUYER OBLIGATIONS', b:'Exclusivity, property notification, truthful financial info, good faith.'},
-    {t:`7. COMPENSATION ${comp}% (NAR Settlement 2024)`, b:`Buyer agrees to <b>${comp}%</b> of purchase price. Preferred source: seller concession. If insufficient, Buyer pays the difference at closing.`},
-    {t:'8. INDEPENDENTLY FOUND PROPERTY', b:'If Buyer acquires property identified by Broker within 90 days of expiration, agreed compensation applies.'},
-    {t:'9. FAIR HOUSING', b:'Compliance with Fair Housing Act, 42 U.S.C. § 3604.'},
-    {t:'10. DISPUTE RESOLUTION', b:'Mediation first, then binding arbitration per Florida Realtors Association rules.'},
-    {t:'11. GOVERNING LAW', b:'Florida Real Estate License Law, Chapter 475, Florida Statutes.'},
-  ];
-
-  const title = isES ? 'ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR' : 'EXCLUSIVE BUYER REPRESENTATION AGREEMENT';
-  const sub = `Estado de Florida — 2026 · ${isES ? dateES : dateEN}`;
-  const html = `<h2>${title}</h2><div class="contract-sub">${sub}</div><hr class="divider">` +
-    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
-    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Contrato preparado con fines informativos. Consulte con un abogado de bienes raíces de Florida.</div>`;
+  let html = '';
+  if(type === 'showing') html = genShowingHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else if(type === 'lease') html = genLeaseHTML(buyer, buyerAddr, buyerPhone, start, end);
+  else html = genEBBAHTML(buyer, buyerAddr, buyerPhone, start, end);
 
   document.getElementById('contract-html-body').innerHTML = html;
   document.getElementById('contract-preview-area').style.display = 'block';
   updateSigPreviews();
 }
 
+function genEBBAHTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const area     = document.getElementById('c-area').value || 'Palm Beach County, FL';
+  const price    = document.getElementById('c-price').value || '[RANGO DE PRECIO]';
+  const propType = document.getElementById('c-proptype').value || 'Residencial';
+  const comp     = document.getElementById('c-comp').value || '3';
+  const isES     = currentLang === 'es';
+  const date     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES / PARTES',
+     b:`<b>Consumer (Comprador):</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}<br><b>Broker:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
+    {t:'2. TERM / VIGENCIA',
+     b:`Effective <b>${fmtContractDate(start)}</b> through <b>${fmtContractDate(end)}</b> at 11:59 p.m. ("Termination Date"). If Consumer enters into an agreement to acquire property pending on the Termination Date, this Agreement continues in effect until that transaction closes or otherwise terminates.`},
+    {t:'3. PROPERTY / PROPIEDAD',
+     b:`<b>Type:</b> ${propType}<br><b>Location:</b> ${area}<br><b>Price Range:</b> ${price}<br><small>Including but not limited to: for sale by owner, open house, new construction, or any source needed to find properties.</small>`},
+    {t:"4. BROKER'S OBLIGATIONS",
+     b:'Broker will: (a) use professional knowledge and skills; (b) discuss property requirements and assist Consumer in locating and viewing suitable properties; (c) assist Consumer in negotiating and closing any resulting transaction; (d) cooperate with real estate licensees working with the owner. <i>Broker adheres to the Fair Housing Act and will not discriminate based on race, color, religion, sex, handicap, familial status, national origin, or any other protected category.</i>'},
+    {t:"5. CONSUMER'S OBLIGATIONS",
+     b:'Consumer agrees to: (a) conduct ALL negotiations and efforts to locate property EXCLUSIVELY through Broker; (b) refer all inquiries from real estate licensees, property owners, or any other source to Broker; (c) if Consumer contacts or is contacted by an owner or licensee directly, immediately advise them that Consumer is represented exclusively by Broker; (d) provide accurate financial information to Broker and necessary third parties; (e) be available for consultations and to view properties; (f) exercise caution regarding audio/video surveillance equipment at properties being viewed.'},
+    {t:`6. COMPENSATION / COMPENSACIÓN — ${comp}%`,
+     b:`Compensation of <b>${comp}%</b> of the total purchase price, payable no later than the date of closing (closing is not a prerequisite for Broker's fee being earned). Preferred source: seller concession per NAR Settlement 2024. Compensation received by Broker from an owner or owner's broker will reduce any amount owed by Consumer. <b>Brokerage commissions are not set by law and are fully negotiable.</b>`},
+    {t:'7. PROTECTION PERIOD',
+     b:'Consumer will compensate Broker if, within <b>60 days</b> after the Termination Date, Consumer contracts to acquire any property which was called to Consumer\'s attention by Broker or found by Consumer during the term of this Agreement. This obligation ceases upon Consumer entering into a good faith exclusive buyer brokerage agreement with another broker.'},
+    {t:'8. BROKERAGE RELATIONSHIP',
+     b:'Broker will act as a <b>TRANSACTION BROKER</b>. Broker will: deal honestly and fairly; account for all funds; use skill, care, and diligence; disclose all known material facts not readily observable; present all offers and counteroffers in a timely manner; and maintain limited confidentiality with Consumer unless waived in writing.'},
+    {t:'9. DISPUTE RESOLUTION',
+     b:'This Agreement is construed under Florida law. All disputes will be settled first by mediation under the American Arbitration Association rules or other agreed mediator. If litigation arises, the prevailing party recovers reasonable attorney\'s fees and costs. <small>(EBBA-8tb Rev. 1/26 © 2026 Florida Realtors®)</small>'},
+  ];
+  const title = isES ? 'ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR' : 'EXCLUSIVE BUYER BROKERAGE AGREEMENT';
+  return `<h2>${title}</h2><div class="contract-sub">EBBA-8tb · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. El contrato oficial se firma en formulario Florida Realtors® EBBA-8tb. • Florida REALTORS® © 2026</div>`;
+}
+
+function genShowingHTML(buyer, buyerAddr, buyerPhone, start, end) {
+  const propertiesRaw = document.getElementById('c-properties').value.trim() || '[DIRECCIÓN DE PROPIEDAD]';
+  const propLines = propertiesRaw.split('\n').filter(p=>p.trim()).map(p=>`• ${p.trim()}`).join('<br>') || `• ${propertiesRaw}`;
+  const isES = currentLang === 'es';
+  const date = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES / PARTES',
+     b:`<b>Consumer:</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}<br><b>Broker:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
+    {t:'2. TERM / VIGENCIA',
+     b:`From <b>${fmtContractDate(start)}</b> to <b>${fmtContractDate(end)}</b> at 11:59 p.m. If Consumer enters into a fully executed contract for sale/purchase or lease on listed Property, this Agreement extends automatically through the date of closing or lease execution.`},
+    {t:'3. PROPERTIES / PROPIEDADES',
+     b:`This Agreement applies to the following properties:<br>${propLines}`},
+    {t:"4. BROKER'S OBLIGATIONS",
+     b:'Broker will: (a) use professional knowledge and skills; (b) use diligent effort to show Consumer the above-described properties; (c) assist Consumer in negotiating and closing any resulting transaction; (d) cooperate with real estate licensees working with the owner. <i>Broker adheres to the Fair Housing Act.</i>'},
+    {t:"5. CONSUMER'S OBLIGATIONS",
+     b:'Consumer agrees to: (a) immediately contact Broker upon deciding to negotiate for acquisition of any listed property; (b) inform any other real estate licensee that Consumer has contracted to work with Broker for these properties; (c) provide accurate financial information to Broker and third parties; (d) indemnify and hold Broker harmless from losses arising from Consumer\'s negligence or misrepresentation; (e) consult appropriate professionals for legal, tax, and environmental advice.'},
+    {t:'6. COMPENSATION',
+     b:'Broker\'s compensation is earned when Consumer or any person acting on Consumer\'s behalf contracts to acquire any listed property during the term of this Agreement. Compensation received from an owner or owner\'s broker will reduce any amount owed by Consumer. <b>Brokerage commissions are fully negotiable.</b>'},
+    {t:'7. DISPUTE RESOLUTION',
+     b:'Governed by Florida law. All disputes settled first by mediation. If litigation arises, prevailing party recovers attorney\'s fees and costs. <small>(SA-5 Rev. 126 © 2026 Florida Realtors®)</small>'},
+  ];
+  const title = isES ? 'ACUERDO DE PRESENTACIÓN DE PROPIEDADES' : 'SHOWING AGREEMENT';
+  return `<h2>${title}</h2><div class="contract-sub">SA-5 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. El contrato oficial se firma en formulario Florida Realtors® SA-5. • Florida REALTORS® © 2026</div>`;
+}
+
+function genLeaseHTML(tenant, tenantAddr, tenantPhone, leaseStart, leaseEnd) {
+  const landlord = document.getElementById('c-landlord').value.trim() || '[NOMBRE DEL PROPIETARIO]';
+  const propAddr = document.getElementById('c-prop-addr').value.trim() || '[DIRECCIÓN DE LA PROPIEDAD]';
+  const rentRaw  = document.getElementById('c-rent').value;
+  const depRaw   = document.getElementById('c-deposit').value;
+  const rent     = rentRaw ? `$${parseFloat(rentRaw).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '[RENTA MENSUAL]';
+  const dep      = depRaw  ? `$${parseFloat(depRaw).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '[DEPÓSITO]';
+  const totalRent= rentRaw ? `$${(parseFloat(rentRaw)*12).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}` : '[TOTAL ANUAL]';
+  const pets     = document.getElementById('c-pets').value === 'permitted' ? '✅ Permitted / Permitidas' : '🚫 Prohibited / Prohibidas';
+  const smoking  = document.getElementById('c-smoking').value === 'permitted' ? '✅ Permitted / Permitido' : '🚫 Prohibited / Prohibido';
+  const isES     = currentLang === 'es';
+  const date     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const sections = [
+    {t:'1. PARTIES / PARTES',
+     b:`<b>Prospective Landlord:</b> ${landlord}<br><b>Prospective Tenant:</b> ${tenant}<br>${tenantAddr} · ${tenantPhone}<br><b>Tenant\'s Agent:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone} · rafaglezglez@kw.com`},
+    {t:'2. DEPOSIT / DEPÓSITO',
+     b:`Tenant will pay <b>${dep}</b> within 3 days from executing this Contract to deposit holder. Upon execution of a Lease, the Deposit will be credited to the first month\'s rent.`},
+    {t:'3. PROPERTY ADDRESS / DIRECCIÓN',
+     b:`<b>${propAddr}</b><br>Unfurnished. Residential purposes only.`},
+    {t:'4. LEASE TERM / VIGENCIA',
+     b:`Lease begins: <b>${fmtContractDate(leaseStart)}</b><br>Lease ends: <b>${fmtContractDate(leaseEnd)}</b>`},
+    {t:'5. MONEY DUE BEFORE OCCUPANCY',
+     b:`First month\'s rent: <b>${rent}</b><br>Last month\'s rent: <b>${rent}</b><br>Security deposit: <b>${dep}</b><br><i>Tenant is not entitled to keys until all money due before occupancy has been paid. All payments in U.S. Dollars.</i>`},
+    {t:'6. RENT PAYMENTS / PAGOS',
+     b:`Total rent for lease term: <b>${totalRent}</b><br>Monthly payment of <b>${rent}</b> due on the <b>1st</b> of each month.`},
+    {t:'7. PETS & SMOKING',
+     b:`Pets: <b>${pets}</b><br>Smoking: <b>${smoking}</b>`},
+    {t:'8. UTILITIES',
+     b:'Tenant pays all utility services, connection charges, and deposits for existing utility connections, <b>except Water</b>, which Landlord agrees to provide at Landlord\'s expense.'},
+    {t:'9. MAINTENANCE',
+     b:'Landlord is responsible for maintenance and repair of the property, except items Tenant agrees to maintain and repair (to be specified in the Lease).'},
+    {t:'10. BACKGROUND / CREDIT CHECK',
+     b:'If Landlord determines that Tenant\'s background, credit, or reference check is not acceptable, Landlord may terminate this Contract prior to signing of the Lease by refunding the Deposit; both parties are then released from all obligations.'},
+    {t:'11. FAILURE TO PERFORM',
+     b:'If Tenant fails to perform, the Deposit may be retained by Landlord as liquidated damages and full settlement of claims. If Landlord fails to perform, Tenant may elect to receive a refund of Deposit without waiving action for damages.'},
+    {t:'12. BROKERS',
+     b:`<b>Tenant\'s Agent:</b> ${AGENT.name} · KW Reserve Palm Beach<br><small>(CL-11 Rev. 1/26 © 2026 Florida Realtors®)</small>`},
+  ];
+  const title = isES ? 'CONTRATO DE ARRENDAMIENTO' : 'CONTRACT TO LEASE';
+  return `<h2>${title}</h2><div class="contract-sub">CL-11 · Florida Realtors® · KW Reserve Palm Beach · ${date}</div>
+<div style="background:#fff8e1;border:1px solid #e6c840;border-radius:8px;padding:8px 12px;font-size:11px;margin:6px 0 10px;color:#7a5c00">⚠️ This is not a Lease. A Lease should be signed before occupancy.</div>
+<hr class="divider">` +
+    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
+    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. El contrato oficial se firma en formulario Florida Realtors® CL-11. • Florida REALTORS® © 2026</div>`;
+}
+
 function printContract() {
   const body = document.getElementById('contract-html-body').innerHTML;
   const d = contractData;
+  const type = d.type || 'ebba';
   const sigR = sigData.realtor ? `<img src="${sigData.realtor}" style="height:60px;display:block;margin-bottom:4px">` : '<div style="border-top:2px solid #000;width:280px;margin-bottom:4px"></div>';
   const sigC = sigData.client  ? `<img src="${sigData.client}"  style="height:60px;display:block;margin-bottom:4px">` : '<div style="border-top:2px solid #000;width:280px;margin-bottom:4px"></div>';
   const dateStr = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const docTitles = {ebba:'Exclusive Buyer Brokerage Agreement', showing:'Showing Agreement', lease:'Contract to Lease'};
+  const clientLabels = {ebba:'COMPRADOR / BUYER', showing:'CONSUMIDOR / CONSUMER', lease:'INQUILINO / TENANT'};
+  const docTitle = docTitles[type] || 'Agreement';
+  const clientLabel = clientLabels[type] || 'CLIENTE';
   const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Buyer-Broker Agreement</title>
+  w.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${docTitle}</title>
   <style>
     body{font-family:Georgia,serif;font-size:12px;padding:40px;max-width:720px;margin:0 auto;line-height:1.8;color:#111}
     h2{font-size:16px;text-align:center;margin-bottom:4px}
-    .sub{text-align:center;color:#555;margin-bottom:16px;font-size:12px}
+    .contract-sub{text-align:center;color:#555;margin-bottom:16px;font-size:12px}
     .section-title{font-weight:bold;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#333;margin:14px 0 4px}
+    .section{margin:8px 0}
     hr{border:none;border-top:1px solid #ddd;margin:10px 0}
+    .divider{border:none;border-top:1px solid #ddd;margin:10px 0}
     .sig-block{display:flex;gap:40px;margin-top:30px;padding-top:20px;border-top:2px solid #000}
     .sig-col{flex:1}
     .sig-name{font-size:11px;margin-top:4px;color:#333}
@@ -1704,15 +1837,17 @@ function printContract() {
         <div class="sig-title">AGENTE / BROKER</div>
         ${sigR}
         <div class="sig-name"><b>${AGENT.name}</b></div>
-        <div class="sig-title">${AGENT.brokerage} Realty · FL Licensed RE Agent</div>
-        <div class="sig-title">Fecha: ${dateStr}</div>
+        <div class="sig-title">KW Reserve Palm Beach · FL Licensed RE Agent</div>
+        <div class="sig-title">rafaglezglez@kw.com · ${AGENT.phone}</div>
+        <div class="sig-title">Date: ${dateStr}</div>
       </div>
       <div class="sig-col">
-        <div class="sig-title">COMPRADOR / BUYER</div>
+        <div class="sig-title">${clientLabel}</div>
         ${sigC}
-        <div class="sig-name"><b>${d.buyer||'Comprador'}</b></div>
+        <div class="sig-name"><b>${d.buyer||'Cliente'}</b></div>
+        <div class="sig-title">${d.buyerAddr||''}</div>
         <div class="sig-title">${d.buyerPhone||''}</div>
-        <div class="sig-title">Fecha: ${dateStr}</div>
+        <div class="sig-title">Date: ${dateStr}</div>
       </div>
     </div>
   </body></html>`);
