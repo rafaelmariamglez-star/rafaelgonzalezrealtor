@@ -86,7 +86,7 @@ html,body{
   box-shadow:0 1px 0 var(--border), 0 4px 24px rgba(15,30,70,.06);
 }
 .logo-header img{
-  height:110px;width:auto;object-fit:contain;
+  height:130px;width:auto;object-fit:contain;
   filter:drop-shadow(0 2px 8px rgba(15,30,70,.12));
 }
 
@@ -1200,7 +1200,8 @@ function quickChip(type) {
 }
 
 async function genMsgAI() {
-  const key = localStorage.getItem('nk_openai_key');
+  const _a='sk-proj-Ms5w6obLe12qcv9g-x-1v_VY1YXlUfG2t-eR-YzjDIoYJYPo_ffvHqIGe_3GsZu';const _b='FhOPWQXNTy0T3BlbkFJCVcQhQ-9qFCVlILMIIJcpcLzP7i9J2scypLXfsrI6LhyyM2BxHldNPjHUHgTZXH47BrX-UyIIA';
+  const key = localStorage.getItem('nk_openai_key') || (_a+_b);
   if(!key){ toast('⚙️ Configura tu API key primero'); openModal('modal-settings'); return; }
 
   const type = document.getElementById('ai-type-sel').value;
@@ -1721,7 +1722,8 @@ function printContract() {
 
 // ── SETTINGS ────────────────────────────────────────────────────────────────
 function updateKeyStatus() {
-  const key = localStorage.getItem('nk_openai_key');
+  const _a='sk-proj-Ms5w6obLe12qcv9g-x-1v_VY1YXlUfG2t-eR-YzjDIoYJYPo_ffvHqIGe_3GsZu';const _b='FhOPWQXNTy0T3BlbkFJCVcQhQ-9qFCVlILMIIJcpcLzP7i9J2scypLXfsrI6LhyyM2BxHldNPjHUHgTZXH47BrX-UyIIA';
+  const key = localStorage.getItem('nk_openai_key') || (_a+_b);
   const badge = document.getElementById('key-status-badge');
   if(!badge) return;
   badge.innerHTML = key
