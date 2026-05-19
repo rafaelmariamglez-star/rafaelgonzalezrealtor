@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Firmar Contrato</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#f2f0eb;
+  color:#0f1e46;
+}
+.container{max-width:800px;margin:0 auto;padding:20px}
+.header{text-align:center;margin-bottom:30px}
+.header h1{font-size:28px;font-weight:800;margin-bottom:10px}
+.header p{color:#7a8a9e;font-size:14px}
+.contract-area{
+  background:#fff;
+  border:1px solid rgba(15,30,70,.09);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  max-height:400px;
+  overflow-y:auto;
+}
+.contract-area pre{
+  font-size:12px;
+  line-height:1.6;
+  font-family:Arial,sans-serif;
+  white-space:pre-wrap;
+  overflow-wrap:break-word;
+}
+.signature-area{
+  background:#fff;
+  border:1px solid rgba(15,30,70,.09);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+}
+.signature-area h3{font-size:16px;font-weight:700;margin-bottom:10px}
+.signature-area p{font-size:13px;color:#7a8a9e;margin-bottom:10px}
+canvas{
+  width:100%;
+  height:200px;
+  background:#fff;
+  border:2px dashed rgba(15,30,70,.2);
+  border-radius:12px;
+  cursor:crosshair;
+  display:block;
+  margin-bottom:10px;
+}
+.sig-buttons{display:flex;gap:10px;margin-bottom:20px}
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:12px;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .2s;
+}
+.btn-primary{
+  background:#0f1e46;
+  color:#fff;
+  flex:1;
+}
+.btn-primary:hover{background:#1e3470}
+.btn-primary:disabled{
+  background:#ccc;
+  cursor:not-allowed;
+  opacity:.5;
+}
+.btn-ghost{
+  background:#f7f5f0;
+  color:#0f1e46;
+  flex:1;
+  border:1px solid rgba(15,30,70,.09);
+}
+.btn-ghost:hover{background:#eee}
+.info{
+  background:rgba(5,150,105,.1);
+  border:1px solid #059669;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:20px;
+  color:#059669;
+  font-size:14px;
+}
+.info.error{
+  background:rgba(220,38,38,.1);
+  border-color:#dc2626;
+  color:#dc2626;
+}
+.loading{text-align:center;padding:40px;color:#7a8a9e}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>✍️ Firma tu Contrato</h1>
+    <p>Por favor revisa y firma el contrato a continuación</p>
+  </div>
+
+  <div id="content">
+    <div class="loading">Cargando contrato...</div>
+  </div>
+</div>
+
+<script>
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCPmeGgPk3waKw0k8FF82-z_YfNcsQnxRU",
+  authDomain: "nextrkey.firebaseapp.com",
+  projectId: "nextrkey",
+  storageBucket: "nextrkey.firebasestorage.app",
+  messagingSenderId: "987710354400",
+  appId: "1:987710354400:web:01e09067c6c96100993185",
+  measurementId: "G-BGSH64DZX8"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let sigCanvas, sigCtx, sigDrawing = false, sigLastX = 0, sigLastY = 0;
+let contractId = null;
+let contractData = null;
+
+// Get contract ID from URL
+const params = new URLSearchParams(window.location.search);
+contractId = params.get('id');
+
+if(!contractId) {
+  document.getElementById('content').innerHTML = '<div class="info error">❌ Enlace inválido o expirado</div>';
+} else {
+  // Load contract from Firestore
+  db.collection('contracts').doc(contractId).get()
+    .then(doc => {
+      if(!doc.exists) {
+        document.getElementById('content').innerHTML = '<div class="info error">❌ Contrato no encontrado</div>';
+        return;
+      }
+      contractData = doc.data();
+      renderContract();
+    })
+    .catch(e => {
+      document.getElementById('content').innerHTML = '<div class="info error">❌ Error al cargar: ' + e.message + '</div>';
+    });
+}
+
+function renderContract() {
+  const html = `
+    <div class="info">
+      ✅ Contrato para: <strong>${contractData.buyer}</strong> | Email: <strong>${contractData.buyerEmail}</strong>
+    </div>
+
+    <div class="contract-area">
+      <pre>${contractData.contractText}</pre>
+    </div>
+
+    <div class="signature-area">
+      <h3>Tu Firma</h3>
+      <p>Por favor firma en el área a continuación. Puedes usar tu dedo (en móvil) o el mouse (en computadora).</p>
+      <canvas id="sig-canvas"></canvas>
+      <div class="sig-buttons">
+        <button class="btn-ghost" onclick="clearSignature()">🗑 Limpiar</button>
+        <button class="btn-primary" onclick="confirmSignature()" ${contractData.clientSignature ? 'disabled' : ''}>
+          ${contractData.clientSignature ? '✅ Ya firmado' : '✏️ Confirmar firma'}
+        </button>
+      </div>
+    </div>
+
+    ${contractData.clientSignature ?
+      '<div class="info">✅ Tu firma ha sido guardada correctamente. El contrato está completo.</div>'
+      : ''}
+  `;
+
+  document.getElementById('content').innerHTML = html;
+
+  if(!contractData.clientSignature) {
+    setTimeout(initSignatureCanvas, 100);
+  }
+}
+
+function initSignatureCanvas() {
+  sigCanvas = document.getElementById('sig-canvas');
+  if(!sigCanvas) return;
+
+  sigCanvas.width = sigCanvas.offsetWidth * window.devicePixelRatio;
+  sigCanvas.height = sigCanvas.offsetHeight * window.devicePixelRatio;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.scale(window.devicePixelRatio, window.devicePixelRatio);
+  sigCtx.fillStyle = '#fff';
+  sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+  sigCtx.strokeStyle = '#111';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+
+  const getPos = e => {
+    const r = sigCanvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return {x: src.clientX - r.left, y: src.clientY - r.top};
+  };
+
+  sigCanvas.addEventListener('mousedown', e => { sigDrawing = true; const p = getPos(e); sigLastX = p.x; sigLastY = p.y; });
+  sigCanvas.addEventListener('mousemove', e => { if(!sigDrawing) return; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); sigLastX = p.x; sigLastY = p.y; });
+  sigCanvas.addEventListener('mouseup', () => sigDrawing = false);
+
+  sigCanvas.addEventListener('touchstart', e => { e.preventDefault(); sigDrawing = true; const p = getPos(e); sigLastX = p.x; sigLastY = p.y; }, {passive: false});
+  sigCanvas.addEventListener('touchmove', e => { e.preventDefault(); if(!sigDrawing) return; const p = getPos(e); sigCtx.beginPath(); sigCtx.moveTo(sigLastX, sigLastY); sigCtx.lineTo(p.x, p.y); sigCtx.stroke(); sigLastX = p.x; sigLastY = p.y; }, {passive: false});
+  sigCanvas.addEventListener('touchend', () => sigDrawing = false);
+}
+
+function clearSignature() {
+  if(!sigCtx) return;
+  sigCtx.fillStyle = '#fff';
+  sigCtx.fillRect(0, 0, sigCanvas.width, sigCanvas.height);
+}
+
+function confirmSignature() {
+  if(!sigCtx) return;
+
+  const sigDataUrl = sigCanvas.toDataURL('image/png');
+
+  db.collection('contracts').doc(contractId).update({
+    clientSignature: sigDataUrl,
+    status: 'completed',
+    signedAt: new Date().toISOString()
+  })
+  .then(() => {
+    contractData.clientSignature = sigDataUrl;
+    contractData.status = 'completed';
+    renderContract();
+  })
+  .catch(e => {
+    alert('❌ Error al guardar firma: ' + e.message);
+  });
+}
+</script>
+
+</body>
+</html>

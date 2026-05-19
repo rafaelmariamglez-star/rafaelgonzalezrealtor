@@ -7,6 +7,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>NextKey</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -734,6 +736,7 @@ html,body{
       <div class="field"><label id="label-buyer">Nombre completo del comprador</label><input id="c-buyer" placeholder="Ana García"/></div>
       <div class="field"><label>Dirección</label><input id="c-buyer-addr" placeholder="123 Main St, West Palm Beach, FL 33401"/></div>
       <div class="field"><label>Teléfono</label><input id="c-buyer-phone" placeholder="(561) 000-0000"/></div>
+      <div class="field"><label>Email del cliente (para enviar contrato)</label><input id="c-buyer-email" type="email" placeholder="cliente@ejemplo.com"/></div>
       <div class="field"><label>Fecha de inicio</label><input id="c-start" type="date"/></div>
       <div class="field"><label>Fecha de vencimiento</label><input id="c-end" type="date"/></div>
       <div id="fields-ebba">
@@ -794,9 +797,10 @@ html,body{
           <div id="sig-status" style="text-align:center;font-size:12px;color:var(--text2);margin:10px 0"></div>
         </div>
 
-        <div id="contract-actions" style="margin-top:10px;display:flex;gap:8px">
+        <div id="contract-actions" style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
           <button class="btn btn-ghost" style="flex:1" onclick="printContract()">🖨 Imprimir / PDF</button>
           <button class="btn btn-primary" style="flex:1" id="btn-seal" onclick="sealContract()" disabled style="opacity:.5">🔏 Sellar</button>
+          <button class="btn btn-ghost" style="flex:1" id="btn-send-client" onclick="sendToClient()" disabled style="opacity:.5">📧 Enviar cliente</button>
         </div>
       </div>
     </div>
@@ -831,9 +835,18 @@ html,body{
       <div id="key-status-badge"></div>
       <div class="field"><label>OpenAI API Key</label><input id="keyInput" type="text" placeholder="sk-..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/></div>
       <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Tu clave se guarda <strong>solo en este dispositivo</strong> y nunca sale a ningún servidor.<br>Consíguela en <span style="color:var(--accent)">platform.openai.com</span></p>
-      <div style="display:flex;gap:10px">
+      <div style="display:flex;gap:10px;margin-bottom:20px">
         <button class="btn btn-primary" onclick="saveKey()" style="flex:1">Guardar</button>
         <button class="btn btn-ghost" onclick="clearKey()">Limpiar</button>
+      </div>
+
+      <div id="brevo-status-badge"></div>
+      <div class="field"><label>Brevo API Key (Email)</label><input id="brevoKeyInput" type="text" placeholder="xkeysib-..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/></div>
+      <div class="field"><label>Email de envío (desde)</label><input id="senderEmail" type="email" placeholder="tu@email.com"/></div>
+      <p style="font-size:12px;color:var(--text2);margin-bottom:14px;line-height:1.6">Para enviar contratos por email. Crea una cuenta gratis en <span style="color:var(--accent)">brevo.com</span> — 300 emails/día. Usa un email verificado en Brevo.</p>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-primary" onclick="saveBrevoKey()" style="flex:1">Guardar</button>
+        <button class="btn btn-ghost" onclick="clearBrevoKey()">Limpiar</button>
       </div>
     </div>
   </div>
@@ -846,6 +859,21 @@ html,body{
 // ── DATA ────────────────────────────────────────────────────────────────────
 const AGENT = {name:'Rafael', brokerage:'Keller Williams', phone:'561-905-6211'};
 const COLORS = ['#4f7ef8','#7c5cf8','#d4a843','#22c55e','#f87171','#f59e0b','#ec4899','#06b6d4'];
+
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyCPmeGgPk3waKw0k8FF82-z_YfNcsQnxRU",
+  authDomain: "nextrkey.firebaseapp.com",
+  projectId: "nextrkey",
+  storageBucket: "nextrkey.firebasestorage.app",
+  messagingSenderId: "987710354400",
+  appId: "1:987710354400:web:01e09067c6c96100993185",
+  measurementId: "G-BGSH64DZX8"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 let leads = [];
 
@@ -1613,6 +1641,7 @@ function autoFillContract(id) {
   document.getElementById('c-buyer').value = l.name;
   document.getElementById('c-buyer-phone').value = l.phone || '';
   document.getElementById('c-buyer-addr').value = l.address || '';
+  document.getElementById('c-buyer-email').value = l.email || '';
   const type = document.getElementById('c-contract-type').value;
   if(type === 'ebba') document.getElementById('c-price').value = l.budget || '';
 }
@@ -1693,6 +1722,9 @@ function updateSigPreviews() {
   const both = sigData.realtor && sigData.client;
   const btn = document.getElementById('btn-seal');
   if(btn) { btn.disabled = !both; btn.style.opacity = both ? '1' : '.5'; }
+  const sendBtn = document.getElementById('btn-send-client');
+  const hasEmail = contractData.buyerEmail;
+  if(sendBtn) { sendBtn.disabled = !hasEmail; sendBtn.style.opacity = hasEmail ? '1' : '.5'; }
   const status = document.getElementById('sig-status');
   if(status) {
     if(both) status.innerHTML = '<span style="color:var(--green);font-weight:700">✅ Ambas firmas completas — listo para sellar</span>';
@@ -1707,6 +1739,78 @@ function sealContract() {
   printContract();
 }
 
+function sendToClient() {
+  if(!contractData.buyerEmail){ toast('❌ Falta el email del cliente'); return; }
+  const brevoKey = localStorage.getItem('nk_brevo_key');
+  const senderEmail = localStorage.getItem('nk_sender_email');
+  if(!brevoKey || !senderEmail){ alert('❌ Configura Brevo (API Key + Email) en Configuración'); return; }
+
+  toast('📧 Guardando contrato y enviando...');
+
+  // Generate unique contract ID
+  const contractId = 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+  const signingLink = `${window.location.origin}${window.location.pathname.replace('app.html', 'sign.html')}?id=${contractId}`;
+
+  // Prepare contract data for Firestore
+  const contractDoc = {
+    contractId: contractId,
+    type: contractData.type,
+    buyer: contractData.buyer,
+    buyerEmail: contractData.buyerEmail,
+    buyerAddr: contractData.buyerAddr,
+    buyerPhone: contractData.buyerPhone,
+    start: contractData.start,
+    end: contractData.end,
+    contractText: document.getElementById('contract-html-body').innerText,
+    realtorSignature: sigData.realtor || null,
+    clientSignature: null,
+    createdAt: new Date().toISOString(),
+    status: 'pending_client_signature',
+    sentAt: new Date().toISOString()
+  };
+
+  // Save to Firestore
+  db.collection('contracts').doc(contractId).set(contractDoc)
+    .then(() => {
+      // Send email with signing link
+      const subject = `Contrato para firmar — ${contractData.buyer} (${contractData.type})`;
+      const message = `Hola ${contractData.buyer},\n\nTienes un contrato para revisar y firmar de ${AGENT.name}.\n\n🔗 ENLACE PARA FIRMAR:\n${signingLink}\n\nHaz clic en el enlace anterior para revisar y firmar el contrato.\n\nSaludos,\n${AGENT.name}\n${AGENT.brokerage}\n${AGENT.phone}`;
+
+      return fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': brevoKey
+        },
+        body: JSON.stringify({
+          to: [{email: contractData.buyerEmail, name: contractData.buyer}],
+          from: {email: senderEmail, name: AGENT.name},
+          subject: subject,
+          htmlContent: `<pre>${escapeHtml(message)}</pre>`,
+          textContent: message
+        })
+      });
+    })
+    .then(r => r.json())
+    .then(d => {
+      if(d.messageId) {
+        toast('✅ Contrato enviado y guardado. Cliente recibió enlace de firma.');
+        contractData.sentAt = new Date().toISOString();
+      } else {
+        toast('❌ Error al enviar: ' + (d.message || 'Verifica tu Brevo Key'));
+      }
+    })
+    .catch(e => {
+      toast('❌ Error: ' + e.message);
+    });
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
 function fmtContractDate(d) {
   if(!d || d.startsWith('[')) return d;
   const [y,m,day] = d.split('-');
@@ -1718,10 +1822,11 @@ function genContract() {
   const buyer    = document.getElementById('c-buyer').value.trim() || '[NOMBRE]';
   const buyerAddr= document.getElementById('c-buyer-addr').value.trim() || '[DIRECCIÓN]';
   const buyerPhone=document.getElementById('c-buyer-phone').value.trim() || '[TELÉFONO]';
+  const buyerEmail=document.getElementById('c-buyer-email').value.trim() || '';
   const start    = document.getElementById('c-start').value || '[FECHA INICIO]';
   const end      = document.getElementById('c-end').value || '[FECHA FIN]';
 
-  contractData = {type, buyer, buyerAddr, buyerPhone, start, end};
+  contractData = {type, buyer, buyerAddr, buyerPhone, buyerEmail, start, end};
   sigData = {realtor:null, client:null};
   document.getElementById('sig-client-name').textContent = buyer;
   document.getElementById('sig-realtor-area').classList.remove('signed');
@@ -1750,36 +1855,262 @@ function genContract() {
 }
 
 function genEBBAHTML(buyer, buyerAddr, buyerPhone, start, end) {
-  const area     = document.getElementById('c-area').value || 'Palm Beach County, FL';
-  const price    = document.getElementById('c-price').value || '[RANGO DE PRECIO]';
-  const propType = document.getElementById('c-proptype').value || 'Residencial';
-  const comp     = document.getElementById('c-comp').value || '3';
-  const isES     = currentLang === 'es';
-  const date     = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-  const sections = [
-    {t:'1. PARTIES / PARTES',
-     b:`<b>Consumer (Comprador):</b> ${buyer}<br>${buyerAddr} · ${buyerPhone}<br><b>Broker:</b> ${AGENT.name} · KW Reserve Palm Beach · ${AGENT.phone}`},
-    {t:'2. TERM / VIGENCIA',
-     b:`Effective <b>${fmtContractDate(start)}</b> through <b>${fmtContractDate(end)}</b> at 11:59 p.m. ("Termination Date"). If Consumer enters into an agreement to acquire property pending on the Termination Date, this Agreement continues in effect until that transaction closes or otherwise terminates.`},
-    {t:'3. PROPERTY / PROPIEDAD',
-     b:`<b>Type:</b> ${propType}<br><b>Location:</b> ${area}<br><b>Price Range:</b> ${price}<br><small>Including but not limited to: for sale by owner, open house, new construction, or any source needed to find properties.</small>`},
-    {t:"4. BROKER'S OBLIGATIONS",
-     b:'Broker will: (a) use professional knowledge and skills; (b) discuss property requirements and assist Consumer in locating and viewing suitable properties; (c) assist Consumer in negotiating and closing any resulting transaction; (d) cooperate with real estate licensees working with the owner. <i>Broker adheres to the Fair Housing Act and will not discriminate based on race, color, religion, sex, handicap, familial status, national origin, or any other protected category.</i>'},
-    {t:"5. CONSUMER'S OBLIGATIONS",
-     b:'Consumer agrees to: (a) conduct ALL negotiations and efforts to locate property EXCLUSIVELY through Broker; (b) refer all inquiries from real estate licensees, property owners, or any other source to Broker; (c) if Consumer contacts or is contacted by an owner or licensee directly, immediately advise them that Consumer is represented exclusively by Broker; (d) provide accurate financial information to Broker and necessary third parties; (e) be available for consultations and to view properties; (f) exercise caution regarding audio/video surveillance equipment at properties being viewed.'},
-    {t:`6. COMPENSATION / COMPENSACIÓN — ${comp}%`,
-     b:`Compensation of <b>${comp}%</b> of the total purchase price, payable no later than the date of closing (closing is not a prerequisite for Broker's fee being earned). Preferred source: seller concession per NAR Settlement 2024. Compensation received by Broker from an owner or owner's broker will reduce any amount owed by Consumer. <b>Brokerage commissions are not set by law and are fully negotiable.</b>`},
-    {t:'7. PROTECTION PERIOD',
-     b:'Consumer will compensate Broker if, within <b>60 days</b> after the Termination Date, Consumer contracts to acquire any property which was called to Consumer\'s attention by Broker or found by Consumer during the term of this Agreement. This obligation ceases upon Consumer entering into a good faith exclusive buyer brokerage agreement with another broker.'},
-    {t:'8. BROKERAGE RELATIONSHIP',
-     b:'Broker will act as a <b>TRANSACTION BROKER</b>. Broker will: deal honestly and fairly; account for all funds; use skill, care, and diligence; disclose all known material facts not readily observable; present all offers and counteroffers in a timely manner; and maintain limited confidentiality with Consumer unless waived in writing.'},
-    {t:'9. DISPUTE RESOLUTION',
-     b:'This Agreement is construed under Florida law. All disputes will be settled first by mediation under the American Arbitration Association rules or other agreed mediator. If litigation arises, the prevailing party recovers reasonable attorney\'s fees and costs. <small>(EBBA-8tb Rev. 1/26 © 2026 Florida Realtors®)</small>'},
-  ];
-  const title = isES ? 'ACUERDO EXCLUSIVO DE REPRESENTACIÓN DE COMPRADOR' : 'EXCLUSIVE BUYER BROKERAGE AGREEMENT';
-  return `<h2>${title}</h2><div class="contract-sub">EBBA-8tb · Florida Realtors® · KW Reserve Palm Beach · ${date}</div><hr class="divider">` +
-    sections.map(s=>`<div class="section"><div class="section-title">${s.t}</div><div>${s.b}</div></div>`).join('<hr class="divider">') +
-    `<hr class="divider"><div style="font-size:10px;color:#888;text-align:center">Documento preparatorio. El contrato oficial se firma en formulario Florida Realtors® EBBA-8tb. • Florida REALTORS® © 2026</div>`;
+  const contractText = `<pre style="font-family:Arial,sans-serif;font-size:11px;line-height:1.3;white-space:pre-wrap;overflow-wrap:break-word;padding:10px">Exclusive Buyer Brokerage Agreement
+1. PARTIES:
+Joshua YOUNG
+KW Reserve Palm Beach
+28
+28
+June
+2026
+April
+("Consumer") grants
+("Broker")
+${buyer}
+KW Reserve Palm Beach
+28
+28
+June
+2026
+April
+("Consumer") grants
+("Broker")
+the exclusive right to work with and assist Consumer in locating and negotiating the acquisition of suitable real property as
+described below. The term "acquire" or "acquisition" includes any purchase, option, exchange, lease or other acquisition of an
+ownership, possessory, or equity interest in real property.
+2. TERM: This Agreement will begin on the ______ day of _____________, ______ and will terminate at 11:59 p.m. on the
+______ day of _______________, ______ ("Termination Date"). However, if Consumer enters into an agreement to acquire
+property that is pending on the Termination Date, this Agreement will continue in effect until that transaction has closed or
+otherwise terminated.
+3. PROPERTY: Consumer is interested in acquiring real property as follows or as otherwise acceptable to Consumer
+("Property"):
+(a) Type of property:
+(b) Location:
+2026
+Residential
+Florida
+4. BROKER'S OBLIGATIONS:
+(a) Broker Assistance. Broker will
+* use Broker's professional knowledge and skills;
+* discuss property requirements and assist Consumer in locating and viewing suitable properties;
+* assist Consumer in negotiating and closing any resulting transaction;
+* cooperate with real estate licensees working with the owner, if any, to complete a transaction.
+(b) Other Consumers. Consumer understands that Broker may work with other prospective consumers who want to
+acquire the same property as Consumer. If Broker submits offers by competing consumers, Broker will notify
+Consumer that a competing offer has been made, but will not disclose any of the offer's material terms or conditions.
+Consumer agrees that Broker may make competing consumers aware of the existence of any offer Consumer
+makes, so long as Broker does not reveal any material terms or conditions of the offer without Consumer's prior
+written consent. Consumer understands that even if Broker is compensated by an owner or a real estate licensee
+who is working with an owner, such compensation does not compromise Broker's duties to Consumer.
+(c) Fair Housing. Broker adheres to the principles expressed in the Fair Housing Act and will not participate in any
+act that unlawfully discriminates on the basis of race, color, religion, sex, handicap, familial status, country of national origin
+or any other category protected under federal, state or local law.
+(d) Service Providers. Broker does not warrant or guarantee products or services provided by any third party whom
+Broker, at Consumer's request, refers or recommends to Consumer in connection with property acquisition.
+5. CONSUMER'S OBLIGATIONS: Consumer agrees to cooperate with Broker in accomplishing the objectives of this
+Agreement, including:
+(a) Conducting all negotiations and efforts to locate suitable property only through Broker and referring to Broker all
+inquiries of any kind from real estate licensees, property owners or any other source. If Consumer contacts or is
+contacted by an owner or a real estate licensee who is working with an owner or views a property unaccompanied by
+Broker, Consumer, will, at first opportunity, advise the owner or real estate licensee that Consumer is working with and
+represented exclusively by Broker.
+(b) Providing Broker and necessary third parties (i.e., any lender, closing agent, etc.) with accurate information
+requested by Broker or third parties in connection with ensuring Consumer's ability to acquire property.
+(c) Being available to meet with Broker at reasonable times for consultations and to view properties.
+(d) Indemnifying and holding Broker harmless from and against all losses, damages, costs and expenses of any kind,
+including attorney's fees, and from liability to any person, that Broker incurs because of acting on Consumer's
+behalf.
+(e) Not asking or expecting to restrict the acquisition of a property according to race, color, religion, sex, handicap, familial
+status, country of national origin or any other category protected under federal, state or local law.
+(f) Acknowledging that property owners may have audio recording and/or video surveillance equipment on a property
+to be viewed (i.e. cameras with audio recording capabilities, doorbell cameras, etc.). Consumer will exercise caution
+while viewing such properties.
+(g) Consulting an appropriate professional for legal, tax, environmental, engineering, foreign reporting requirements and
+other specialized advice.
+Consumer (_____) (_____) and Broker/Sales Associate (_____) (_____) acknowledge receipt of a copy of this page, which is Page 1 of 4.
+EBBA-8tn
+©2026 Florida Realtors®
+Rev. 1/26
+(h) Making a diligent good faith effort to perform the contract terms of any purchase agreement or contract to lease
+and closing on the sale of any property Consumer contracts to acquire.
+0
+6. RETAINER: A non-refundable retainer fee of $_________________________ for Broker's services provided for
+Consumer ("Retainer") is earned and payable upon execution of this Agreement. This Retainer is in addition to any
+compensation earned by Broker. Broker and Consumer agree the Retainer is for real estate services described herein
+and does not constitute a fee paid for a rental information list as described in section 475.453, Florida Statutes.
+7. COMPENSATION: Broker's compensation is earned when, during the term of this Agreement or any renewal or extension,
+Consumer or any person acting for or on behalf of Consumer contracts to acquire real property as specified in this
+Agreement or defaults on any contract to acquire property. This compensation is for Broker's services for Consumer.
+Compensation received by Broker, if any, from an owner or owner's broker for services rendered to Consumer will
+reduce any amount owed by Consumer per this paragraph.
+(a) Purchase or exchange: $________________ or ______% (select only one); or $________________ or ______ %
+plus $___________________ (select only one) of the total purchase price or other consideration for the acquired property,
+payable no later than the date of closing specified in the sales contract; however, closing is not a prerequisite for
+Broker's fee being earned.
+50
+1
+(b) Lease: $________________ or ______ % of _____ month's rent (select only one); or $_____________ or
+__________% plus $_________ (select only one) of the gross lease value, payable when Consumer enters into a lease
+with the owner. If Consumer enters into a lease-purchase agreement, the amount of the leasing fee which Broker
+receives will be credited toward the amount due Broker for the purchase.
+(c) Option: Broker will be paid $________________ or ______ % (select only one) of the option amount, to be
+paid when Consumer enters into the option agreement.  If Consumer enters into a lease with option to
+purchase, Broker will be compensated for both the lease and the option.
+(d) Other: Broker will be compensated for all other types of acquisitions as if such acquisition were a purchase or
+exchange.
+0
+(e) Additional Fees: ____________________________________________________________________________
+_____________________________________________________________________________________________
+_____________________________________________________________________________________________
+8. PROTECTION PERIOD: Consumer will compensate Broker if, within ______ (if left blank, 30) days after Termination
+60
+Date, Consumer contracts to acquire any property which was called to Consumer's attention by Broker or any other person or
+found by Consumer during the term of this Agreement. Consumer's obligation to pay Broker's fee ceases upon Consumer
+0
+entering into a good faith exclusive buyer brokerage agreement with another broker after Termination Date.
+9. CONDITIONAL TERMINATION: At Consumer's request, Broker may agree to conditionally terminate this
+Agreement. If Broker agrees to conditional termination of this Agreement, Consumer must enter a written agreement to
+this effect and pay a cancellation fee of $ _________________. Broker may void the conditional termination and
+Consumer will pay the fee stated in the COMPENSATION Paragraph less the cancellation fee if, from the early
+termination date to Termination Date plus Protection Period, if applicable, Consumer contracts to acquire any property
+which, prior to the early termination date, was found by Consumer or called to Consumer's attention by Broker or any
+other person.
+10. DISPUTE RESOLUTION: This Agreement will be construed under Florida law. All controversies, claims, and other
+matters in question between the parties arising out of or relating to this Agreement or the breach thereof will be settled by
+first attempting mediation under the rules of the American Arbitration Association or other mediator agreed upon by the
+parties. If litigation arises out of this Agreement, the prevailing party will be entitled to recover reasonable attorney's fees
+and costs, unless the parties agree that disputes will be settled by arbitration as follows:  Arbitration:  By initialing in the
+space provided, Consumer (____) (____),and Broker or Authorized Associate (____) agree that disputes not resolved
+by mediation will be settled by neutral binding arbitration in the county in which the Property is located in accordance with
+the rules of the American Arbitration Association or other arbitrator agreed upon by the parties. Each party to any
+arbitration (or litigation to enforce the arbitration provision of this Agreement or an arbitration award) will pay its own fees,
+costs, and expenses, including attorney's fees, and will equally split the arbitrator's fees and administrative fees of
+arbitration.
+11. ASSIGNMENT; PERSONS BOUND: Broker may assign this Agreement to another broker. This Agreement will bind and inure
+to Broker's and Consumer's heirs, personal representatives, successors and assigns.
+Consumer (_____) (_____) and Broker/Sales Associate (_____) (_____) acknowledge receipt of a copy of this page, which is Page 2 of 4.
+EBBA-8tn
+©2026 Florida Realtors®
+Rev. 1/26
+12. BROKERAGE RELATIONSHIP:
+SINGLE AGENT NOTICE
+FLORIDA LAW REQUIRES THAT REAL ESTATE LICENSEES OPERATING AS SINGLE AGENTS
+DISCLOSE TO BUYERS AND SELLERS THEIR DUTIES.
+KW Reserve Palm Beach
+As a single agent, _________________________________________________________ and its associates owe to you
+the following duties:
+1. Dealing honestly and fairly;
+2. Loyalty;
+3. Confidentiality;
+4. Obedience;
+5. Full Disclosure;
+6. Accounting for all funds;
+7. Skill, care, and diligence in the transaction;
+8. Presenting all offers and counteroffers in a timely manner, unless a party has previously directed the licensee
+otherwise in writing; and
+9. Disclosing all known facts that materially affect the value of the residential real property and are not readily
+observable.
+_____________________________________
+Signature
+_____________________________________
+Signature
+___________________________
+Date
+___________________________
+Date
+******************************************************************************************
+CONSENT TO TRANSITION TO TRANSACTION BROKER
+FLORIDA LAW ALLOWS REAL ESTATE LICENSEES WHO REPRESENT A BUYER OR SELLER AS A SINGLE
+AGENT TO CHANGE FROM SINGLE AGENT RELATIONSHIP TO A TRANSACTION BROKERAGE RELATIONSHIP
+IN ORDER FOR THE LICENSEE TO ASSIST BOTH PARTIES IN A REAL ESTATE TRANSACTION BY PROVIDING A
+LIMITED FORM OF REPRESENTATION TO BOTH THE BUYER AND THE SELLER. THIS CHANGE IN
+RELATIONSHIP CANNOT OCCUR WITHOUT YOUR PRIOR WRITTEN CONSENT.
+KW Reserve Palm Beach
+As a transaction broker, _____________________________________________________________________________
+and its associates, provides to you a limited form of representation that includes the following duties:
+1. Dealing honestly and fairly;
+2. Accounting for all funds;
+3. Using skill, care, and diligence in the transaction;
+4. Disclosing all known facts that materially affect the value of residential real property and are not readily
+observable to the buyer;
+5. Presenting all offers and counteroffers in a timely manner, unless a party has previously directed the licensee
+otherwise in writing;
+6. Limited confidentiality, unless waived in writing by a party. This limited confidentiality will prevent disclosure that
+the seller will accept a price less than the asking or listed price, that the buyer will pay a price greater than the
+price submitted in a written offer, of the motivation of any party for selling or buying property, that a seller or buyer
+will agree to financing terms other than those offered, or any other information requested by a party to remain
+confidential; and
+7. Any additional duties that are entered into by this or by separate agreement
+Limited representation means that a buyer or seller is not responsible for the acts of the licensee. Additionally, parties are
+giving up their rights to the undivided loyalty of the licensee. This aspect of limited representation allows a licensee to
+facilitate a real estate transaction by assisting both the buyer and the seller, but a licensee will not work to represent one
+party to the detriment of the other party when acting as a transaction broker to both parties.
+Consumer (_____) (_____) and Broker/Sales Associate (_____) (_____) acknowledge receipt of a copy of this page, which is Page 3 of 4.
+EBBA-8tn
+©2026 Florida Realtors®
+Rev. 1/26
+
+I agree that my agent may assume the role and duties of a transaction broker.
+____________________________________
+Signature
+____________________________________
+Signature
+________________________
+Date
+________________________
+Date
+13. OTHER TERMS:
+Residential Properties,incluse but not,limited for sale,by owner,open house
+new constuction,or any source needed to find properties
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+__________________________________________________________________________________________
+14. ACKNOWLEDGMENT; MODIFICATIONS: Consumer has read this Agreement and understands its contents. This
+Agreement cannot be changed except by written agreement signed by both parties. Electronic signatures will be
+acceptable and binding. Brokerage commissions are not set by law and are fully negotiable. Broker may not
+receive compensation from any source that exceeds the amount or rate agreed to with Consumer. However,
+Consumer agrees that Broker may receive separate compensation from owner of the property for services rendered to
+owner by Broker, for which Consumer will not be responsible.
+Date: _________________
+Joshua YOUNG
+1398 Riverside Circle
+33414
+Consumer Name: _____________________________________________________
+Consumer Signature:  __________________________________________________
+Address: ____________________________________________________________
+Zip: ____________ Telephone: ____________Email: _________________________
+561 787 4640
+Wellington
+FL
+joshuayoung1989@outlook.com
+Date: _________________
+Date: _________________
+Date: _________________
+Consumer Name: _____________________________________________________
+Consumer Signature:  __________________________________________________
+Address: ____________________________________________________________
+Zip: ____________ Telephone: ____________Email: _________________________
+Real Estate Associate:
+________________________________________________
+Real Estate Broker:  ___________________________________________________
+Copy returned to Consumer on ___________________ by:  personal delivery
+X
+mail
+facsimile
+email.
+Florida REALTORS® makes no representation as to the legal validity or adequacy of any provision of this form in any specific transaction. This standardized form should not be used in
+complex transactions or with extensive riders or additions. This form is available for use by the entire real estate industry and is not intended to identify the user as REALTOR®.
+REALTOR® is a registered collective membership mark which may be used only by real estate licensees who are members of the NATIONAL ASSOCIATION OF REALTORS® and
+who subscribe to its Code of Ethics. The copyright laws of United States (17 U.S. Code) forbid the unauthorized reproduction of this form by any means including facsimile or
+computerized forms.
+Consumer (_____) (_____) and Broker/Sales Associate (_____) (_____) acknowledge receipt of a copy of this page, which is Page 4 of 4.
+EBBA-8tn
+©2026 Florida Realtors®
+Rev. 1/26             </pre>`;
+
+  return contractText;
 }
 
 function genShowingHTML(buyer, buyerAddr, buyerPhone, start, end) {
@@ -2113,11 +2444,44 @@ function clearKey() {
   toast('🗑 API Key eliminada');
 }
 
+function updateBrevoStatus() {
+  const key = localStorage.getItem('nk_brevo_key');
+  const email = localStorage.getItem('nk_sender_email');
+  const badge = document.getElementById('brevo-status-badge');
+  if(!badge) return;
+  badge.innerHTML = (key && email)
+    ? `<div class="key-status key-ok">✓ Email configurado — listo para enviar</div>`
+    : `<div class="key-status key-no">✗ Falta Brevo Key o Email — no se pueden enviar emails</div>`;
+  if(key) document.getElementById('brevoKeyInput').value = key;
+  if(email) document.getElementById('senderEmail').value = email;
+}
+
+function saveBrevoKey() {
+  const k = document.getElementById('brevoKeyInput').value.trim();
+  const e = document.getElementById('senderEmail').value.trim();
+  if(!k){ alert('El campo está vacío — pega tu Brevo API key primero'); return; }
+  if(!k.startsWith('xkeysib-')){ alert('La key debe comenzar con xkeysib- — verifica que la copiaste completa'); return; }
+  if(!e){ alert('Especifica un email de envío válido'); return; }
+  localStorage.setItem('nk_brevo_key', k);
+  localStorage.setItem('nk_sender_email', e);
+  updateBrevoStatus();
+  alert('✅ Brevo configurado correctamente. Ya puedes enviar contratos por email.');
+}
+
+function clearBrevoKey() {
+  localStorage.removeItem('nk_brevo_key');
+  localStorage.removeItem('nk_sender_email');
+  document.getElementById('brevoKeyInput').value = '';
+  document.getElementById('senderEmail').value = '';
+  updateBrevoStatus();
+  toast('🗑 Configuración de email eliminada');
+}
+
 // ── MODALS ──────────────────────────────────────────────────────────────────
 function openModal(id) {
   document.getElementById(id).classList.add('open');
   document.body.style.overflow = 'hidden';
-  if(id === 'modal-settings') updateKeyStatus();
+  if(id === 'modal-settings') { updateKeyStatus(); updateBrevoStatus(); }
   if(id === 'modal-pipeline') renderPipeline();
   if(id === 'modal-contract') setContractDefaults();
 }
